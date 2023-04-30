@@ -27,18 +27,18 @@ fun SymptomTrackerNavHost(
 ) {
     NavHost(navController = navController, startDestination = Route.HOME.name) {
         composable(route = Route.HOME.name) {
-            HomeScreen(onAddFoodClick = { navController.navigate(Route.ADD_FOOD.name) },
-                onAddSymptomClick = { navController.navigate(Route.ADD_SYMPTOM.name) },
-                onAddMovementClick = { navController.navigate(Route.ADD_MOVEMENT.name) })
+            HomeScreen(navigateToAddFood = { navController.navigate(Route.ADD_FOOD.name) },
+                navigateToAddSymptom = { navController.navigate(Route.ADD_SYMPTOM.name) },
+                navigateToAddMovement = { navController.navigate(Route.ADD_MOVEMENT.name) })
         }
         composable(route = Route.ADD_FOOD.name) {
-            AddFoodScreen(onBackClick = { navController.navigateUp() })
+            AddFoodScreen(navigateBack = { navController.navigateUp() })
         }
         composable(route = Route.ADD_SYMPTOM.name) {
             AddSymptomScreen(navigateBack = { navController.navigateUp() })
         }
         composable(route = Route.ADD_MOVEMENT.name) {
-            AddMovementScreen(onBackClick = { navController.navigateUp() })
+            AddMovementScreen(navigateBack = { navController.navigateUp() })
         }
     }
 }
