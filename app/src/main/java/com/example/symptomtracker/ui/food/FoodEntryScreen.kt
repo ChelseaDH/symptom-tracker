@@ -3,6 +3,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -52,8 +53,10 @@ fun AddFoodScreen(
             foodLogUiState = viewModel.foodLogUiState,
             chosenItems = viewModel.chosenItems,
             onChosenItemUpdated = viewModel::updateChosenItem,
+            onNameUpdated = viewModel::updateItemName,
             onAddItem = viewModel::addItem,
             onDeleteItem = viewModel::removeItem,
+            onClearChosenItem = viewModel::clearItemInputs,
             modifier = Modifier.padding(innerPadding)
         )
     }
@@ -64,8 +67,10 @@ fun FoodEntryBody(
     foodLogUiState: FoodLogUiState,
     chosenItems: List<Item>,
     onChosenItemUpdated: (Item) -> Unit,
+    onNameUpdated: (String) -> Unit,
     onAddItem: () -> Unit,
     onDeleteItem: (Item) -> Unit,
+    onClearChosenItem: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier
@@ -73,10 +78,14 @@ fun FoodEntryBody(
         .padding(all = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        FoodLogItemInput(availableItems = foodLogUiState.availableItems,
+        FoodLogItemInput(
+            availableItems = foodLogUiState.availableItems,
+            itemName = foodLogUiState.itemName,
             chosenItem = foodLogUiState.chosenItem,
             onChosenItemUpdated = onChosenItemUpdated,
-            onAddItem = onAddItem
+            onNameUpdated = onNameUpdated,
+            onAddItem = onAddItem,
+            onClearChosenItem = onClearChosenItem,
         )
         Divider()
         FoodLogItemList(itemList = chosenItems, onDeleteItem = onDeleteItem)
@@ -96,7 +105,9 @@ fun FoodLogItemList(
                 headlineText = { Text(text = item.name) },
                 trailingContent = {
                     IconButton(onClick = { onDeleteItem(item) }) {
-                        Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete item")
+                        Icon(imageVector = Icons.Default.Delete,
+                            contentDescription = stringResource(
+                                R.string.delete_item_cd))
                     }
                 },
                 modifier = modifier
@@ -109,8 +120,11 @@ fun FoodLogItemList(
 @Composable
 fun FoodLogItemInput(
     availableItems: List<Item>,
+    itemName: String,
     chosenItem: Item?,
     onChosenItemUpdated: (Item) -> Unit,
+    onNameUpdated: (String) -> Unit,
+    onClearChosenItem: () -> Unit,
     onAddItem: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -125,26 +139,44 @@ fun FoodLogItemInput(
             expanded = selectorExpanded,
             onExpandedChange = { selectorExpanded = !selectorExpanded }
         ) {
-            OutlinedTextField(value = chosenItem?.name ?: "", onValueChange = {}, label = {
-                Text(text = "Food",
-                    color = MaterialTheme.colorScheme.onPrimaryContainer)
-            }, modifier = Modifier.menuAnchor(), readOnly = true, trailingIcon = {
-                ExposedDropdownMenuDefaults.TrailingIcon(expanded = selectorExpanded)
-            })
-            ExposedDropdownMenu(
-                expanded = selectorExpanded,
-                onDismissRequest = { selectorExpanded = false }) {
-                for (availableItem in availableItems) {
-                    DropdownMenuItem(text = { Text(text = availableItem.name) },
-                        onClick = {
-                            onChosenItemUpdated(availableItem)
-                            selectorExpanded = false
-                        })
+            OutlinedTextField(
+                value = chosenItem?.name ?: itemName,
+                onValueChange = {
+                    onNameUpdated(it)
+                    selectorExpanded = true
+                },
+                label = {
+                    Text(text = stringResource(id = R.string.add_food_text),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer)
+                },
+                modifier = Modifier.menuAnchor(),
+                trailingIcon = {
+                    IconButton(onClick = { onClearChosenItem() }) {
+                        Icon(imageVector = Icons.Default.Clear,
+                            contentDescription = stringResource(id = R.string.clear_food_input_cd))
+                    }
+                },
+                singleLine = true,
+            )
+            val filteredOptions =
+                availableItems.filter { it.name.contains(itemName, ignoreCase = true) }
+            if (filteredOptions.isNotEmpty()) {
+                ExposedDropdownMenu(
+                    expanded = selectorExpanded,
+                    onDismissRequest = { selectorExpanded = false }) {
+                    for (option in filteredOptions) {
+                        DropdownMenuItem(text = { Text(text = option.name) },
+                            onClick = {
+                                onChosenItemUpdated(option)
+                                selectorExpanded = false
+                            })
+                    }
                 }
             }
         }
         FloatingActionButton(onClick = { onAddItem() }) {
-            Icon(imageVector = Icons.Default.Add, contentDescription = "Add food")
+            Icon(imageVector = Icons.Default.Add,
+                contentDescription = stringResource(id = R.string.add_food_cd))
         }
     }
 }
@@ -153,21 +185,25 @@ fun FoodLogItemInput(
 @Preview(showSystemUi = true)
 fun AddFoodScreenPreview() {
     SymptomTrackerTheme {
-        FoodEntryBody(foodLogUiState = FoodLogUiState(
-            availableItems = listOf(
-                Item(itemId = 1, name = "Oats"),
-                Item(itemId = 2, name = "Banana"),
-                Item(itemId = 3, name = "Egg"),
-                Item(itemId = 4, name = "Oat milk")
+        FoodEntryBody(
+            foodLogUiState = FoodLogUiState(
+                availableItems = listOf(
+                    Item(itemId = 1, name = "Oats"),
+                    Item(itemId = 2, name = "Banana"),
+                    Item(itemId = 3, name = "Egg"),
+                    Item(itemId = 4, name = "Oat milk")
+                ),
+                chosenItem = null
             ),
-            chosenItem = null
-        ),
             chosenItems = listOf(
                 Item(itemId = 1, name = "Oats"),
                 Item(itemId = 2, name = "Banana"),
             ),
             onChosenItemUpdated = {},
+            onNameUpdated = {},
             onAddItem = {},
-            onDeleteItem = {})
+            onDeleteItem = {},
+            onClearChosenItem = {}
+        )
     }
 }

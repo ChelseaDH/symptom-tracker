@@ -35,6 +35,7 @@ class FoodEntryViewModel(private val foodLogRepository: FoodLogRepository) : Vie
     fun addItem() {
         if (foodLogUiState.chosenItem != null && !chosenItems.contains(foodLogUiState.chosenItem!!)) {
             _chosenItems.add(foodLogUiState.chosenItem!!)
+            clearItemInputs()
         }
     }
 
@@ -42,9 +43,22 @@ class FoodEntryViewModel(private val foodLogRepository: FoodLogRepository) : Vie
         _chosenItems.remove(item)
     }
 
-    fun updateChosenItem(item: Item) {
+    fun updateChosenItem(item: Item?) {
         foodLogUiState = foodLogUiState.copy(
             chosenItem = item
+        )
+    }
+
+    fun updateItemName(itemName: String) {
+        foodLogUiState = foodLogUiState.copy(
+            itemName = itemName
+        )
+    }
+
+    fun clearItemInputs() {
+        foodLogUiState = foodLogUiState.copy(
+            itemName = "",
+            chosenItem = null
         )
     }
 
@@ -69,6 +83,7 @@ data class FoodLogUiState(
     val foodLogDetails: FoodLogDetails = FoodLogDetails(),
     val availableItems: List<Item> = listOf(),
     val chosenItem: Item? = null,
+    val itemName: String = "",
     val isEntryValid: Boolean = false,
 )
 

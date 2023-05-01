@@ -12,4 +12,6 @@
     <string name="log_symptom_title">Log symptom</string>
     <string name="log_movement_title">Log movement</string>
     <string name="save_button_text">Save</string>
+    <string name="delete_item_cd">Delete item</string>
+    <string name="clear_food_input_cd">Clear food input</string>
 </resources>
