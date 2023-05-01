@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.symptomtracker.SymptomTrackerApplication
+import com.example.symptomtracker.ui.food.FoodEntryViewModel
 import com.example.symptomtracker.ui.symptom.SymptomEntryViewModel
 
 /**
@@ -17,6 +18,11 @@ object AppViewModelProvider {
         // Initializer for SymptomEntryViewModel
         initializer {
             SymptomEntryViewModel(symptomRepository = symptomTrackerApplication().container.symptomRepository)
+        }
+
+        // Initializer for FoodLogEntryViewModel
+        initializer {
+            FoodEntryViewModel(foodLogRepository = symptomTrackerApplication().container.foodLogRepository)
         }
     }
 }

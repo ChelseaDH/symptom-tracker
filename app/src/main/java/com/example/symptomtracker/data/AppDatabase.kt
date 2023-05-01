@@ -5,16 +5,23 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.example.symptomtracker.data.food.FoodLog
+import com.example.symptomtracker.data.food.FoodLogDao
+import com.example.symptomtracker.data.food.FoodLogItemCrossRef
+import com.example.symptomtracker.data.food.Item
 import com.example.symptomtracker.data.symptom.Symptom
 import com.example.symptomtracker.data.symptom.SymptomDao
 
 /**
  * Database class with singleton Instance object
  */
-@Database(entities = [Symptom::class], version = 1, exportSchema = false)
+@Database(entities = [Symptom::class, FoodLog::class, Item::class, FoodLogItemCrossRef::class],
+    version = 1,
+    exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun symptomDao(): SymptomDao
+    abstract fun foodLogDao(): FoodLogDao
 
     companion object {
         @Volatile
