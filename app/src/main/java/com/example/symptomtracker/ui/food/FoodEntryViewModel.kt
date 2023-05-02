@@ -47,13 +47,15 @@ class FoodEntryViewModel(private val foodLogRepository: FoodLogRepository) : Vie
 
     fun updateChosenItem(item: Item) {
         foodLogUiState = foodLogUiState.copy(
-            chosenItem = item
+            chosenItem = item,
+            itemName = item.name
         )
     }
 
     fun updateItemName(itemName: String) {
         foodLogUiState = foodLogUiState.copy(
-            itemName = itemName
+            itemName = itemName,
+            chosenItem = null
         )
     }
 
