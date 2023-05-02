@@ -11,6 +11,9 @@ interface FoodLogDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertItems(items: List<Item>): Array<Long>
 
+    @Insert
+    suspend fun insertItem(item: Item)
+
     @Query("SELECT * FROM item ORDER BY name ASC")
     fun getAllItems(): Flow<List<Item>>
 

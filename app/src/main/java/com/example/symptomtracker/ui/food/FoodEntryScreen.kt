@@ -55,6 +55,11 @@ fun AddFoodScreen(
             onChosenItemUpdated = viewModel::updateChosenItem,
             onNameUpdated = viewModel::updateItemName,
             onAddItem = viewModel::addItem,
+            onCreateItem = {
+                coroutineScope.launch {
+                    viewModel.insertNewItemFromInput()
+                }
+            },
             onDeleteItem = viewModel::removeItem,
             onClearChosenItem = viewModel::clearItemInputs,
             modifier = Modifier.padding(innerPadding)
@@ -69,6 +74,7 @@ fun FoodEntryBody(
     onChosenItemUpdated: (Item) -> Unit,
     onNameUpdated: (String) -> Unit,
     onAddItem: () -> Unit,
+    onCreateItem: () -> Unit,
     onDeleteItem: (Item) -> Unit,
     onClearChosenItem: () -> Unit,
     modifier: Modifier = Modifier,
@@ -85,6 +91,7 @@ fun FoodEntryBody(
             onChosenItemUpdated = onChosenItemUpdated,
             onNameUpdated = onNameUpdated,
             onAddItem = onAddItem,
+            onCreateItem = onCreateItem,
             onClearChosenItem = onClearChosenItem,
         )
         Divider()
@@ -126,6 +133,7 @@ fun FoodLogItemInput(
     onNameUpdated: (String) -> Unit,
     onClearChosenItem: () -> Unit,
     onAddItem: () -> Unit,
+    onCreateItem: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var selectorExpanded by remember { mutableStateOf(false) }
@@ -160,10 +168,10 @@ fun FoodLogItemInput(
             )
             val filteredOptions =
                 availableItems.filter { it.name.contains(itemName, ignoreCase = true) }
-            if (filteredOptions.isNotEmpty()) {
-                ExposedDropdownMenu(
-                    expanded = selectorExpanded,
-                    onDismissRequest = { selectorExpanded = false }) {
+            ExposedDropdownMenu(
+                expanded = selectorExpanded,
+                onDismissRequest = { selectorExpanded = false }) {
+                if (filteredOptions.isNotEmpty()) {
                     for (option in filteredOptions) {
                         DropdownMenuItem(text = { Text(text = option.name) },
                             onClick = {
@@ -171,7 +179,17 @@ fun FoodLogItemInput(
                                 selectorExpanded = false
                             })
                     }
+                    Divider()
                 }
+                DropdownMenuItem(text = { Text(text = itemName) },
+                    onClick = { onCreateItem() },
+                    trailingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Create new item"
+                        )
+                    }
+                )
             }
         }
         FloatingActionButton(onClick = { onAddItem() }) {
@@ -202,6 +220,7 @@ fun AddFoodScreenPreview() {
             onChosenItemUpdated = {},
             onNameUpdated = {},
             onAddItem = {},
+            onCreateItem = {},
             onDeleteItem = {},
             onClearChosenItem = {}
         )

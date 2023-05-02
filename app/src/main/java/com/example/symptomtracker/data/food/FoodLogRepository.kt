@@ -15,4 +15,9 @@ interface FoodLogRepository {
      * Retrieves all [Item] records.
      */
     fun getAllItemsStream(): Flow<List<Item>>
+
+    /**
+     * Insert [Item].
+     */
+    suspend fun insertItem(item: Item)
 }

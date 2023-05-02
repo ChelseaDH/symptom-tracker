@@ -5,4 +5,6 @@ class OfflineFoodLogRepository(private val foodLogDao: FoodLogDao) : FoodLogRepo
         foodLogDao.insertFoodLogWithItems(foodLogWithItems = foodLogWithItems)
 
     override fun getAllItemsStream() = foodLogDao.getAllItems()
+
+    override suspend fun insertItem(item: Item) = foodLogDao.insertItem(item)
 }

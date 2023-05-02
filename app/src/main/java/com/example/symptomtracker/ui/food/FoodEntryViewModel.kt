@@ -10,7 +10,6 @@ import com.example.symptomtracker.data.food.FoodLog
 import com.example.symptomtracker.data.food.FoodLogRepository
 import com.example.symptomtracker.data.food.FoodLogWithItems
 import com.example.symptomtracker.data.food.Item
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -23,8 +22,11 @@ class FoodEntryViewModel(private val foodLogRepository: FoodLogRepository) : Vie
 
     init {
         viewModelScope.launch {
-            foodLogUiState =
-                FoodLogUiState(availableItems = foodLogRepository.getAllItemsStream().first())
+            foodLogRepository.getAllItemsStream().collect {
+                foodLogUiState = foodLogUiState.copy(
+                    availableItems = it
+                )
+            }
         }
     }
 
@@ -43,7 +45,7 @@ class FoodEntryViewModel(private val foodLogRepository: FoodLogRepository) : Vie
         _chosenItems.remove(item)
     }
 
-    fun updateChosenItem(item: Item?) {
+    fun updateChosenItem(item: Item) {
         foodLogUiState = foodLogUiState.copy(
             chosenItem = item
         )
@@ -62,17 +64,27 @@ class FoodEntryViewModel(private val foodLogRepository: FoodLogRepository) : Vie
         )
     }
 
-    suspend fun saveFoodLog() {
-        if (validateInput()) {
-            foodLogRepository.insertFoodLogWithItems(FoodLogWithItems(
-                foodLog = FoodLog(foodLogId = 0, date = Date()),
-                items = chosenItems
-            ))
+    suspend fun insertNewItemFromInput() {
+        if (validateNewItemInput()) {
+            val item = foodLogUiState.toItem()
+
+            foodLogRepository.insertItem(item)
+            updateChosenItem(item)
         }
     }
 
-    private fun validateInput(): Boolean {
+    suspend fun saveFoodLog() {
+        if (validateNewFoodLogInput()) {
+            foodLogRepository.insertFoodLogWithItems(foodLogUiState.toFoodLogWithItems())
+        }
+    }
+
+    private fun validateNewFoodLogInput(): Boolean {
         return chosenItems.isNotEmpty() && !chosenItems.any { item -> item.name.isBlank() }
+    }
+
+    private fun validateNewItemInput(): Boolean {
+        return foodLogUiState.itemName.isNotEmpty()
     }
 }
 
@@ -89,4 +101,20 @@ data class FoodLogUiState(
 
 data class FoodLogDetails(
     val items: List<Item> = listOf(),
+)
+
+/**
+ * Extension function to convert [FoodLogUiState] to [Item].
+ */
+fun FoodLogUiState.toItem(): Item = Item(
+    itemId = 0,
+    name = itemName.replaceFirstChar { it.uppercaseChar() }
+)
+
+/**
+ * Extension function to convert [FoodLogUiState] to [FoodLogWithItems].
+ */
+fun FoodLogUiState.toFoodLogWithItems(): FoodLogWithItems = FoodLogWithItems(
+    foodLog = FoodLog(foodLogId = 0, date = Date()),
+    items = foodLogDetails.items
 )
