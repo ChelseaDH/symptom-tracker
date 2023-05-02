@@ -48,21 +48,24 @@ class FoodEntryViewModel(private val foodLogRepository: FoodLogRepository) : Vie
     fun updateChosenItem(item: Item) {
         foodLogUiState = foodLogUiState.copy(
             chosenItem = item,
-            itemName = item.name
+            itemName = item.name,
+            canCreateNewItemFromInput = false
         )
     }
 
     fun updateItemName(itemName: String) {
         foodLogUiState = foodLogUiState.copy(
             itemName = itemName,
-            chosenItem = null
+            chosenItem = null,
+            canCreateNewItemFromInput = canCreateNewItemFromInput(itemName)
         )
     }
 
     fun clearItemInputs() {
         foodLogUiState = foodLogUiState.copy(
             itemName = "",
-            chosenItem = null
+            chosenItem = null,
+            canCreateNewItemFromInput = false
         )
     }
 
@@ -88,6 +91,14 @@ class FoodEntryViewModel(private val foodLogRepository: FoodLogRepository) : Vie
     private fun validateNewItemInput(): Boolean {
         return foodLogUiState.itemName.isNotEmpty()
     }
+
+    private fun canCreateNewItemFromInput(itemName: String): Boolean {
+        return itemName.isNotBlank()
+                && foodLogUiState.availableItems.none {
+            it.name.equals(itemName,
+                ignoreCase = true)
+        }
+    }
 }
 
 /**
@@ -99,6 +110,7 @@ data class FoodLogUiState(
     val chosenItem: Item? = null,
     val itemName: String = "",
     val isEntryValid: Boolean = false,
+    val canCreateNewItemFromInput: Boolean = false,
 )
 
 data class FoodLogDetails(

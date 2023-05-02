@@ -93,6 +93,7 @@ fun FoodEntryBody(
             onAddItem = onAddItem,
             onCreateItem = onCreateItem,
             onClearChosenItem = onClearChosenItem,
+            canCreateNewItem = foodLogUiState.canCreateNewItemFromInput
         )
         Divider()
         FoodLogItemList(itemList = chosenItems, onDeleteItem = onDeleteItem)
@@ -129,6 +130,7 @@ fun FoodLogItemInput(
     availableItems: List<Item>,
     itemName: String,
     chosenItem: Item?,
+    canCreateNewItem: Boolean,
     onChosenItemUpdated: (Item) -> Unit,
     onNameUpdated: (String) -> Unit,
     onClearChosenItem: () -> Unit,
@@ -179,17 +181,21 @@ fun FoodLogItemInput(
                                 selectorExpanded = false
                             })
                     }
+                }
+                if (filteredOptions.isNotEmpty() && canCreateNewItem) {
                     Divider()
                 }
-                DropdownMenuItem(text = { Text(text = itemName) },
-                    onClick = { onCreateItem() },
-                    trailingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = "Create new item"
-                        )
-                    }
-                )
+                if (canCreateNewItem) {
+                    DropdownMenuItem(text = { Text(text = itemName) },
+                        onClick = { onCreateItem() },
+                        trailingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = "Create new item"
+                            )
+                        }
+                    )
+                }
             }
         }
         FloatingActionButton(onClick = { onAddItem() }) {
