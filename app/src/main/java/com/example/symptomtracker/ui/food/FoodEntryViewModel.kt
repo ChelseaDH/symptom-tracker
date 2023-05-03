@@ -20,36 +20,45 @@ class FoodEntryViewModel(private val foodLogRepository: FoodLogRepository) : Vie
     var foodLogUiState by mutableStateOf(FoodLogUiState())
         private set
 
+    private val _chosenItems = listOf<Item>().toMutableStateList()
+    private var _allItems = listOf<Item>()
+
     init {
         viewModelScope.launch {
             foodLogRepository.getAllItemsStream().collect {
+                _allItems = it
                 foodLogUiState = foodLogUiState.copy(
-                    availableItems = it
+                    availableItems = getAvailableItems()
                 )
             }
         }
     }
 
-    private val _chosenItems = listOf<Item>().toMutableStateList()
-    val chosenItems: List<Item>
-        get() = _chosenItems
-
     fun addItem() {
-        if (foodLogUiState.chosenItem != null && !chosenItems.contains(foodLogUiState.chosenItem!!)) {
+        if (foodLogUiState.chosenItem != null && !_chosenItems.contains(foodLogUiState.chosenItem!!)) {
             _chosenItems.add(foodLogUiState.chosenItem!!)
+
+            foodLogUiState = foodLogUiState.copy(
+                foodLogDetails = FoodLogDetails(_chosenItems)
+            )
             clearItemInputs()
         }
     }
 
     fun removeItem(item: Item) {
         _chosenItems.remove(item)
+
+        foodLogUiState = foodLogUiState.copy(
+            foodLogDetails = FoodLogDetails(_chosenItems)
+        )
     }
 
     fun updateChosenItem(item: Item) {
         foodLogUiState = foodLogUiState.copy(
             chosenItem = item,
             itemName = item.name,
-            canCreateNewItemFromInput = false
+            canCreateNewItemFromInput = false,
+            availableItems = getAvailableItems()
         )
     }
 
@@ -57,7 +66,8 @@ class FoodEntryViewModel(private val foodLogRepository: FoodLogRepository) : Vie
         foodLogUiState = foodLogUiState.copy(
             itemName = itemName,
             chosenItem = null,
-            canCreateNewItemFromInput = canCreateNewItemFromInput(itemName)
+            canCreateNewItemFromInput = canCreateNewItemFromInput(itemName),
+            availableItems = getAvailableItems()
         )
     }
 
@@ -65,7 +75,8 @@ class FoodEntryViewModel(private val foodLogRepository: FoodLogRepository) : Vie
         foodLogUiState = foodLogUiState.copy(
             itemName = "",
             chosenItem = null,
-            canCreateNewItemFromInput = false
+            canCreateNewItemFromInput = false,
+            availableItems = getAvailableItems()
         )
     }
 
@@ -85,7 +96,7 @@ class FoodEntryViewModel(private val foodLogRepository: FoodLogRepository) : Vie
     }
 
     private fun validateNewFoodLogInput(): Boolean {
-        return chosenItems.isNotEmpty() && !chosenItems.any { item -> item.name.isBlank() }
+        return _chosenItems.isNotEmpty() && !_chosenItems.any { item -> item.name.isBlank() }
     }
 
     private fun validateNewItemInput(): Boolean {
@@ -93,9 +104,15 @@ class FoodEntryViewModel(private val foodLogRepository: FoodLogRepository) : Vie
     }
 
     private fun canCreateNewItemFromInput(itemName: String): Boolean {
-        return itemName.isNotBlank()
-                && foodLogUiState.availableItems.none {
+        return itemName.isNotBlank() && _allItems.none {
             it.name.equals(itemName,
+                ignoreCase = true)
+        }
+    }
+
+    private fun getAvailableItems(): List<Item> {
+        return _allItems.filter { item ->
+            item.name.contains(foodLogUiState.itemName,
                 ignoreCase = true)
         }
     }

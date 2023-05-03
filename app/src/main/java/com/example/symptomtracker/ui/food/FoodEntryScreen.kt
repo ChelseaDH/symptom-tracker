@@ -51,7 +51,6 @@ fun AddFoodScreen(
     ) { innerPadding ->
         FoodEntryBody(
             foodLogUiState = viewModel.foodLogUiState,
-            chosenItems = viewModel.chosenItems,
             onChosenItemUpdated = viewModel::updateChosenItem,
             onNameUpdated = viewModel::updateItemName,
             onAddItem = viewModel::addItem,
@@ -70,7 +69,6 @@ fun AddFoodScreen(
 @Composable
 fun FoodEntryBody(
     foodLogUiState: FoodLogUiState,
-    chosenItems: List<Item>,
     onChosenItemUpdated: (Item) -> Unit,
     onNameUpdated: (String) -> Unit,
     onAddItem: () -> Unit,
@@ -87,7 +85,6 @@ fun FoodEntryBody(
         FoodLogItemInput(
             availableItems = foodLogUiState.availableItems,
             itemName = foodLogUiState.itemName,
-            chosenItem = foodLogUiState.chosenItem,
             onChosenItemUpdated = onChosenItemUpdated,
             onNameUpdated = onNameUpdated,
             onAddItem = onAddItem,
@@ -96,7 +93,7 @@ fun FoodEntryBody(
             canCreateNewItem = foodLogUiState.canCreateNewItemFromInput
         )
         Divider()
-        FoodLogItemList(itemList = chosenItems, onDeleteItem = onDeleteItem)
+        FoodLogItemList(itemList = foodLogUiState.foodLogDetails.items, onDeleteItem = onDeleteItem)
     }
 }
 
@@ -129,7 +126,6 @@ fun FoodLogItemList(
 fun FoodLogItemInput(
     availableItems: List<Item>,
     itemName: String,
-    chosenItem: Item?,
     canCreateNewItem: Boolean,
     onChosenItemUpdated: (Item) -> Unit,
     onNameUpdated: (String) -> Unit,
@@ -150,7 +146,7 @@ fun FoodLogItemInput(
             onExpandedChange = { selectorExpanded = !selectorExpanded }
         ) {
             OutlinedTextField(
-                value = chosenItem?.name ?: itemName,
+                value = itemName,
                 onValueChange = {
                     onNameUpdated(it)
                     selectorExpanded = true
@@ -168,21 +164,19 @@ fun FoodLogItemInput(
                 },
                 singleLine = true,
             )
-            val filteredOptions =
-                availableItems.filter { it.name.contains(itemName, ignoreCase = true) }
             ExposedDropdownMenu(
                 expanded = selectorExpanded,
                 onDismissRequest = { selectorExpanded = false }) {
-                if (filteredOptions.isNotEmpty()) {
-                    for (option in filteredOptions) {
-                        DropdownMenuItem(text = { Text(text = option.name) },
+                if (availableItems.isNotEmpty()) {
+                    for (availableItem in availableItems) {
+                        DropdownMenuItem(text = { Text(text = availableItem.name) },
                             onClick = {
-                                onChosenItemUpdated(option)
+                                onChosenItemUpdated(availableItem)
                                 selectorExpanded = false
                             })
                     }
                 }
-                if (filteredOptions.isNotEmpty() && canCreateNewItem) {
+                if (availableItems.isNotEmpty() && canCreateNewItem) {
                     Divider()
                 }
                 if (canCreateNewItem) {
@@ -218,10 +212,6 @@ fun AddFoodScreenPreview() {
                     Item(itemId = 4, name = "Oat milk")
                 ),
                 chosenItem = null
-            ),
-            chosenItems = listOf(
-                Item(itemId = 1, name = "Oats"),
-                Item(itemId = 2, name = "Banana"),
             ),
             onChosenItemUpdated = {},
             onNameUpdated = {},
