@@ -13,5 +13,6 @@
     <string name="log_movement_title">Log movement</string>
     <string name="save_button_text">Save</string>
     <string name="delete_item_cd">Delete item</string>
-    <string name="clear_food_input_cd">Clear food input</string>
+    <string name="clear_input_cd">Clear input</string>
+    <string name="dropdown_create_cd">Create new option</string>
 </resources>
