@@ -3,7 +3,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -16,6 +15,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.symptomtracker.R
 import com.example.symptomtracker.data.food.Item
 import com.example.symptomtracker.ui.AppViewModelProvider
+import com.example.symptomtracker.ui.components.OutlinedTextFieldWithDropdown
 import com.example.symptomtracker.ui.food.FoodEntryViewModel
 import com.example.symptomtracker.ui.food.FoodLogUiState
 import com.example.symptomtracker.ui.theme.SymptomTrackerTheme
@@ -134,64 +134,23 @@ fun FoodLogItemInput(
     onCreateItem: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var selectorExpanded by remember { mutableStateOf(false) }
-
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        ExposedDropdownMenuBox(
-            expanded = selectorExpanded,
-            onExpandedChange = { selectorExpanded = !selectorExpanded }
-        ) {
-            OutlinedTextField(
-                value = itemName,
-                onValueChange = {
-                    onNameUpdated(it)
-                    selectorExpanded = true
-                },
-                label = {
-                    Text(text = stringResource(id = R.string.add_food_text),
-                        color = MaterialTheme.colorScheme.onPrimaryContainer)
-                },
-                modifier = Modifier.menuAnchor(),
-                trailingIcon = {
-                    IconButton(onClick = { onClearChosenItem() }) {
-                        Icon(imageVector = Icons.Default.Clear,
-                            contentDescription = stringResource(id = R.string.clear_food_input_cd))
-                    }
-                },
-                singleLine = true,
-            )
-            ExposedDropdownMenu(
-                expanded = selectorExpanded,
-                onDismissRequest = { selectorExpanded = false }) {
-                if (availableItems.isNotEmpty()) {
-                    for (availableItem in availableItems) {
-                        DropdownMenuItem(text = { Text(text = availableItem.name) },
-                            onClick = {
-                                onChosenItemUpdated(availableItem)
-                                selectorExpanded = false
-                            })
-                    }
-                }
-                if (availableItems.isNotEmpty() && canCreateNewItem) {
-                    Divider()
-                }
-                if (canCreateNewItem) {
-                    DropdownMenuItem(text = { Text(text = itemName) },
-                        onClick = { onCreateItem() },
-                        trailingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = "Create new item"
-                            )
-                        }
-                    )
-                }
-            }
-        }
+        OutlinedTextFieldWithDropdown(
+            availableOptions = availableItems,
+            getOptionDisplayName = { it.name },
+            textValue = itemName,
+            onTextValueUpdated = onNameUpdated,
+            canCreateOption = canCreateNewItem,
+            onCreateOption = onCreateItem,
+            onClearInput = onClearChosenItem,
+            onChosenOptionUpdated = onChosenItemUpdated,
+            textLabelId = R.string.add_food_text,
+        )
+
         FloatingActionButton(onClick = { onAddItem() }) {
             Icon(imageVector = Icons.Default.Add,
                 contentDescription = stringResource(id = R.string.add_food_cd))
