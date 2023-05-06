@@ -58,7 +58,7 @@ class FoodEntryViewModel(private val foodLogRepository: FoodLogRepository) : Vie
             chosenItem = item,
             itemName = item.name,
             canCreateNewItemFromInput = false,
-            availableItems = getAvailableItems()
+            availableItems = getAvailableItems(item.name)
         )
     }
 
@@ -67,7 +67,7 @@ class FoodEntryViewModel(private val foodLogRepository: FoodLogRepository) : Vie
             itemName = itemName,
             chosenItem = null,
             canCreateNewItemFromInput = canCreateNewItemFromInput(itemName),
-            availableItems = getAvailableItems()
+            availableItems = getAvailableItems(itemName)
         )
     }
 
@@ -76,7 +76,7 @@ class FoodEntryViewModel(private val foodLogRepository: FoodLogRepository) : Vie
             itemName = "",
             chosenItem = null,
             canCreateNewItemFromInput = false,
-            availableItems = getAvailableItems()
+            availableItems = getAvailableItems("")
         )
     }
 
@@ -110,10 +110,9 @@ class FoodEntryViewModel(private val foodLogRepository: FoodLogRepository) : Vie
         }
     }
 
-    private fun getAvailableItems(): List<Item> {
+    private fun getAvailableItems(itemName: String = foodLogUiState.itemName): List<Item> {
         return _allItems.filter { item ->
-            item.name.contains(foodLogUiState.itemName,
-                ignoreCase = true)
+            item.name.contains(itemName, ignoreCase = true)
         }
     }
 }
