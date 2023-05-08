@@ -1,7 +1,6 @@
 package com.example.symptomtracker.ui.components
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
@@ -43,9 +42,7 @@ fun <T> OutlinedTextFieldWithDropdown(
                     Text(text = stringResource(id = textLabelId),
                         color = MaterialTheme.colorScheme.onPrimaryContainer)
             },
-            modifier = Modifier
-                .menuAnchor()
-                .fillMaxWidth(),
+            modifier = modifier.menuAnchor(),
             trailingIcon = {
                 IconButton(onClick = { onClearInput() }) {
                     Icon(imageVector = Icons.Default.Clear,

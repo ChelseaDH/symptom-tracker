@@ -6,7 +6,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -133,10 +132,9 @@ fun FoodLogItemInput(
     onCreateItem: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(
+    Column(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically,
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         OutlinedTextFieldWithDropdown(
             availableOptions = availableItems,
@@ -148,11 +146,19 @@ fun FoodLogItemInput(
             onClearInput = onClearChosenItem,
             onChosenOptionUpdated = onChosenItemUpdated,
             textLabelId = R.string.add_food_text,
+            modifier = Modifier.fillMaxWidth()
         )
-
-        FloatingActionButton(onClick = { onAddItem() }) {
-            Icon(imageVector = Icons.Default.Add,
-                contentDescription = stringResource(id = R.string.add_food_cd))
+        FilledTonalButton(
+            onClick = { onAddItem() },
+            contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = stringResource(id = R.string.add_food_cd),
+                modifier = Modifier.padding(end = 8.dp)
+            )
+            Text(text = "Add to log")
         }
     }
 }

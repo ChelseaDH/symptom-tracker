@@ -195,7 +195,7 @@ fun FormNameInput(
             onChosenOptionUpdated = onSelectedSymptomUpdated,
             textLabelId = null,
             getOptionDisplayName = { it.name },
-            modifier = Modifier
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }
