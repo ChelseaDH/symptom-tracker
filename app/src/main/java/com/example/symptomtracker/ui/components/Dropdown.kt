@@ -1,6 +1,7 @@
 package com.example.symptomtracker.ui.components
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
@@ -21,7 +22,7 @@ fun <T> OutlinedTextFieldWithDropdown(
     onCreateOption: () -> Unit,
     onClearInput: () -> Unit,
     onChosenOptionUpdated: (T) -> Unit,
-    @StringRes textLabelId: Int,
+    @StringRes textLabelId: Int?,
     modifier: Modifier = Modifier,
 ) {
     var selectorExpanded by remember { mutableStateOf(false) }
@@ -38,8 +39,9 @@ fun <T> OutlinedTextFieldWithDropdown(
                 selectorExpanded = true
             },
             label = {
-                Text(text = stringResource(id = textLabelId),
-                    color = MaterialTheme.colorScheme.onPrimaryContainer)
+                if (textLabelId != null)
+                    Text(text = stringResource(id = textLabelId),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer)
             },
             modifier = Modifier.menuAnchor(),
             trailingIcon = {
