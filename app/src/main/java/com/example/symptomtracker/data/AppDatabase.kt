@@ -12,12 +12,12 @@ import com.example.symptomtracker.data.food.Item
 import com.example.symptomtracker.data.symptom.Symptom
 import com.example.symptomtracker.data.symptom.SymptomDao
 import com.example.symptomtracker.data.symptom.SymptomLog
-import com.example.symptomtracker.data.symptom.SymptomLogCrossRef
+import com.example.symptomtracker.data.symptom.SymptomLogRecord
 
 /**
  * Database class with singleton Instance object
  */
-@Database(entities = [Symptom::class, SymptomLog::class, SymptomLogCrossRef::class, FoodLog::class, Item::class, FoodLogItemCrossRef::class],
+@Database(entities = [Symptom::class, SymptomLog::class, SymptomLogRecord::class, FoodLog::class, Item::class, FoodLogItemCrossRef::class],
     version = 1,
     exportSchema = false)
 @TypeConverters(Converters::class)

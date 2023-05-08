@@ -16,9 +16,15 @@ data class SymptomLog(
 )
 
 @Entity(primaryKeys = ["symptomId", "symptomLogId"])
-data class SymptomLogCrossRef(
+data class SymptomLogRecord(
     val symptomId: Long,
     val symptomLogId: Long,
+    val severity: Severity,
+)
+
+data class SymptomWithSeverity(
+    @Embedded val symptom: Symptom,
+    val severity: Severity,
 )
 
 data class SymptomLogWithSymptoms(
@@ -26,7 +32,7 @@ data class SymptomLogWithSymptoms(
     @Relation(
         parentColumn = "symptomLogId",
         entityColumn = "symptomId",
-        associateBy = Junction(SymptomLogCrossRef::class)
+        associateBy = Junction(SymptomLogRecord::class)
     )
-    val symptoms: List<Symptom>,
+    val symptomWithSeverities: List<SymptomWithSeverity>,
 )

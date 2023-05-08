@@ -6,17 +6,19 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.symptomtracker.R
+import com.example.symptomtracker.data.symptom.Severity
 import com.example.symptomtracker.data.symptom.Symptom
+import com.example.symptomtracker.data.symptom.SymptomWithSeverity
 import com.example.symptomtracker.ui.AppViewModelProvider
 import com.example.symptomtracker.ui.components.OutlinedTextFieldWithDropdown
 import com.example.symptomtracker.ui.symptom.SymptomEntryViewModel
+import com.example.symptomtracker.ui.symptom.SymptomInput
 import com.example.symptomtracker.ui.symptom.SymptomLogDetails
 import com.example.symptomtracker.ui.symptom.SymptomUiState
 import com.example.symptomtracker.ui.theme.SymptomTrackerTheme
@@ -50,11 +52,12 @@ fun AddSymptomScreen(
     ) { innerPadding ->
         SymptomEntryBody(symptomUiState = viewModel.uiState,
             onSymptomNameUpdated = viewModel::updateSelectedSymptomName,
-            onCreateSymptom = { coroutineScope.launch { viewModel.insertSymptom() } },
+            onCreateSymptom = viewModel::insertSymptom,
             onClearInput = viewModel::clearSymptomInputs,
             onSelectedSymptomUpdated = viewModel::updateSelectedSymptom,
+            onSelectedSeverityUpdated = viewModel::updateSelectedSeverity,
             onRemoveSymptomFromLog = viewModel::removeSymptomFromLog,
-            onAddSymptomToLog = viewModel::addSymptomToLog,
+            onAddSymptomToLog = viewModel::addSymptomWithSeverityToLog,
             modifier = Modifier.padding(innerPadding)
         )
     }
@@ -67,7 +70,8 @@ fun SymptomEntryBody(
     onCreateSymptom: () -> Unit,
     onClearInput: () -> Unit,
     onSelectedSymptomUpdated: (Symptom) -> Unit,
-    onRemoveSymptomFromLog: (Symptom) -> Unit,
+    onSelectedSeverityUpdated: (Severity) -> Unit,
+    onRemoveSymptomFromLog: (SymptomWithSeverity) -> Unit,
     onAddSymptomToLog: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -76,32 +80,37 @@ fun SymptomEntryBody(
         .padding(all = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        LogSymptomForm(availableSymptoms = symptomUiState.availableSymptoms,
-            symptomName = symptomUiState.selectedSymptomName,
+        LogSymptomForm(
+            availableSymptoms = symptomUiState.availableSymptoms,
+            symptomInput = symptomUiState.symptomInput,
             canCreateSymptom = symptomUiState.canCreateSymptomFromInput,
             onSymptomNameUpdated = onSymptomNameUpdated,
             onCreateSymptom = onCreateSymptom,
             onClearInput = onClearInput,
             onSelectedSymptomUpdated = onSelectedSymptomUpdated,
+            onSelectedSeverityUpdated = onSelectedSeverityUpdated,
             onAddSymptomToLog = onAddSymptomToLog
         )
         Divider()
-        SymptomLogList(symptomList = symptomUiState.symptomLogDetails.symptoms,
-            onDeleteItem = onRemoveSymptomFromLog)
+        SymptomLogList(
+            symptomList = symptomUiState.symptomLogDetails.symptomsWithSeverity,
+            onDeleteItem = onRemoveSymptomFromLog
+        )
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SymptomLogList(
-    symptomList: List<Symptom>,
-    onDeleteItem: (Symptom) -> Unit,
+    symptomList: List<SymptomWithSeverity>,
+    onDeleteItem: (SymptomWithSeverity) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier = modifier) {
-        items(items = symptomList, key = { it.symptomId }) { item ->
+        items(items = symptomList, key = { it.symptom.symptomId }) { item ->
             ListItem(
-                headlineText = { Text(text = item.name) },
+                headlineText = { Text(text = item.symptom.name) },
+                supportingText = { Text(text = item.severity.displayName) },
                 trailingContent = {
                     IconButton(onClick = { onDeleteItem(item) }) {
                         Icon(imageVector = Icons.Default.Delete,
@@ -118,33 +127,107 @@ fun SymptomLogList(
 @Composable
 fun LogSymptomForm(
     availableSymptoms: List<Symptom>,
+    symptomInput: SymptomInput,
+    canCreateSymptom: Boolean,
+    onSymptomNameUpdated: (String) -> Unit,
+    onCreateSymptom: () -> Unit,
+    onClearInput: () -> Unit,
+    onSelectedSymptomUpdated: (Symptom) -> Unit,
+    onSelectedSeverityUpdated: (Severity) -> Unit,
+    onAddSymptomToLog: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        FormNameInput(availableSymptoms = availableSymptoms,
+            symptomName = symptomInput.name,
+            canCreateSymptom = canCreateSymptom,
+            onSymptomNameUpdated = onSymptomNameUpdated,
+            onCreateSymptom = onCreateSymptom,
+            onClearInput = onClearInput,
+            onSelectedSymptomUpdated = onSelectedSymptomUpdated
+        )
+        FormSeverityInput(
+            severity = symptomInput.severity,
+            onSelectionUpdated = onSelectedSeverityUpdated
+        )
+        FilledTonalButton(
+            onClick = { onAddSymptomToLog() },
+            contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = stringResource(id = R.string.add_symptom_cd),
+                modifier = Modifier.padding(end = 8.dp)
+            )
+            Text(text = "Add to log")
+        }
+    }
+}
+
+@Composable
+fun FormNameInput(
+    availableSymptoms: List<Symptom>,
     symptomName: String,
     canCreateSymptom: Boolean,
     onSymptomNameUpdated: (String) -> Unit,
     onCreateSymptom: () -> Unit,
     onClearInput: () -> Unit,
     onSelectedSymptomUpdated: (Symptom) -> Unit,
-    onAddSymptomToLog: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically,
+    Column(
+        modifier = modifier,
     ) {
-        OutlinedTextFieldWithDropdown(availableOptions = availableSymptoms,
+        Text(
+            text = stringResource(R.string.name_input_label)
+        )
+        OutlinedTextFieldWithDropdown(
+            availableOptions = availableSymptoms,
             textValue = symptomName,
             onTextValueUpdated = onSymptomNameUpdated,
             canCreateOption = canCreateSymptom,
             onCreateOption = onCreateSymptom,
             onClearInput = onClearInput,
             onChosenOptionUpdated = onSelectedSymptomUpdated,
-            textLabelId = R.string.add_symptom_text,
-            getOptionDisplayName = { it.name }
+            textLabelId = null,
+            getOptionDisplayName = { it.name },
+            modifier = Modifier
         )
-        FloatingActionButton(onClick = { onAddSymptomToLog() }) {
-            Icon(imageVector = Icons.Default.Add,
-                contentDescription = stringResource(id = R.string.add_symptom_cd))
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FormSeverityInput(
+    severity: Severity?,
+    onSelectionUpdated: (Severity) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier) {
+        Text(
+            text = stringResource(R.string.severity_input_label)
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Severity.values().forEach {
+                AssistChip(onClick = { onSelectionUpdated(it) },
+                    label = { Text(text = it.displayName) },
+                    colors = if (severity == it) {
+                        AssistChipDefaults.assistChipColors(
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            labelColor = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
+                    } else {
+                        AssistChipDefaults.assistChipColors()
+                    }
+                )
+            }
         }
     }
 }
@@ -159,15 +242,18 @@ fun AddSymptomScreenPreview() {
                 Symptom(2, "Fatigue"),
                 Symptom(3, "Nausea")
             ),
-            symptomLogDetails = SymptomLogDetails(symptoms = listOf(
-                Symptom(2, "Fatigue"),
-            ))
+            symptomLogDetails = SymptomLogDetails(symptomsWithSeverity = listOf(
+                SymptomWithSeverity(Symptom(2, "Fatigue"), Severity.MODERATE),
+            )),
+            symptomInput = SymptomInput(severity = Severity.MILD)
         ),
             onSymptomNameUpdated = {},
             onCreateSymptom = {},
             onClearInput = {},
             onSelectedSymptomUpdated = {},
+            onSelectedSeverityUpdated = {},
             onRemoveSymptomFromLog = {},
-            onAddSymptomToLog = {})
+            onAddSymptomToLog = {}
+        )
     }
 }

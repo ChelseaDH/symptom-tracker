@@ -9,7 +9,7 @@ interface SymptomRepository {
     /**
      * Insert [Symptom].
      */
-    suspend fun insertSymptom(symptom: Symptom)
+    fun insertSymptom(symptom: Symptom): Long
 
     /**
      * Retrieves all [Symptom] records.

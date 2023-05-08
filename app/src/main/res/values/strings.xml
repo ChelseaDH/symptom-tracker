@@ -9,10 +9,12 @@
     <string name="add_movement_cd">Add movement</string>
     <string name="back_button_cd">Back</string>
     <string name="log_food_title">Log food</string>
-    <string name="log_symptom_title">Log symptom</string>
+    <string name="log_symptom_title">Log symptoms</string>
     <string name="log_movement_title">Log movement</string>
     <string name="save_button_text">Save</string>
     <string name="delete_item_cd">Delete item</string>
     <string name="clear_input_cd">Clear input</string>
     <string name="dropdown_create_cd">Create new option</string>
+    <string name="name_input_label">Name</string>
+    <string name="severity_input_label">Severity</string>
 </resources>

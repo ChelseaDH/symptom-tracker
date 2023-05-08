@@ -5,8 +5,8 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface SymptomDao {
-    @Insert
-    suspend fun insertSymptom(symptom: Symptom)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertSymptom(symptom: Symptom): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertSymptoms(symptoms: List<Symptom>): Array<Long>
@@ -15,17 +15,17 @@ interface SymptomDao {
     fun insertSymptomLog(symptomLog: SymptomLog): Long
 
     @Insert
-    suspend fun insertSymptomLogCrossRef(symptomLogCrossRef: SymptomLogCrossRef)
+    suspend fun insertSymptomLogRecord(symptomLogRecord: SymptomLogRecord)
 
     @Transaction
     suspend fun insertSymptomLogWithSymptoms(symptomLogWithSymptoms: SymptomLogWithSymptoms) {
         val symptomLogId = insertSymptomLog(symptomLogWithSymptoms.symptomLog)
-        val symptomIds = insertSymptoms(symptomLogWithSymptoms.symptoms)
 
-        symptomIds.forEach { itemId ->
-            insertSymptomLogCrossRef(symptomLogCrossRef = SymptomLogCrossRef(
+        symptomLogWithSymptoms.symptomWithSeverities.forEach {
+            insertSymptomLogRecord(symptomLogRecord = SymptomLogRecord(
                 symptomLogId = symptomLogId,
-                symptomId = itemId
+                symptomId = insertSymptom(it.symptom),
+                severity = it.severity
             ))
         }
     }
