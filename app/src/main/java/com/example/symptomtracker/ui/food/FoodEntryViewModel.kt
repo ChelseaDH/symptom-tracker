@@ -138,7 +138,7 @@ data class FoodLogDetails(
  */
 fun FoodLogUiState.toItem(): Item = Item(
     itemId = 0,
-    name = itemName.replaceFirstChar { it.uppercaseChar() }
+    name = itemName.trim().replaceFirstChar { it.uppercaseChar() }
 )
 
 /**

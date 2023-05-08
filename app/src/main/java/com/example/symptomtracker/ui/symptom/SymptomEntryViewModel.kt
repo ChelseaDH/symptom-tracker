@@ -168,7 +168,7 @@ data class SymptomInput(
  */
 fun SymptomUiState.toSymptom(): Symptom = Symptom(
     symptomId = 0,
-    name = symptomInput.name.replaceFirstChar { it.uppercaseChar() }
+    name = symptomInput.name.trim().replaceFirstChar { it.uppercaseChar() }
 )
 
 fun SymptomUiState.toSymptomLogWithSymptoms(): SymptomLogWithSymptoms = SymptomLogWithSymptoms(
