@@ -43,7 +43,9 @@ fun <T> OutlinedTextFieldWithDropdown(
                     Text(text = stringResource(id = textLabelId),
                         color = MaterialTheme.colorScheme.onPrimaryContainer)
             },
-            modifier = Modifier.menuAnchor(),
+            modifier = Modifier
+                .menuAnchor()
+                .fillMaxWidth(),
             trailingIcon = {
                 IconButton(onClick = { onClearInput() }) {
                     Icon(imageVector = Icons.Default.Clear,
@@ -54,7 +56,9 @@ fun <T> OutlinedTextFieldWithDropdown(
         )
         ExposedDropdownMenu(
             expanded = selectorExpanded,
-            onDismissRequest = { selectorExpanded = false }) {
+            onDismissRequest = { selectorExpanded = false },
+            modifier = Modifier.exposedDropdownSize(true)
+        ) {
             if (availableOptions.isNotEmpty()) {
                 for (availableItem in availableOptions) {
                     DropdownMenuItem(text = { Text(text = getOptionDisplayName(availableItem)) },
