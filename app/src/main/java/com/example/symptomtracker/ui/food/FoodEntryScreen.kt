@@ -14,7 +14,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.symptomtracker.R
 import com.example.symptomtracker.data.food.Item
 import com.example.symptomtracker.ui.AppViewModelProvider
-import com.example.symptomtracker.ui.components.OutlinedTextFieldWithDropdown
+import com.example.symptomtracker.ui.components.OutlinedInputTextFieldWithDropdown
 import com.example.symptomtracker.ui.food.FoodEntryViewModel
 import com.example.symptomtracker.ui.food.FoodLogUiState
 import com.example.symptomtracker.ui.theme.SymptomTrackerTheme
@@ -136,7 +136,7 @@ fun FoodLogItemInput(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        OutlinedTextFieldWithDropdown(
+        OutlinedInputTextFieldWithDropdown(
             availableOptions = availableItems,
             getOptionDisplayName = { it.name },
             textValue = itemName,

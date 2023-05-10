@@ -9,6 +9,8 @@ import com.example.symptomtracker.data.food.FoodLog
 import com.example.symptomtracker.data.food.FoodLogDao
 import com.example.symptomtracker.data.food.FoodLogItemCrossRef
 import com.example.symptomtracker.data.food.Item
+import com.example.symptomtracker.data.movement.MovementDao
+import com.example.symptomtracker.data.movement.MovementLog
 import com.example.symptomtracker.data.symptom.Symptom
 import com.example.symptomtracker.data.symptom.SymptomDao
 import com.example.symptomtracker.data.symptom.SymptomLog
@@ -17,13 +19,14 @@ import com.example.symptomtracker.data.symptom.SymptomLogRecord
 /**
  * Database class with singleton Instance object
  */
-@Database(entities = [Symptom::class, SymptomLog::class, SymptomLogRecord::class, FoodLog::class, Item::class, FoodLogItemCrossRef::class],
+@Database(entities = [Symptom::class, SymptomLog::class, SymptomLogRecord::class, FoodLog::class, Item::class, FoodLogItemCrossRef::class, MovementLog::class],
     version = 1,
     exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun symptomDao(): SymptomDao
     abstract fun foodLogDao(): FoodLogDao
+    abstract fun movementDao(): MovementDao
 
     companion object {
         @Volatile

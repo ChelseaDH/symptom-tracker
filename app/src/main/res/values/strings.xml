@@ -17,4 +17,6 @@
     <string name="dropdown_create_cd">Create new option</string>
     <string name="name_input_label">Name</string>
     <string name="severity_input_label">Severity</string>
+    <string name="stool_type_label">Stool type</string>
+    <string name="stool_type_key">Stool type key</string>
 </resources>

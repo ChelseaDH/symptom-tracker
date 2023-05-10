@@ -16,7 +16,7 @@ import com.example.symptomtracker.data.symptom.Severity
 import com.example.symptomtracker.data.symptom.Symptom
 import com.example.symptomtracker.data.symptom.SymptomWithSeverity
 import com.example.symptomtracker.ui.AppViewModelProvider
-import com.example.symptomtracker.ui.components.OutlinedTextFieldWithDropdown
+import com.example.symptomtracker.ui.components.OutlinedInputTextFieldWithDropdown
 import com.example.symptomtracker.ui.symptom.SymptomEntryViewModel
 import com.example.symptomtracker.ui.symptom.SymptomInput
 import com.example.symptomtracker.ui.symptom.SymptomLogDetails
@@ -185,7 +185,7 @@ fun FormNameInput(
         Text(
             text = stringResource(R.string.name_input_label)
         )
-        OutlinedTextFieldWithDropdown(
+        OutlinedInputTextFieldWithDropdown(
             availableOptions = availableSymptoms,
             textValue = symptomName,
             onTextValueUpdated = onSymptomNameUpdated,

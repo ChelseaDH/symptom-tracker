@@ -12,7 +12,7 @@ import com.example.symptomtracker.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun <T> OutlinedTextFieldWithDropdown(
+fun <T> OutlinedInputTextFieldWithDropdown(
     availableOptions: List<T>,
     getOptionDisplayName: (T) -> String,
     textValue: String,
@@ -78,6 +78,54 @@ fun <T> OutlinedTextFieldWithDropdown(
                         )
                     }
                 )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun <T> OutlinedReadonlyTextFieldWithDropdown(
+    availableOptions: List<T>,
+    getOptionDisplayName: (T) -> String,
+    chosenOption: T?,
+    onChosenOptionUpdated: (T) -> Unit,
+    @StringRes textLabelId: Int?,
+    modifier: Modifier = Modifier,
+) {
+    var selectorExpanded by remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = selectorExpanded,
+        onExpandedChange = { selectorExpanded = !selectorExpanded },
+        modifier = modifier
+    ) {
+        OutlinedTextField(
+            value = chosenOption?.let { getOptionDisplayName(it) } ?: "",
+            onValueChange = {},
+            label = {
+                if (textLabelId != null)
+                    Text(text = stringResource(id = textLabelId),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer)
+            },
+            modifier = modifier.menuAnchor(),
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = selectorExpanded) },
+            singleLine = true,
+            readOnly = true,
+        )
+        ExposedDropdownMenu(
+            expanded = selectorExpanded,
+            onDismissRequest = { selectorExpanded = false },
+            modifier = Modifier.exposedDropdownSize(true)
+        ) {
+            if (availableOptions.isNotEmpty()) {
+                for (availableItem in availableOptions) {
+                    DropdownMenuItem(text = { Text(text = getOptionDisplayName(availableItem)) },
+                        onClick = {
+                            onChosenOptionUpdated(availableItem)
+                            selectorExpanded = false
+                        })
+                }
             }
         }
     }

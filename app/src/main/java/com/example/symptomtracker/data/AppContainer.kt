@@ -3,6 +3,8 @@ package com.example.symptomtracker.data
 import android.content.Context
 import com.example.symptomtracker.data.food.FoodLogRepository
 import com.example.symptomtracker.data.food.OfflineFoodLogRepository
+import com.example.symptomtracker.data.movement.MovementRepository
+import com.example.symptomtracker.data.movement.OfflineMovementRepository
 import com.example.symptomtracker.data.symptom.OfflineSymptomRepository
 import com.example.symptomtracker.data.symptom.SymptomRepository
 
@@ -12,6 +14,7 @@ import com.example.symptomtracker.data.symptom.SymptomRepository
 interface AppContainer {
     val symptomRepository: SymptomRepository
     val foodLogRepository: FoodLogRepository
+    val movementRepository: MovementRepository
 }
 
 /**
@@ -26,5 +29,9 @@ class AppDataContainer(context: Context) : AppContainer {
 
     override val foodLogRepository: FoodLogRepository by lazy {
         OfflineFoodLogRepository(database.foodLogDao())
+    }
+
+    override val movementRepository: MovementRepository by lazy {
+        OfflineMovementRepository(database.movementDao())
     }
 }
