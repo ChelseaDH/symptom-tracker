@@ -16,13 +16,14 @@ import com.example.symptomtracker.data.symptom.Severity
 import com.example.symptomtracker.data.symptom.Symptom
 import com.example.symptomtracker.data.symptom.SymptomWithSeverity
 import com.example.symptomtracker.ui.AppViewModelProvider
-import com.example.symptomtracker.ui.components.OutlinedInputTextFieldWithDropdown
+import com.example.symptomtracker.ui.components.*
 import com.example.symptomtracker.ui.symptom.SymptomEntryViewModel
 import com.example.symptomtracker.ui.symptom.SymptomInput
 import com.example.symptomtracker.ui.symptom.SymptomLogDetails
 import com.example.symptomtracker.ui.symptom.SymptomUiState
 import com.example.symptomtracker.ui.theme.SymptomTrackerTheme
 import kotlinx.coroutines.launch
+import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,6 +59,8 @@ fun AddSymptomScreen(
             onSelectedSeverityUpdated = viewModel::updateSelectedSeverity,
             onRemoveSymptomFromLog = viewModel::removeSymptomFromLog,
             onAddSymptomToLog = viewModel::addSymptomWithSeverityToLog,
+            onDateChanged = viewModel::updateDate,
+            onTimeChanged = viewModel::updateTime,
             modifier = Modifier.padding(innerPadding)
         )
     }
@@ -73,6 +76,8 @@ fun SymptomEntryBody(
     onSelectedSeverityUpdated: (Severity) -> Unit,
     onRemoveSymptomFromLog: (SymptomWithSeverity) -> Unit,
     onAddSymptomToLog: () -> Unit,
+    onDateChanged: (DateInputFields) -> Unit,
+    onTimeChanged: (TimeInputFields) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier
@@ -83,13 +88,16 @@ fun SymptomEntryBody(
         LogSymptomForm(
             availableSymptoms = symptomUiState.availableSymptoms,
             symptomInput = symptomUiState.symptomInput,
+            dateTimeInput = symptomUiState.dateTimeInput,
             canCreateSymptom = symptomUiState.canCreateSymptomFromInput,
             onSymptomNameUpdated = onSymptomNameUpdated,
             onCreateSymptom = onCreateSymptom,
             onClearInput = onClearInput,
             onSelectedSymptomUpdated = onSelectedSymptomUpdated,
             onSelectedSeverityUpdated = onSelectedSeverityUpdated,
-            onAddSymptomToLog = onAddSymptomToLog
+            onAddSymptomToLog = onAddSymptomToLog,
+            onDateChanged = onDateChanged,
+            onTimeChanged = onTimeChanged,
         )
         Divider()
         SymptomLogList(
@@ -128,12 +136,15 @@ fun SymptomLogList(
 fun LogSymptomForm(
     availableSymptoms: List<Symptom>,
     symptomInput: SymptomInput,
+    dateTimeInput: DateTimeInput,
     canCreateSymptom: Boolean,
     onSymptomNameUpdated: (String) -> Unit,
     onCreateSymptom: () -> Unit,
     onClearInput: () -> Unit,
     onSelectedSymptomUpdated: (Symptom) -> Unit,
     onSelectedSeverityUpdated: (Severity) -> Unit,
+    onDateChanged: (DateInputFields) -> Unit,
+    onTimeChanged: (TimeInputFields) -> Unit,
     onAddSymptomToLog: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -141,7 +152,14 @@ fun LogSymptomForm(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        FormNameInput(availableSymptoms = availableSymptoms,
+        DateTimeInputRow(
+            dateTimeInput = dateTimeInput,
+            onDateChanged = onDateChanged,
+            onTimeChanged = onTimeChanged,
+            labelOnTextField = true,
+        )
+        FormNameInput(
+            availableSymptoms = availableSymptoms,
             symptomName = symptomInput.name,
             canCreateSymptom = canCreateSymptom,
             onSymptomNameUpdated = onSymptomNameUpdated,
@@ -181,6 +199,7 @@ fun FormNameInput(
 ) {
     Column(
         modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Text(
             text = stringResource(R.string.name_input_label)
@@ -207,7 +226,10 @@ fun FormSeverityInput(
     onSelectionUpdated: (Severity) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
         Text(
             text = stringResource(R.string.severity_input_label)
         )
@@ -236,24 +258,28 @@ fun FormSeverityInput(
 @Preview(showSystemUi = true, showBackground = true)
 fun AddSymptomScreenPreview() {
     SymptomTrackerTheme {
-        SymptomEntryBody(symptomUiState = SymptomUiState(
-            availableSymptoms = listOf(
-                Symptom(1, "Bloating"),
-                Symptom(2, "Fatigue"),
-                Symptom(3, "Nausea")
+        SymptomEntryBody(
+            symptomUiState = SymptomUiState(
+                availableSymptoms = listOf(
+                    Symptom(1, "Bloating"),
+                    Symptom(2, "Fatigue"),
+                    Symptom(3, "Nausea")
+                ),
+                symptomLogDetails = SymptomLogDetails(symptomsWithSeverity = listOf(
+                    SymptomWithSeverity(Symptom(2, "Fatigue"), Severity.MODERATE),
+                )),
+                symptomInput = SymptomInput(severity = Severity.MILD),
+                dateTimeInput = DateTimeInput(Calendar.getInstance())
             ),
-            symptomLogDetails = SymptomLogDetails(symptomsWithSeverity = listOf(
-                SymptomWithSeverity(Symptom(2, "Fatigue"), Severity.MODERATE),
-            )),
-            symptomInput = SymptomInput(severity = Severity.MILD)
-        ),
             onSymptomNameUpdated = {},
             onCreateSymptom = {},
             onClearInput = {},
             onSelectedSymptomUpdated = {},
             onSelectedSeverityUpdated = {},
             onRemoveSymptomFromLog = {},
-            onAddSymptomToLog = {}
+            onAddSymptomToLog = {},
+            onDateChanged = {},
+            onTimeChanged = {},
         )
     }
 }

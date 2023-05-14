@@ -14,11 +14,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.symptomtracker.R
 import com.example.symptomtracker.data.food.Item
 import com.example.symptomtracker.ui.AppViewModelProvider
-import com.example.symptomtracker.ui.components.OutlinedInputTextFieldWithDropdown
+import com.example.symptomtracker.ui.components.*
 import com.example.symptomtracker.ui.food.FoodEntryViewModel
 import com.example.symptomtracker.ui.food.FoodLogUiState
 import com.example.symptomtracker.ui.theme.SymptomTrackerTheme
 import kotlinx.coroutines.launch
+import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,9 +50,11 @@ fun AddFoodScreen(
         modifier = modifier
     ) { innerPadding ->
         FoodEntryBody(
-            foodLogUiState = viewModel.foodLogUiState,
+            foodLogUiState = viewModel.uiState,
             onChosenItemUpdated = viewModel::updateChosenItem,
             onNameUpdated = viewModel::updateItemName,
+            onDateChanged = viewModel::updateDate,
+            onTimeChanged = viewModel::updateTime,
             onAddItem = viewModel::addItem,
             onCreateItem = {
                 coroutineScope.launch {
@@ -70,6 +73,8 @@ fun FoodEntryBody(
     foodLogUiState: FoodLogUiState,
     onChosenItemUpdated: (Item) -> Unit,
     onNameUpdated: (String) -> Unit,
+    onDateChanged: (DateInputFields) -> Unit,
+    onTimeChanged: (TimeInputFields) -> Unit,
     onAddItem: () -> Unit,
     onCreateItem: () -> Unit,
     onDeleteItem: (Item) -> Unit,
@@ -84,8 +89,11 @@ fun FoodEntryBody(
         FoodLogItemInput(
             availableItems = foodLogUiState.availableItems,
             itemName = foodLogUiState.itemName,
+            dateTimeInput = foodLogUiState.dateTimeInput,
             onChosenItemUpdated = onChosenItemUpdated,
             onNameUpdated = onNameUpdated,
+            onDateChanged = onDateChanged,
+            onTimeChanged = onTimeChanged,
             onAddItem = onAddItem,
             onCreateItem = onCreateItem,
             onClearChosenItem = onClearChosenItem,
@@ -124,8 +132,11 @@ fun FoodLogItemList(
 fun FoodLogItemInput(
     availableItems: List<Item>,
     itemName: String,
+    dateTimeInput: DateTimeInput,
     canCreateNewItem: Boolean,
     onChosenItemUpdated: (Item) -> Unit,
+    onDateChanged: (DateInputFields) -> Unit,
+    onTimeChanged: (TimeInputFields) -> Unit,
     onNameUpdated: (String) -> Unit,
     onClearChosenItem: () -> Unit,
     onAddItem: () -> Unit,
@@ -136,6 +147,12 @@ fun FoodLogItemInput(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
+        DateTimeInputRow(
+            dateTimeInput = dateTimeInput,
+            onDateChanged = onDateChanged,
+            onTimeChanged = onTimeChanged,
+            labelOnTextField = true
+        )
         OutlinedInputTextFieldWithDropdown(
             availableOptions = availableItems,
             getOptionDisplayName = { it.name },
@@ -168,18 +185,20 @@ fun FoodLogItemInput(
 fun AddFoodScreenPreview() {
     SymptomTrackerTheme {
         FoodEntryBody(
-            foodLogUiState = FoodLogUiState(
+            foodLogUiState = FoodLogUiState(Calendar.getInstance()).copy(
                 availableItems = listOf(
                     Item(itemId = 1, name = "Oats"),
                     Item(itemId = 2, name = "Banana"),
                     Item(itemId = 3, name = "Egg"),
                     Item(itemId = 4, name = "Oat milk")
                 ),
-                chosenItem = null
+                chosenItem = null,
             ),
             onChosenItemUpdated = {},
             onNameUpdated = {},
             onAddItem = {},
+            onDateChanged = {},
+            onTimeChanged = {},
             onCreateItem = {},
             onDeleteItem = {},
             onClearChosenItem = {}

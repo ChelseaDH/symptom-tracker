@@ -15,10 +15,11 @@ import com.example.symptomtracker.data.movement.StoolType
 import com.example.symptomtracker.data.movement.getDescription
 import com.example.symptomtracker.data.movement.getDisplayName
 import com.example.symptomtracker.ui.AppViewModelProvider
-import com.example.symptomtracker.ui.components.OutlinedReadonlyTextFieldWithDropdown
+import com.example.symptomtracker.ui.components.*
 import com.example.symptomtracker.ui.movement.MovementEntryViewModel
 import com.example.symptomtracker.ui.movement.MovementUiState
 import com.example.symptomtracker.ui.theme.SymptomTrackerTheme
+import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,6 +49,8 @@ fun AddMovementScreen(
         MovementEntryBody(
             uiState = viewModel.uiState,
             onChosenStoolTypeUpdated = viewModel::updateChosenStoolType,
+            onDateChanged = viewModel::updateDate,
+            onTimeChanged = viewModel::updateTime,
             modifier = Modifier.padding(innerPadding)
         )
     }
@@ -57,6 +60,8 @@ fun AddMovementScreen(
 fun MovementEntryBody(
     uiState: MovementUiState,
     onChosenStoolTypeUpdated: (StoolType) -> Unit,
+    onDateChanged: (DateInputFields) -> Unit,
+    onTimeChanged: (TimeInputFields) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier
@@ -66,7 +71,10 @@ fun MovementEntryBody(
     ) {
         LogMovementForm(
             stoolType = uiState.chosenStoolType,
-            onChosenStoolTypeUpdated = onChosenStoolTypeUpdated
+            dateTimeInput = uiState.dateTimeInput,
+            onChosenStoolTypeUpdated = onChosenStoolTypeUpdated,
+            onDateChanged = onDateChanged,
+            onTimeChanged = onTimeChanged,
         )
         Divider()
         MovementKey()
@@ -76,10 +84,22 @@ fun MovementEntryBody(
 @Composable
 fun LogMovementForm(
     stoolType: StoolType?,
+    dateTimeInput: DateTimeInput,
     onChosenStoolTypeUpdated: (StoolType) -> Unit,
+    onDateChanged: (DateInputFields) -> Unit,
+    onTimeChanged: (TimeInputFields) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        DateTimeInputRow(
+            dateTimeInput = dateTimeInput,
+            onDateChanged = onDateChanged,
+            onTimeChanged = onTimeChanged,
+            labelOnTextField = true,
+        )
         OutlinedReadonlyTextFieldWithDropdown(
             availableOptions = StoolType.values().asList(),
             getOptionDisplayName = { "(%d) %s".format(it.type, it.getDisplayName()) },
@@ -131,8 +151,10 @@ fun Avatar(text: String) {
 fun AddMovementScreenPreview() {
     SymptomTrackerTheme {
         MovementEntryBody(
-            uiState = MovementUiState(),
-            onChosenStoolTypeUpdated = {}
+            uiState = MovementUiState(Calendar.getInstance()),
+            onChosenStoolTypeUpdated = {},
+            onDateChanged = {},
+            onTimeChanged = {},
         )
     }
 }

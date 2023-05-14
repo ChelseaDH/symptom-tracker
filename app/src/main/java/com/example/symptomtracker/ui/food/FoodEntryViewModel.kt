@@ -10,6 +10,10 @@ import com.example.symptomtracker.data.food.FoodLog
 import com.example.symptomtracker.data.food.FoodLogRepository
 import com.example.symptomtracker.data.food.FoodLogWithItems
 import com.example.symptomtracker.data.food.Item
+import com.example.symptomtracker.ui.components.DateInputFields
+import com.example.symptomtracker.ui.components.DateTimeInput
+import com.example.symptomtracker.ui.components.TimeInputFields
+import com.example.symptomtracker.ui.components.toDate
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -17,7 +21,7 @@ import java.util.*
  * View model to validate and insert Food Logs with Items in to the Room database.
  */
 class FoodEntryViewModel(private val foodLogRepository: FoodLogRepository) : ViewModel() {
-    var foodLogUiState by mutableStateOf(FoodLogUiState())
+    var uiState by mutableStateOf(FoodLogUiState(calendar = Calendar.getInstance()))
         private set
 
     private val _chosenItems = listOf<Item>().toMutableStateList()
@@ -27,7 +31,7 @@ class FoodEntryViewModel(private val foodLogRepository: FoodLogRepository) : Vie
         viewModelScope.launch {
             foodLogRepository.getAllItemsStream().collect {
                 _allItems = it
-                foodLogUiState = foodLogUiState.copy(
+                uiState = uiState.copy(
                     availableItems = getAvailableItems()
                 )
             }
@@ -35,10 +39,10 @@ class FoodEntryViewModel(private val foodLogRepository: FoodLogRepository) : Vie
     }
 
     fun addItem() {
-        if (foodLogUiState.chosenItem != null && !_chosenItems.contains(foodLogUiState.chosenItem!!)) {
-            _chosenItems.add(foodLogUiState.chosenItem!!)
+        if (uiState.chosenItem != null && !_chosenItems.contains(uiState.chosenItem!!)) {
+            _chosenItems.add(uiState.chosenItem!!)
 
-            foodLogUiState = foodLogUiState.copy(
+            uiState = uiState.copy(
                 foodLogDetails = FoodLogDetails(_chosenItems)
             )
             clearItemInputs()
@@ -48,13 +52,13 @@ class FoodEntryViewModel(private val foodLogRepository: FoodLogRepository) : Vie
     fun removeItem(item: Item) {
         _chosenItems.remove(item)
 
-        foodLogUiState = foodLogUiState.copy(
+        uiState = uiState.copy(
             foodLogDetails = FoodLogDetails(_chosenItems)
         )
     }
 
     fun updateChosenItem(item: Item) {
-        foodLogUiState = foodLogUiState.copy(
+        uiState = uiState.copy(
             chosenItem = item,
             itemName = item.name,
             canCreateNewItemFromInput = false,
@@ -63,7 +67,7 @@ class FoodEntryViewModel(private val foodLogRepository: FoodLogRepository) : Vie
     }
 
     fun updateItemName(itemName: String) {
-        foodLogUiState = foodLogUiState.copy(
+        uiState = uiState.copy(
             itemName = itemName,
             chosenItem = null,
             canCreateNewItemFromInput = canCreateNewItemFromInput(itemName),
@@ -72,7 +76,7 @@ class FoodEntryViewModel(private val foodLogRepository: FoodLogRepository) : Vie
     }
 
     fun clearItemInputs() {
-        foodLogUiState = foodLogUiState.copy(
+        uiState = uiState.copy(
             itemName = "",
             chosenItem = null,
             canCreateNewItemFromInput = false,
@@ -82,7 +86,7 @@ class FoodEntryViewModel(private val foodLogRepository: FoodLogRepository) : Vie
 
     suspend fun insertNewItemFromInput() {
         if (validateNewItemInput()) {
-            val item = foodLogUiState.toItem()
+            val item = uiState.toItem()
 
             foodLogRepository.insertItem(item)
             updateChosenItem(item)
@@ -91,8 +95,24 @@ class FoodEntryViewModel(private val foodLogRepository: FoodLogRepository) : Vie
 
     suspend fun saveFoodLog() {
         if (validateNewFoodLogInput()) {
-            foodLogRepository.insertFoodLogWithItems(foodLogUiState.toFoodLogWithItems())
+            foodLogRepository.insertFoodLogWithItems(uiState.toFoodLogWithItems())
         }
+    }
+
+    fun updateDate(dateInputFields: DateInputFields) {
+        uiState = uiState.copy(
+            dateTimeInput = uiState.dateTimeInput.copy(
+                dateInputFields = dateInputFields
+            )
+        )
+    }
+
+    fun updateTime(timeInputFields: TimeInputFields) {
+        uiState = uiState.copy(
+            dateTimeInput = uiState.dateTimeInput.copy(
+                timeInputFields = timeInputFields
+            )
+        )
     }
 
     private fun validateNewFoodLogInput(): Boolean {
@@ -100,7 +120,7 @@ class FoodEntryViewModel(private val foodLogRepository: FoodLogRepository) : Vie
     }
 
     private fun validateNewItemInput(): Boolean {
-        return foodLogUiState.itemName.isNotEmpty()
+        return uiState.itemName.isNotEmpty()
     }
 
     private fun canCreateNewItemFromInput(itemName: String): Boolean {
@@ -110,7 +130,7 @@ class FoodEntryViewModel(private val foodLogRepository: FoodLogRepository) : Vie
         }
     }
 
-    private fun getAvailableItems(itemName: String = foodLogUiState.itemName): List<Item> {
+    private fun getAvailableItems(itemName: String = uiState.itemName): List<Item> {
         return _allItems.filter { item ->
             item.name.contains(itemName, ignoreCase = true)
         }
@@ -125,9 +145,14 @@ data class FoodLogUiState(
     val availableItems: List<Item> = listOf(),
     val chosenItem: Item? = null,
     val itemName: String = "",
+    val dateTimeInput: DateTimeInput,
     val isEntryValid: Boolean = false,
     val canCreateNewItemFromInput: Boolean = false,
-)
+) {
+    constructor(calendar: Calendar) : this(
+        dateTimeInput = DateTimeInput(calendar = calendar),
+    )
+}
 
 data class FoodLogDetails(
     val items: List<Item> = listOf(),
@@ -145,6 +170,6 @@ fun FoodLogUiState.toItem(): Item = Item(
  * Extension function to convert [FoodLogUiState] to [FoodLogWithItems].
  */
 fun FoodLogUiState.toFoodLogWithItems(): FoodLogWithItems = FoodLogWithItems(
-    foodLog = FoodLog(foodLogId = 0, date = Date()),
+    foodLog = FoodLog(foodLogId = 0, date = dateTimeInput.toDate()),
     items = foodLogDetails.items
 )
