@@ -7,6 +7,10 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.symptomtracker.data.symptom.*
+import com.example.symptomtracker.ui.components.DateInputFields
+import com.example.symptomtracker.ui.components.DateTimeInput
+import com.example.symptomtracker.ui.components.TimeInputFields
+import com.example.symptomtracker.ui.components.toDate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
@@ -15,7 +19,7 @@ import java.util.*
  * View Model to validate and insert symptoms in the Room database.
  */
 class SymptomEntryViewModel(private val symptomRepository: SymptomRepository) : ViewModel() {
-    var uiState by mutableStateOf(SymptomUiState())
+    var uiState by mutableStateOf(SymptomUiState(Calendar.getInstance()))
         private set
 
     private var _allSymptoms = listOf<Symptom>()
@@ -92,6 +96,22 @@ class SymptomEntryViewModel(private val symptomRepository: SymptomRepository) : 
         )
     }
 
+    fun updateDate(dateInputFields: DateInputFields) {
+        uiState = uiState.copy(
+            dateTimeInput = uiState.dateTimeInput.copy(
+                dateInputFields = dateInputFields
+            )
+        )
+    }
+
+    fun updateTime(timeInputFields: TimeInputFields) {
+        uiState = uiState.copy(
+            dateTimeInput = uiState.dateTimeInput.copy(
+                timeInputFields = timeInputFields
+            )
+        )
+    }
+
     /**
      * Inserts a [Symptom] in the Room database and updates selected symptom to the newly inserted symptom.
      */
@@ -149,9 +169,14 @@ data class SymptomUiState(
     val symptomLogDetails: SymptomLogDetails = SymptomLogDetails(),
     val availableSymptoms: List<Symptom> = listOf(),
     val symptomInput: SymptomInput = SymptomInput(),
+    val dateTimeInput: DateTimeInput,
     val canCreateSymptomFromInput: Boolean = false,
     val isEntryValid: Boolean = false,
-)
+) {
+    constructor(calendar: Calendar) : this(
+        dateTimeInput = DateTimeInput(calendar = calendar)
+    )
+}
 
 data class SymptomLogDetails(
     val symptomsWithSeverity: List<SymptomWithSeverity> = listOf(),
@@ -172,7 +197,7 @@ fun SymptomUiState.toSymptom(): Symptom = Symptom(
 )
 
 fun SymptomUiState.toSymptomLogWithSymptoms(): SymptomLogWithSymptoms = SymptomLogWithSymptoms(
-    symptomLog = SymptomLog(id = 0, date = Date()),
+    symptomLog = SymptomLog(id = 0, date = dateTimeInput.toDate()),
     symptomsWithSeverity = symptomLogDetails.symptomsWithSeverity
 )
 
