@@ -167,13 +167,13 @@ data class SymptomInput(
  * Extension function to convert [SymptomUiState] to [Symptom].
  */
 fun SymptomUiState.toSymptom(): Symptom = Symptom(
-    symptomId = 0,
+    id = 0,
     name = symptomInput.name.trim().replaceFirstChar { it.uppercaseChar() }
 )
 
 fun SymptomUiState.toSymptomLogWithSymptoms(): SymptomLogWithSymptoms = SymptomLogWithSymptoms(
-    symptomLog = SymptomLog(symptomLogId = 0, date = Date()),
-    symptomWithSeverities = symptomLogDetails.symptomsWithSeverity
+    symptomLog = SymptomLog(id = 0, date = Date()),
+    symptomsWithSeverity = symptomLogDetails.symptomsWithSeverity
 )
 
 fun SymptomUiState.toSymptomWithSeverity(): SymptomWithSeverity = SymptomWithSeverity(

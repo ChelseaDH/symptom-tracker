@@ -17,6 +17,11 @@ interface SymptomRepository {
     fun getAllSymptomsStream(): Flow<List<Symptom>>
 
     /**
+     * Retrieves all [SymptomLog] records with their associated [SymptomWithSeverity] objects.
+     */
+    fun getAllSymptomLogs(): Flow<Map<SymptomLog, List<Symptom>>>
+
+    /**
      * Insert [SymptomLog] and associated [Symptom] records via the [SymptomLogWithSymptoms] object.
      */
     suspend fun insertSymptomLogWithSymptom(symptomLogWithSymptoms: SymptomLogWithSymptoms)

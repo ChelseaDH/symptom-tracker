@@ -10,9 +10,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.symptomtracker.R
+import com.example.symptomtracker.ui.food.FoodLogListScreen
+import com.example.symptomtracker.ui.movement.MovementLogListScreen
+import com.example.symptomtracker.ui.symptom.SymptomLogListScreen
 
 enum class Route {
-    HOME, ADD_FOOD, ADD_SYMPTOM, ADD_MOVEMENT
+    HOME, ADD_FOOD, ADD_SYMPTOM, ADD_MOVEMENT, VIEW_FOOD_LOGS, VIEW_SYMPTOM_LOGS, VIEW_MOVEMENT_LOGS
 }
 
 @Composable
@@ -27,9 +30,14 @@ fun SymptomTrackerNavHost(
 ) {
     NavHost(navController = navController, startDestination = Route.HOME.name) {
         composable(route = Route.HOME.name) {
-            HomeScreen(navigateToAddFood = { navController.navigate(Route.ADD_FOOD.name) },
+            HomeScreen(
+                navigateToAddFood = { navController.navigate(Route.ADD_FOOD.name) },
                 navigateToAddSymptom = { navController.navigate(Route.ADD_SYMPTOM.name) },
-                navigateToAddMovement = { navController.navigate(Route.ADD_MOVEMENT.name) })
+                navigateToAddMovement = { navController.navigate(Route.ADD_MOVEMENT.name) },
+                navigateToViewFoodLogs = { navController.navigate(Route.VIEW_FOOD_LOGS.name) },
+                navigateToViewSymptomLogs = { navController.navigate(Route.VIEW_SYMPTOM_LOGS.name) },
+                navigateToViewMovementLogs = { navController.navigate(Route.VIEW_MOVEMENT_LOGS.name) },
+            )
         }
         composable(route = Route.ADD_FOOD.name) {
             AddFoodScreen(navigateBack = { navController.navigateUp() })
@@ -39,6 +47,15 @@ fun SymptomTrackerNavHost(
         }
         composable(route = Route.ADD_MOVEMENT.name) {
             AddMovementScreen(navigateBack = { navController.navigateUp() })
+        }
+        composable(route = Route.VIEW_FOOD_LOGS.name) {
+            FoodLogListScreen(navigateBack = { navController.navigateUp() })
+        }
+        composable(route = Route.VIEW_SYMPTOM_LOGS.name) {
+            SymptomLogListScreen(navigateBack = { navController.navigateUp() })
+        }
+        composable(route = Route.VIEW_MOVEMENT_LOGS.name) {
+            MovementLogListScreen(navigateBack = { navController.navigateUp() })
         }
     }
 }

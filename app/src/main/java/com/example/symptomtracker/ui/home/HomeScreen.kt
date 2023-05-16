@@ -1,7 +1,4 @@
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
@@ -19,6 +16,9 @@ fun HomeScreen(
     navigateToAddFood: () -> Unit,
     navigateToAddSymptom: () -> Unit,
     navigateToAddMovement: () -> Unit,
+    navigateToViewFoodLogs: () -> Unit,
+    navigateToViewSymptomLogs: () -> Unit,
+    navigateToViewMovementLogs: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -30,9 +30,13 @@ fun HomeScreen(
         },
         modifier = modifier
     ) { innerPadding ->
-        HomeBody(onAddFoodClick = navigateToAddFood,
+        HomeBody(
+            onAddFoodClick = navigateToAddFood,
             onAddSymptomClick = navigateToAddSymptom,
             onAddMovementClick = navigateToAddMovement,
+            onViewFoodLogsClick = navigateToViewFoodLogs,
+            onViewSymptomLogs = navigateToViewSymptomLogs,
+            onViewMovementLogs = navigateToViewMovementLogs,
             modifier = Modifier.padding(innerPadding)
         )
     }
@@ -43,6 +47,9 @@ fun HomeBody(
     onAddFoodClick: () -> Unit,
     onAddSymptomClick: () -> Unit,
     onAddMovementClick: () -> Unit,
+    onViewFoodLogsClick: () -> Unit,
+    onViewSymptomLogs: () -> Unit,
+    onViewMovementLogs: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -52,35 +59,120 @@ fun HomeBody(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        ExtendedFloatingActionButton(onClick = { onAddFoodClick() },
-            text = { Text(text = stringResource(R.string.add_food_text)) },
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(R.string.add_food_cd)
-                )
-            })
-        ExtendedFloatingActionButton(onClick = { onAddSymptomClick() },
-            text = { Text(text = stringResource(R.string.add_symptom_text)) },
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(R.string.add_symptom_cd)
-                )
-            })
-        ExtendedFloatingActionButton(onClick = { onAddMovementClick() },
-            text = { Text(text = stringResource(R.string.add_movement_text)) },
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(R.string.add_movement_cd)
-                )
-            })
+        QuickAdd(
+            onAddFoodClick = onAddFoodClick,
+            onAddSymptomClick = onAddSymptomClick,
+            onAddMovementClick = onAddMovementClick
+        )
+        Divider()
+        ViewLogs(
+            onViewFoodLogs = onViewFoodLogsClick,
+            onViewSymptomLogs = onViewSymptomLogs,
+            onViewMovementLogs = onViewMovementLogs
+        )
+    }
+}
+
+@Composable
+fun QuickAdd(
+    onAddFoodClick: () -> Unit,
+    onAddSymptomClick: () -> Unit,
+    onAddMovementClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        Text(
+            text = stringResource(R.string.quick_add_title),
+            style = MaterialTheme.typography.titleMedium
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            ExtendedFloatingActionButton(
+                onClick = { onAddFoodClick() },
+                text = { Text(text = stringResource(R.string.add_food_text)) },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = stringResource(R.string.add_food_cd)
+                    )
+                }
+            )
+            ExtendedFloatingActionButton(
+                onClick = { onAddSymptomClick() },
+                text = { Text(text = stringResource(R.string.add_symptom_text)) },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = stringResource(R.string.add_symptom_cd)
+                    )
+                }
+            )
+            ExtendedFloatingActionButton(
+                onClick = { onAddMovementClick() },
+                text = { Text(text = stringResource(R.string.add_movement_text)) },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = stringResource(R.string.add_movement_cd)
+                    )
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun ViewLogs(
+    onViewFoodLogs: () -> Unit,
+    onViewSymptomLogs: () -> Unit,
+    onViewMovementLogs: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        Text(
+            text = "View logs",
+            style = MaterialTheme.typography.titleMedium
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            ExtendedFloatingActionButton(
+                onClick = { onViewFoodLogs() }
+            ) {
+                Text(text = stringResource(R.string.add_food_text))
+            }
+            ExtendedFloatingActionButton(
+                onClick = { onViewSymptomLogs() }
+            ) {
+                Text(text = stringResource(R.string.add_symptom_text))
+            }
+            ExtendedFloatingActionButton(
+                onClick = { onViewMovementLogs() }
+            ) {
+                Text(text = stringResource(R.string.add_movement_text))
+            }
+        }
     }
 }
 
 @Preview(showSystemUi = true)
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen(navigateToAddFood = {}, navigateToAddSymptom = {}, navigateToAddMovement = {})
+    HomeScreen(
+        navigateToAddFood = {},
+        navigateToAddSymptom = {},
+        navigateToAddMovement = {},
+        navigateToViewFoodLogs = {},
+        navigateToViewSymptomLogs = {},
+        navigateToViewMovementLogs = {},
+    )
 }

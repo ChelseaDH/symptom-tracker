@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.util.*
 
-@Entity
+@Entity(tableName = "movement_log")
 data class MovementLog(
     @PrimaryKey(autoGenerate = true) val symptomLogId: Long,
     val date: Date,

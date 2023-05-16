@@ -107,7 +107,7 @@ fun SymptomLogList(
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier = modifier) {
-        items(items = symptomList, key = { it.symptom.symptomId }) { item ->
+        items(items = symptomList, key = { it.symptom.id }) { item ->
             ListItem(
                 headlineText = { Text(text = item.symptom.name) },
                 supportingText = { Text(text = item.severity.displayName) },

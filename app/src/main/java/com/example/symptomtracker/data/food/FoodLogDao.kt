@@ -17,6 +17,10 @@ interface FoodLogDao {
     @Query("SELECT * FROM item ORDER BY name ASC")
     fun getAllItems(): Flow<List<Item>>
 
+    @Transaction
+    @Query("SELECT * FROM food_log")
+    fun getAllFoodLogs(): Flow<List<FoodLogWithItems>>
+
     @Insert
     suspend fun insertFoodLogItemCrossRef(foodLogItemCrossRef: FoodLogItemCrossRef)
 

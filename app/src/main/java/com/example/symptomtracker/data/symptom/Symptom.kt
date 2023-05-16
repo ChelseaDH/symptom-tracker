@@ -1,38 +1,48 @@
 package com.example.symptomtracker.data.symptom
 
-import androidx.room.*
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.Index
+import androidx.room.PrimaryKey
 import java.util.*
 
-@Entity
+@Entity(tableName = "symptom")
 data class Symptom(
-    @PrimaryKey(autoGenerate = true) val symptomId: Long,
+    @PrimaryKey(autoGenerate = true) val id: Long,
     val name: String,
 )
 
-@Entity
+@Entity(tableName = "symptom_log")
 data class SymptomLog(
-    @PrimaryKey(autoGenerate = true) val symptomLogId: Long,
+    @PrimaryKey(autoGenerate = true) val id: Long,
     val date: Date,
 )
 
-@Entity(primaryKeys = ["symptomId", "symptomLogId"])
+@Entity(
+    tableName = "symptom_log_record",
+    primaryKeys = ["symptomLogId", "symptomId"],
+    foreignKeys = [
+        ForeignKey(entity = SymptomLog::class,
+            parentColumns = ["id"],
+            childColumns = ["symptomLogId"]),
+        ForeignKey(entity = Symptom::class, parentColumns = ["id"], childColumns = ["symptomId"])
+    ],
+    indices = [
+        Index(value = ["symptomId"])
+    ]
+)
 data class SymptomLogRecord(
-    val symptomId: Long,
     val symptomLogId: Long,
+    val symptomId: Long,
     val severity: Severity,
 )
 
 data class SymptomWithSeverity(
-    @Embedded val symptom: Symptom,
+    val symptom: Symptom,
     val severity: Severity,
 )
 
 data class SymptomLogWithSymptoms(
-    @Embedded val symptomLog: SymptomLog,
-    @Relation(
-        parentColumn = "symptomLogId",
-        entityColumn = "symptomId",
-        associateBy = Junction(SymptomLogRecord::class)
-    )
-    val symptomWithSeverities: List<SymptomWithSeverity>,
+    val symptomLog: SymptomLog,
+    val symptomsWithSeverity: List<SymptomWithSeverity>,
 )

@@ -15,7 +15,11 @@ data class Item(
     val name: String,
 )
 
-@Entity(tableName = "food_log_item", primaryKeys = ["foodLogId", "itemId"])
+@Entity(
+    tableName = "food_log_item",
+    primaryKeys = ["foodLogId", "itemId"],
+    indices = [Index("itemId")]
+)
 data class FoodLogItemCrossRef(
     val foodLogId: Long,
     val itemId: Long,

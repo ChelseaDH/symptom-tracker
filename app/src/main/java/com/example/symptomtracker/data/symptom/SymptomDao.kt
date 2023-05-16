@@ -21,7 +21,7 @@ interface SymptomDao {
     suspend fun insertSymptomLogWithSymptoms(symptomLogWithSymptoms: SymptomLogWithSymptoms) {
         val symptomLogId = insertSymptomLog(symptomLogWithSymptoms.symptomLog)
 
-        symptomLogWithSymptoms.symptomWithSeverities.forEach {
+        symptomLogWithSymptoms.symptomsWithSeverity.forEach {
             insertSymptomLogRecord(symptomLogRecord = SymptomLogRecord(
                 symptomLogId = symptomLogId,
                 symptomId = insertSymptom(it.symptom),
@@ -32,4 +32,10 @@ interface SymptomDao {
 
     @Query("SELECT * FROM symptom ORDER BY name ASC")
     fun getAllSymptoms(): Flow<List<Symptom>>
+
+    @Transaction
+    @Query(
+        "SELECT * FROM symptom_log sl JOIN symptom_log_record slr ON slr.symptomLogId = sl.id JOIN symptom s ON s.id = slr.symptomId"
+    )
+    fun getAllSymptomLogs(): Flow<Map<SymptomLog, List<Symptom>>>
 }

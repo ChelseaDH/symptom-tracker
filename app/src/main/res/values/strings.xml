@@ -19,4 +19,8 @@
     <string name="severity_input_label">Severity</string>
     <string name="stool_type_label">Stool type</string>
     <string name="stool_type_key">Stool type key</string>
+    <string name="food_logs_title">Food logs</string>
+    <string name="movement_logs_title">Movement logs</string>
+    <string name="symptom_logs_title">Symptom logs</string>
+    <string name="quick_add_title">Quick add</string>
 </resources>
