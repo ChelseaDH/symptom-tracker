@@ -23,4 +23,8 @@
     <string name="movement_logs_title">Movement logs</string>
     <string name="symptom_logs_title">Symptom logs</string>
     <string name="quick_add_title">Quick add</string>
+    <string name="time_label">Time</string>
+    <string name="edit_time_cd">Edit time</string>
+    <string name="date_label">Date</string>
+    <string name="edit_date_cd">Edit date</string>
 </resources>
