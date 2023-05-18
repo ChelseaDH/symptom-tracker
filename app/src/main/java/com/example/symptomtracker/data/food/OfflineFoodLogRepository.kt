@@ -8,7 +8,7 @@ class OfflineFoodLogRepository(private val foodLogDao: FoodLogDao) : FoodLogRepo
 
     override fun getAllItemsStream() = foodLogDao.getAllItems()
 
-    override fun getAllFoodLogs(): Flow<List<FoodLogWithItems>> = foodLogDao.getAllFoodLogs()
+    override fun getAllFoodLogs(): Flow<Map<FoodLog, List<Item>>> = foodLogDao.getAllFoodLogs()
 
     override suspend fun insertItem(item: Item) = foodLogDao.insertItem(item)
 }

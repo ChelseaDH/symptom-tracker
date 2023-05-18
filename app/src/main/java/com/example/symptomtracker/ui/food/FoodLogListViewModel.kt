@@ -17,7 +17,9 @@ class FoodLogListViewModel(private val foodLogRepository: FoodLogRepository) : V
         viewModelScope.launch {
             foodLogRepository.getAllFoodLogs().collect {
                 uiState = uiState.copy(
-                    foodLogs = it
+                    foodLogs = it.map { (foodLog, items) ->
+                        FoodLogWithItems(foodLog = foodLog, items = items)
+                    }
                 )
             }
         }

@@ -19,7 +19,7 @@ interface FoodLogRepository {
     /**
      * Retrieves all [FoodLog] records with their associated [Item] records.
      */
-    fun getAllFoodLogs(): Flow<List<FoodLogWithItems>>
+    fun getAllFoodLogs(): Flow<Map<FoodLog, List<Item>>>
 
     /**
      * Insert [Item] record.

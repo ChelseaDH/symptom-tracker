@@ -162,7 +162,7 @@ data class FoodLogDetails(
  * Extension function to convert [FoodLogUiState] to [Item].
  */
 fun FoodLogUiState.toItem(): Item = Item(
-    itemId = 0,
+    id = 0,
     name = itemName.trim().replaceFirstChar { it.uppercaseChar() }
 )
 
@@ -170,6 +170,6 @@ fun FoodLogUiState.toItem(): Item = Item(
  * Extension function to convert [FoodLogUiState] to [FoodLogWithItems].
  */
 fun FoodLogUiState.toFoodLogWithItems(): FoodLogWithItems = FoodLogWithItems(
-    foodLog = FoodLog(foodLogId = 0, date = dateTimeInput.toDate()),
+    foodLog = FoodLog(id = 0, date = dateTimeInput.toDate()),
     items = foodLogDetails.items
 )

@@ -35,7 +35,9 @@ interface SymptomDao {
 
     @Transaction
     @Query(
-        "SELECT * FROM symptom_log sl JOIN symptom_log_record slr ON slr.symptomLogId = sl.id JOIN symptom s ON s.id = slr.symptomId"
+        "SELECT * FROM symptom_log sl " +
+                "JOIN symptom_log_record slr ON slr.symptom_log_id = sl.id " +
+                "JOIN symptom s ON s.id = slr.symptom_id"
     )
     fun getAllSymptomLogs(): Flow<Map<SymptomLog, List<Symptom>>>
 }

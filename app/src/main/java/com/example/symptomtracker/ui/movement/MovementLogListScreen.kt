@@ -91,10 +91,10 @@ fun AddFoodScreenPreview() {
     SymptomTrackerTheme {
         MovementLogList(
             movementLogs = listOf(
-                MovementLog(symptomLogId = 1,
+                MovementLog(id = 1,
                     date = Date(),
                     stoolType = StoolType.SEVERE_CONSTIPATION),
-                MovementLog(symptomLogId = 2,
+                MovementLog(id = 2,
                     date = Date(),
                     stoolType = StoolType.MILD_CONSTIPATION)
             ))

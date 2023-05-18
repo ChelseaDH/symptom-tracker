@@ -112,7 +112,7 @@ fun FoodLogItemList(
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier = modifier) {
-        items(items = itemList, key = { it.itemId }) { item ->
+        items(items = itemList, key = { it.id }) { item ->
             ListItem(
                 headlineText = { Text(text = item.name) },
                 trailingContent = {
@@ -187,10 +187,10 @@ fun AddFoodScreenPreview() {
         FoodEntryBody(
             foodLogUiState = FoodLogUiState(Calendar.getInstance()).copy(
                 availableItems = listOf(
-                    Item(itemId = 1, name = "Oats"),
-                    Item(itemId = 2, name = "Banana"),
-                    Item(itemId = 3, name = "Egg"),
-                    Item(itemId = 4, name = "Oat milk")
+                    Item(id = 1, name = "Oats"),
+                    Item(id = 2, name = "Banana"),
+                    Item(id = 3, name = "Egg"),
+                    Item(id = 4, name = "Oat milk")
                 ),
                 chosenItem = null,
             ),

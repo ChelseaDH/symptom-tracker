@@ -18,8 +18,12 @@ interface FoodLogDao {
     fun getAllItems(): Flow<List<Item>>
 
     @Transaction
-    @Query("SELECT * FROM food_log")
-    fun getAllFoodLogs(): Flow<List<FoodLogWithItems>>
+    @Query(
+        "SELECT * FROM food_log fl " +
+                "JOIN food_log_item fli ON fli.food_log_id = fl.id " +
+                "JOIN item i ON fli.item_id = i.id "
+    )
+    fun getAllFoodLogs(): Flow<Map<FoodLog, List<Item>>>
 
     @Insert
     suspend fun insertFoodLogItemCrossRef(foodLogItemCrossRef: FoodLogItemCrossRef)

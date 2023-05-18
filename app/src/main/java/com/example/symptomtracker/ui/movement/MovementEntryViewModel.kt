@@ -67,7 +67,7 @@ data class MovementUiState(
 
 fun MovementUiState.toMovementLog(): MovementLog {
     return MovementLog(
-        symptomLogId = 0,
+        id = 0,
         date = dateTimeInput.toDate(),
         stoolType = chosenStoolType!!
     )
