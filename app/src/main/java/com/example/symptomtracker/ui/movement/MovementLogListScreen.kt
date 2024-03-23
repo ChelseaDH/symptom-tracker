@@ -1,6 +1,6 @@
 package com.example.symptomtracker.ui.movement
 
-import SymptomTrackerTopAppBar
+import com.example.symptomtracker.SymptomTrackerTopAppBar
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -20,7 +20,6 @@ import com.example.symptomtracker.ui.AppViewModelProvider
 import com.example.symptomtracker.ui.theme.SymptomTrackerTheme
 import java.util.*
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovementLogListScreen(
     navigateBack: () -> Unit,
@@ -58,7 +57,6 @@ fun MovementLogList(movementLogs: List<MovementLog>, modifier: Modifier = Modifi
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovementLogCard(movementLog: MovementLog, modifier: Modifier = Modifier) {
     ElevatedCard(
@@ -76,10 +74,10 @@ fun MovementLogCard(movementLog: MovementLog, modifier: Modifier = Modifier) {
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding()
             )
-            Divider()
+            HorizontalDivider()
             ListItem(
-                headlineText = { Text(text = movementLog.stoolType.getDisplayName()) },
-                supportingText = { Text(text = movementLog.stoolType.getDescription()) },
+                headlineContent = { Text(text = movementLog.stoolType.getDisplayName()) },
+                supportingContent = { Text(text = movementLog.stoolType.getDescription()) },
             )
         }
     }

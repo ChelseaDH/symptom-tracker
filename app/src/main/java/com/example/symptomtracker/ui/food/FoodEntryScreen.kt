@@ -12,6 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.symptomtracker.R
+import com.example.symptomtracker.SymptomTrackerTopAppBar
 import com.example.symptomtracker.data.food.Item
 import com.example.symptomtracker.ui.AppViewModelProvider
 import com.example.symptomtracker.ui.components.*
@@ -21,7 +22,6 @@ import com.example.symptomtracker.ui.theme.SymptomTrackerTheme
 import kotlinx.coroutines.launch
 import java.util.*
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddFoodScreen(
     navigateBack: () -> Unit,
@@ -99,12 +99,11 @@ fun FoodEntryBody(
             onClearChosenItem = onClearChosenItem,
             canCreateNewItem = foodLogUiState.canCreateNewItemFromInput
         )
-        Divider()
+        HorizontalDivider()
         FoodLogItemList(itemList = foodLogUiState.foodLogDetails.items, onDeleteItem = onDeleteItem)
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FoodLogItemList(
     itemList: List<Item>,
@@ -114,7 +113,7 @@ fun FoodLogItemList(
     LazyColumn(modifier = modifier) {
         items(items = itemList, key = { it.itemId }) { item ->
             ListItem(
-                headlineText = { Text(text = item.name) },
+                headlineContent = { Text(text = item.name) },
                 trailingContent = {
                     IconButton(onClick = { onDeleteItem(item) }) {
                         Icon(imageVector = Icons.Default.Delete,

@@ -9,8 +9,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.symptomtracker.R
+import com.example.symptomtracker.SymptomTrackerTopAppBar
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     navigateToAddFood: () -> Unit,
@@ -64,7 +64,7 @@ fun HomeBody(
             onAddSymptomClick = onAddSymptomClick,
             onAddMovementClick = onAddMovementClick
         )
-        Divider()
+        HorizontalDivider()
         ViewLogs(
             onViewFoodLogs = onViewFoodLogsClick,
             onViewSymptomLogs = onViewSymptomLogs,

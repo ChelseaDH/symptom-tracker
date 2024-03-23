@@ -1,6 +1,6 @@
 package com.example.symptomtracker.ui.symptom
 
-import SymptomTrackerTopAppBar
+import com.example.symptomtracker.SymptomTrackerTopAppBar
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -17,7 +17,6 @@ import com.example.symptomtracker.ui.AppViewModelProvider
 import com.example.symptomtracker.ui.theme.SymptomTrackerTheme
 import java.util.*
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SymptomLogListScreen(
     navigateBack: () -> Unit,
@@ -75,19 +74,18 @@ fun SymptomLogCard(
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding()
             )
-            Divider()
+            HorizontalDivider()
             SymptomWithSeverityList(symptomsWithSeverity = symptomLogWithSymptoms.second)
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SymptomWithSeverityList(symptomsWithSeverity: List<Symptom>, modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
         symptomsWithSeverity.forEach {
             ListItem(
-                headlineText = { Text(text = it.name) },
+                headlineContent = { Text(text = it.name) },
                 modifier = modifier
             )
         }

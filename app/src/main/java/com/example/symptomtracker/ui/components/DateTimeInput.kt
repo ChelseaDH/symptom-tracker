@@ -70,7 +70,6 @@ fun DateTimeInput.toDate(): Date {
     return calendar.time
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DateInput(
     dateInputFields: DateInputFields,
@@ -117,7 +116,6 @@ fun DateInput(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimeInput(
     timeInput: TimeInputFields,

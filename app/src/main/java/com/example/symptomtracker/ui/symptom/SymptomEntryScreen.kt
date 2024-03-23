@@ -12,6 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.symptomtracker.R
+import com.example.symptomtracker.SymptomTrackerTopAppBar
 import com.example.symptomtracker.data.symptom.Severity
 import com.example.symptomtracker.data.symptom.Symptom
 import com.example.symptomtracker.data.symptom.SymptomWithSeverity
@@ -25,7 +26,6 @@ import com.example.symptomtracker.ui.theme.SymptomTrackerTheme
 import kotlinx.coroutines.launch
 import java.util.*
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddSymptomScreen(
     navigateBack: () -> Unit,
@@ -99,7 +99,7 @@ fun SymptomEntryBody(
             onDateChanged = onDateChanged,
             onTimeChanged = onTimeChanged,
         )
-        Divider()
+        HorizontalDivider()
         SymptomLogList(
             symptomList = symptomUiState.symptomLogDetails.symptomsWithSeverity,
             onDeleteItem = onRemoveSymptomFromLog
@@ -107,7 +107,6 @@ fun SymptomEntryBody(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SymptomLogList(
     symptomList: List<SymptomWithSeverity>,
@@ -117,8 +116,8 @@ fun SymptomLogList(
     LazyColumn(modifier = modifier) {
         items(items = symptomList, key = { it.symptom.id }) { item ->
             ListItem(
-                headlineText = { Text(text = item.symptom.name) },
-                supportingText = { Text(text = item.severity.displayName) },
+                headlineContent = { Text(text = item.symptom.name) },
+                supportingContent = { Text(text = item.severity.displayName) },
                 trailingContent = {
                     IconButton(onClick = { onDeleteItem(item) }) {
                         Icon(imageVector = Icons.Default.Delete,
@@ -219,7 +218,6 @@ fun FormNameInput(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FormSeverityInput(
     severity: Severity?,

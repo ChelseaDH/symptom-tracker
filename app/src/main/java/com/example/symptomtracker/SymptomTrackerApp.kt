@@ -1,6 +1,12 @@
+package com.example.symptomtracker
+
+import AddFoodScreen
+import AddMovementScreen
+import AddSymptomScreen
+import HomeScreen
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -9,7 +15,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.symptomtracker.R
 import com.example.symptomtracker.ui.food.FoodLogListScreen
 import com.example.symptomtracker.ui.movement.MovementLogListScreen
 import com.example.symptomtracker.ui.symptom.SymptomLogListScreen
@@ -70,7 +75,7 @@ fun SymptomTrackerTopAppBar(
     canNavigateBack: Boolean,
     modifier: Modifier = Modifier,
     navigateUp: () -> Unit = {},
-    actions: @Composable() (RowScope.() -> Unit) = {},
+    actions: @Composable (RowScope.() -> Unit) = {},
 ) {
     if (canNavigateBack) {
         CenterAlignedTopAppBar(title = {
@@ -81,7 +86,7 @@ fun SymptomTrackerTopAppBar(
         }, navigationIcon = {
             IconButton(onClick = { navigateUp() }) {
                 Icon(
-                    imageVector = Icons.Default.ArrowBack,
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = stringResource(R.string.back_button_cd)
                 )
             }

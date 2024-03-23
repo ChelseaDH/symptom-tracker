@@ -66,7 +66,7 @@ fun <T> OutlinedInputTextFieldWithDropdown(
                 }
             }
             if (availableOptions.isNotEmpty() && canCreateOption) {
-                Divider()
+                HorizontalDivider()
             }
             if (canCreateOption) {
                 DropdownMenuItem(text = { Text(text = textValue) },

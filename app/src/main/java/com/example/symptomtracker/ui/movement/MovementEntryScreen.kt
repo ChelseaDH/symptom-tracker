@@ -11,6 +11,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.symptomtracker.R
+import com.example.symptomtracker.SymptomTrackerTopAppBar
 import com.example.symptomtracker.data.movement.StoolType
 import com.example.symptomtracker.data.movement.getDescription
 import com.example.symptomtracker.data.movement.getDisplayName
@@ -21,7 +22,6 @@ import com.example.symptomtracker.ui.movement.MovementUiState
 import com.example.symptomtracker.ui.theme.SymptomTrackerTheme
 import java.util.*
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddMovementScreen(
     navigateBack: () -> Unit,
@@ -76,7 +76,7 @@ fun MovementEntryBody(
             onDateChanged = onDateChanged,
             onTimeChanged = onTimeChanged,
         )
-        Divider()
+        HorizontalDivider()
         MovementKey()
     }
 }
@@ -111,7 +111,6 @@ fun LogMovementForm(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovementKey(modifier: Modifier = Modifier) {
     Column(
@@ -123,8 +122,8 @@ fun MovementKey(modifier: Modifier = Modifier) {
         LazyColumn(modifier = modifier) {
             items(items = StoolType.values()) { stoolType ->
                 ListItem(
-                    headlineText = { Text(text = stoolType.getDisplayName()) },
-                    supportingText = { Text(text = stoolType.getDescription()) },
+                    headlineContent = { Text(text = stoolType.getDisplayName()) },
+                    supportingContent = { Text(text = stoolType.getDescription()) },
                     leadingContent = {
                         Avatar(text = stoolType.type.toString())
                     },

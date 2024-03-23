@@ -1,6 +1,6 @@
 package com.example.symptomtracker.ui.food
 
-import SymptomTrackerTopAppBar
+import com.example.symptomtracker.SymptomTrackerTopAppBar
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -19,7 +19,6 @@ import com.example.symptomtracker.ui.AppViewModelProvider
 import com.example.symptomtracker.ui.theme.SymptomTrackerTheme
 import java.util.*
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FoodLogListScreen(
     navigateBack: () -> Unit,
@@ -74,19 +73,18 @@ fun FoodLogCard(foodLog: FoodLogWithItems, modifier: Modifier = Modifier) {
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding()
             )
-            Divider()
+            HorizontalDivider()
             ItemsList(items = foodLog.items)
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ItemsList(items: List<Item>, modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
         items.forEach { item ->
             ListItem(
-                headlineText = { Text(text = item.name) }
+                headlineContent = { Text(text = item.name) }
             )
         }
     }
