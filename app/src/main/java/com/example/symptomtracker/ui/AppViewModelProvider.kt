@@ -9,6 +9,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.symptomtracker.SymptomTrackerApplication
 import com.example.symptomtracker.ui.food.FoodEntryViewModel
 import com.example.symptomtracker.ui.food.FoodLogListViewModel
+import com.example.symptomtracker.ui.home.HomeScreenViewModel
 import com.example.symptomtracker.ui.movement.MovementEntryViewModel
 import com.example.symptomtracker.ui.movement.MovementLogListViewModel
 import com.example.symptomtracker.ui.symptom.SymptomEntryViewModel
@@ -42,6 +43,8 @@ object AppViewModelProvider {
         initializer {
             SymptomLogListViewModel(symptomRepository = symptomTrackerApplication().container.symptomRepository)
         }
+
+        initializer { HomeScreenViewModel() }
     }
 }
 

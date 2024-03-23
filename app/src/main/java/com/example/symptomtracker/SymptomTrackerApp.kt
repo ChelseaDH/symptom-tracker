@@ -3,11 +3,15 @@ package com.example.symptomtracker
 import AddFoodScreen
 import AddMovementScreen
 import AddSymptomScreen
-import HomeScreen
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.*
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -16,6 +20,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.symptomtracker.ui.food.FoodLogListScreen
+import com.example.symptomtracker.ui.home.HomeScreen
 import com.example.symptomtracker.ui.movement.MovementLogListScreen
 import com.example.symptomtracker.ui.symptom.SymptomLogListScreen
 
@@ -95,12 +100,13 @@ fun SymptomTrackerTopAppBar(
             modifier = modifier
         )
     } else {
-        CenterAlignedTopAppBar(title = {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleLarge
-            )
-        },
+        CenterAlignedTopAppBar(
+            title = {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleLarge
+                )
+            },
             actions = actions,
             modifier = modifier
         )
