@@ -14,7 +14,7 @@ import com.example.symptomtracker.ui.components.TimeInputFields
 import com.example.symptomtracker.ui.components.toDate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.Calendar
 
 class MovementEntryViewModel(private val movementRepository: MovementRepository) : ViewModel() {
     var uiState by mutableStateOf(MovementUiState(Calendar.getInstance()))
@@ -67,7 +67,7 @@ data class MovementUiState(
 
 fun MovementUiState.toMovementLog(): MovementLog {
     return MovementLog(
-        symptomLogId = 0,
+        movementLogId = 0,
         date = dateTimeInput.toDate(),
         stoolType = chosenStoolType!!
     )

@@ -6,14 +6,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.symptomtracker.data.symptom.*
+import com.example.symptomtracker.data.symptom.Severity
+import com.example.symptomtracker.data.symptom.Symptom
+import com.example.symptomtracker.data.symptom.SymptomLog
+import com.example.symptomtracker.data.symptom.SymptomLogWithSymptomsAndSeverity
+import com.example.symptomtracker.data.symptom.SymptomRepository
+import com.example.symptomtracker.data.symptom.SymptomWithSeverity
 import com.example.symptomtracker.ui.components.DateInputFields
 import com.example.symptomtracker.ui.components.DateTimeInput
 import com.example.symptomtracker.ui.components.TimeInputFields
 import com.example.symptomtracker.ui.components.toDate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.Calendar
 
 /**
  * View Model to validate and insert symptoms in the Room database.
@@ -127,7 +132,7 @@ class SymptomEntryViewModel(private val symptomRepository: SymptomRepository) : 
     }
 
     /**
-     * Inserts a [SymptomLogWithSymptoms] in the Room database.
+     * Inserts a [SymptomLogWithSymptomsAndSeverity] in the Room database.
      */
     suspend fun insertSymptomLog() {
         if (validateSymptomLogInput()) {
@@ -192,17 +197,17 @@ data class SymptomInput(
  * Extension function to convert [SymptomUiState] to [Symptom].
  */
 fun SymptomUiState.toSymptom(): Symptom = Symptom(
-    id = 0,
+    symptomId = 0,
     name = symptomInput.name.trim().replaceFirstChar { it.uppercaseChar() }
 )
 
-fun SymptomUiState.toSymptomLogWithSymptoms(): SymptomLogWithSymptoms = SymptomLogWithSymptoms(
-    symptomLog = SymptomLog(id = 0, date = dateTimeInput.toDate()),
-    symptomsWithSeverity = symptomLogDetails.symptomsWithSeverity
-)
+fun SymptomUiState.toSymptomLogWithSymptoms(): SymptomLogWithSymptomsAndSeverity =
+    SymptomLogWithSymptomsAndSeverity(
+        log = SymptomLog(symptomLogId = 0, date = dateTimeInput.toDate()),
+        items = symptomLogDetails.symptomsWithSeverity
+    )
 
 fun SymptomUiState.toSymptomWithSeverity(): SymptomWithSeverity = SymptomWithSeverity(
     symptom = symptomInput.symptom!!,
     severity = symptomInput.severity!!
 )
-

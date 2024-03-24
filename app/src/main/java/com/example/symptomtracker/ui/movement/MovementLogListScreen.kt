@@ -79,7 +79,7 @@ fun MovementLogCard(movementLog: MovementLog, modifier: Modifier = Modifier) {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                text = movementLog.date.toString(),
+                text = movementLog.getDate().toString(),
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding()
             )
@@ -99,12 +99,12 @@ fun AddFoodScreenPreview() {
         MovementLogList(
             movementLogs = listOf(
                 MovementLog(
-                    symptomLogId = 1,
+                    movementLogId = 1,
                     date = OffsetDateTime.now(),
                     stoolType = StoolType.SEVERE_CONSTIPATION
                 ),
                 MovementLog(
-                    symptomLogId = 2,
+                    movementLogId = 2,
                     date = OffsetDateTime.now(),
                     stoolType = StoolType.MILD_CONSTIPATION
                 )

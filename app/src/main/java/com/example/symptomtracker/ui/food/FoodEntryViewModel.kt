@@ -15,7 +15,7 @@ import com.example.symptomtracker.ui.components.DateTimeInput
 import com.example.symptomtracker.ui.components.TimeInputFields
 import com.example.symptomtracker.ui.components.toDate
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.Calendar
 
 /**
  * View model to validate and insert Food Logs with Items in to the Room database.
@@ -125,8 +125,10 @@ class FoodEntryViewModel(private val foodLogRepository: FoodLogRepository) : Vie
 
     private fun canCreateNewItemFromInput(itemName: String): Boolean {
         return itemName.isNotBlank() && _allItems.none {
-            it.name.equals(itemName,
-                ignoreCase = true)
+            it.name.equals(
+                itemName,
+                ignoreCase = true
+            )
         }
     }
 
@@ -170,6 +172,6 @@ fun FoodLogUiState.toItem(): Item = Item(
  * Extension function to convert [FoodLogUiState] to [FoodLogWithItems].
  */
 fun FoodLogUiState.toFoodLogWithItems(): FoodLogWithItems = FoodLogWithItems(
-    foodLog = FoodLog(foodLogId = 0, date = dateTimeInput.toDate()),
+    log = FoodLog(foodLogId = 0, date = dateTimeInput.toDate()),
     items = foodLogDetails.items
 )

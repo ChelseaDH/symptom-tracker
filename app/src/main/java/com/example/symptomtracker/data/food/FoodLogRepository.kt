@@ -1,6 +1,7 @@
 package com.example.symptomtracker.data.food
 
 import kotlinx.coroutines.flow.Flow
+import java.time.OffsetDateTime
 
 /**
  * Repository that provides insert and retrieval of [FoodLogWithItems] and [Item] records from a given data source.
@@ -20,6 +21,14 @@ interface FoodLogRepository {
      * Retrieves all [FoodLog] records with their associated [Item] records.
      */
     fun getAllFoodLogs(): Flow<List<FoodLogWithItems>>
+
+    /**
+     * Retrieves all [FoodLog] records with their associated [Item] records between two given dates.
+     */
+    fun getAllFoodLogsBetweenDates(
+        startDate: OffsetDateTime,
+        endDate: OffsetDateTime
+    ): Flow<List<FoodLogWithItems>>
 
     /**
      * Insert [Item] record.

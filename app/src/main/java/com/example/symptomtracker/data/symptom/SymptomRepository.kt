@@ -1,6 +1,7 @@
 package com.example.symptomtracker.data.symptom
 
 import kotlinx.coroutines.flow.Flow
+import java.time.OffsetDateTime
 
 /**
  * Repository that provides insert of [Symptom] from a given data source.
@@ -22,7 +23,15 @@ interface SymptomRepository {
     fun getAllSymptomLogs(): Flow<Map<SymptomLog, List<Symptom>>>
 
     /**
-     * Insert [SymptomLog] and associated [Symptom] records via the [SymptomLogWithSymptoms] object.
+     * Retrieves all [SymptomLog] records with their associated [Symptom] records between two given dates.
      */
-    suspend fun insertSymptomLogWithSymptom(symptomLogWithSymptoms: SymptomLogWithSymptoms)
+    fun getAllSymptomLogsBetweenDates(
+        startDate: OffsetDateTime,
+        endDate: OffsetDateTime
+    ): Flow<List<SymptomLogWithSymptoms>>
+
+    /**
+     * Insert [SymptomLog] and associated [Symptom] records via the [SymptomLogWithSymptomsAndSeverity] object.
+     */
+    suspend fun insertSymptomLogWithSymptom(symptomLogWithSymptoms: SymptomLogWithSymptomsAndSeverity)
 }

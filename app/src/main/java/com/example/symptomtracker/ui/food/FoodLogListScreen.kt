@@ -78,7 +78,7 @@ fun FoodLogCard(foodLog: FoodLogWithItems, modifier: Modifier = Modifier) {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                text = foodLog.foodLog.date.toString(),
+                text = foodLog.log.date.toString(),
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding()
             )
@@ -106,14 +106,14 @@ fun AddFoodScreenPreview() {
         FoodLogList(
             foodLogs = listOf(
                 FoodLogWithItems(
-                    foodLog = FoodLog(1, OffsetDateTime.now()),
+                    log = FoodLog(1, OffsetDateTime.now()),
                     items = listOf(
                         Item(1, "Banana"),
                         Item(2, "Oats"),
                     )
                 ),
                 FoodLogWithItems(
-                    foodLog = FoodLog(2, OffsetDateTime.now()),
+                    log = FoodLog(2, OffsetDateTime.now()),
                     items = listOf(
                         Item(1, "Banana"),
                         Item(3, "Yoghurt"),

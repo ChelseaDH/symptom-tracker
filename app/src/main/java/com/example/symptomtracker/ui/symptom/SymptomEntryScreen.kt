@@ -1,11 +1,27 @@
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -17,14 +33,18 @@ import com.example.symptomtracker.data.symptom.Severity
 import com.example.symptomtracker.data.symptom.Symptom
 import com.example.symptomtracker.data.symptom.SymptomWithSeverity
 import com.example.symptomtracker.ui.AppViewModelProvider
-import com.example.symptomtracker.ui.components.*
+import com.example.symptomtracker.ui.components.DateInputFields
+import com.example.symptomtracker.ui.components.DateTimeInput
+import com.example.symptomtracker.ui.components.DateTimeInputRow
+import com.example.symptomtracker.ui.components.OutlinedInputTextFieldWithDropdown
+import com.example.symptomtracker.ui.components.TimeInputFields
 import com.example.symptomtracker.ui.symptom.SymptomEntryViewModel
 import com.example.symptomtracker.ui.symptom.SymptomInput
 import com.example.symptomtracker.ui.symptom.SymptomLogDetails
 import com.example.symptomtracker.ui.symptom.SymptomUiState
 import com.example.symptomtracker.ui.theme.SymptomTrackerTheme
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.Calendar
 
 @Composable
 fun AddSymptomScreen(
@@ -51,7 +71,8 @@ fun AddSymptomScreen(
             )
         }
     ) { innerPadding ->
-        SymptomEntryBody(symptomUiState = viewModel.uiState,
+        SymptomEntryBody(
+            symptomUiState = viewModel.uiState,
             onSymptomNameUpdated = viewModel::updateSelectedSymptomName,
             onCreateSymptom = viewModel::insertSymptom,
             onClearInput = viewModel::clearSymptomInputs,
@@ -80,9 +101,10 @@ fun SymptomEntryBody(
     onTimeChanged: (TimeInputFields) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier
-        .fillMaxWidth()
-        .padding(all = 16.dp),
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(all = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         LogSymptomForm(
@@ -114,15 +136,18 @@ fun SymptomLogList(
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier = modifier) {
-        items(items = symptomList, key = { it.symptom.id }) { item ->
+        items(items = symptomList, key = { it.symptom.symptomId }) { item ->
             ListItem(
                 headlineContent = { Text(text = item.symptom.name) },
                 supportingContent = { Text(text = item.severity.displayName) },
                 trailingContent = {
                     IconButton(onClick = { onDeleteItem(item) }) {
-                        Icon(imageVector = Icons.Default.Delete,
+                        Icon(
+                            imageVector = Icons.Default.Delete,
                             contentDescription = stringResource(
-                                R.string.delete_item_cd))
+                                R.string.delete_item_cd
+                            )
+                        )
                     }
                 },
                 modifier = modifier
@@ -236,7 +261,8 @@ fun FormSeverityInput(
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             Severity.values().forEach {
-                AssistChip(onClick = { onSelectionUpdated(it) },
+                AssistChip(
+                    onClick = { onSelectionUpdated(it) },
                     label = { Text(text = it.displayName) },
                     colors = if (severity == it) {
                         AssistChipDefaults.assistChipColors(
@@ -263,9 +289,11 @@ fun AddSymptomScreenPreview() {
                     Symptom(2, "Fatigue"),
                     Symptom(3, "Nausea")
                 ),
-                symptomLogDetails = SymptomLogDetails(symptomsWithSeverity = listOf(
-                    SymptomWithSeverity(Symptom(2, "Fatigue"), Severity.MODERATE),
-                )),
+                symptomLogDetails = SymptomLogDetails(
+                    symptomsWithSeverity = listOf(
+                        SymptomWithSeverity(Symptom(2, "Fatigue"), Severity.MODERATE),
+                    )
+                ),
                 symptomInput = SymptomInput(severity = Severity.MILD),
                 dateTimeInput = DateTimeInput(Calendar.getInstance())
             ),

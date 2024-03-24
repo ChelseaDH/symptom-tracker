@@ -44,7 +44,13 @@ object AppViewModelProvider {
             SymptomLogListViewModel(symptomRepository = symptomTrackerApplication().container.symptomRepository)
         }
 
-        initializer { HomeScreenViewModel() }
+        initializer {
+            HomeScreenViewModel(
+                foodLogRepository = symptomTrackerApplication().container.foodLogRepository,
+                symptomRepository = symptomTrackerApplication().container.symptomRepository,
+                movementRepository = symptomTrackerApplication().container.movementRepository,
+            )
+        }
     }
 }
 
