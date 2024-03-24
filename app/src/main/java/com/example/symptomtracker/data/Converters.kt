@@ -1,16 +1,21 @@
 package com.example.symptomtracker.data
 
 import androidx.room.TypeConverter
-import java.util.*
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 
 class Converters {
+    private val formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
+
     @TypeConverter
-    fun fromTimestamp(value: Long?): Date? {
-        return value?.let { Date(it) }
+    fun toOffsetDateTime(value: String?): OffsetDateTime? {
+        return value?.let {
+            return formatter.parse(value, OffsetDateTime::from)
+        }
     }
 
     @TypeConverter
-    fun dateToTimestamp(date: Date?): Long? {
-        return date?.time
+    fun fromOffsetDateTime(date: OffsetDateTime?): String? {
+        return date?.format(formatter)
     }
 }

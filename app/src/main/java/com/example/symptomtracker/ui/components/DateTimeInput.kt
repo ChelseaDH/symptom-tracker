@@ -10,7 +10,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,7 +25,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.symptomtracker.R
 import com.example.symptomtracker.ui.theme.SymptomTrackerTheme
-import java.util.*
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
+import java.util.Calendar
 
 data class DateInputFields(
     val year: Int,
@@ -59,15 +65,17 @@ data class DateTimeInput(
     )
 }
 
-fun DateTimeInput.toDate(): Date {
+fun DateTimeInput.toDate(): OffsetDateTime {
     val calendar = Calendar.getInstance()
-    calendar.set(dateInputFields.year,
+    calendar.set(
+        dateInputFields.year,
         dateInputFields.month,
         dateInputFields.day,
         timeInputFields.hour,
-        timeInputFields.minute)
+        timeInputFields.minute
+    )
 
-    return calendar.time
+    return calendar.time.toInstant().atOffset(ZoneOffset.UTC)
 }
 
 @Composable
@@ -108,8 +116,10 @@ fun DateInput(
             readOnly = true,
             trailingIcon = {
                 IconButton(onClick = { datePickerDialog.show() }) {
-                    Icon(imageVector = Icons.Default.Edit,
-                        contentDescription = stringResource(R.string.edit_date_cd))
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = stringResource(R.string.edit_date_cd)
+                    )
                 }
             }
         )
@@ -212,12 +222,16 @@ fun Preview() {
         )
 
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            DateInput(dateInputFields = dateInputFields,
+            DateInput(
+                dateInputFields = dateInputFields,
                 onDateChanged = {},
-                labelOnTextField = true)
-            DateInput(dateInputFields = dateInputFields,
+                labelOnTextField = true
+            )
+            DateInput(
+                dateInputFields = dateInputFields,
                 onDateChanged = {},
-                labelOnTextField = false)
+                labelOnTextField = false
+            )
             TimeInput(timeInput = timeInputFields, onTimeChanged = {}, labelOnTextField = true)
             TimeInput(timeInput = timeInputFields, onTimeChanged = {}, labelOnTextField = false)
             DateTimeInputRow(

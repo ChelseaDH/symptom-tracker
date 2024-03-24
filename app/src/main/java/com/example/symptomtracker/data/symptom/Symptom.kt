@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import java.util.*
+import java.time.OffsetDateTime
 
 @Entity(tableName = "symptom")
 data class Symptom(
@@ -15,16 +15,18 @@ data class Symptom(
 @Entity(tableName = "symptom_log")
 data class SymptomLog(
     @PrimaryKey(autoGenerate = true) val id: Long,
-    val date: Date,
+    val date: OffsetDateTime,
 )
 
 @Entity(
     tableName = "symptom_log_record",
     primaryKeys = ["symptomLogId", "symptomId"],
     foreignKeys = [
-        ForeignKey(entity = SymptomLog::class,
+        ForeignKey(
+            entity = SymptomLog::class,
             parentColumns = ["id"],
-            childColumns = ["symptomLogId"]),
+            childColumns = ["symptomLogId"]
+        ),
         ForeignKey(entity = Symptom::class, parentColumns = ["id"], childColumns = ["symptomId"])
     ],
     indices = [
