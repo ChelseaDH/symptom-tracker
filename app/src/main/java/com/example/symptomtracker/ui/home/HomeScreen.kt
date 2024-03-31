@@ -1,29 +1,45 @@
 package com.example.symptomtracker.ui.home
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,6 +58,7 @@ import com.example.symptomtracker.data.symptom.Symptom
 import com.example.symptomtracker.data.symptom.SymptomLog
 import com.example.symptomtracker.data.symptom.SymptomLogWithSymptoms
 import com.example.symptomtracker.ui.AppViewModelProvider
+import com.example.symptomtracker.ui.components.DatePickerModal
 import com.example.symptomtracker.ui.components.LogItemCard
 import com.example.symptomtracker.ui.components.NoLogsFoundCard
 import kotlinx.coroutines.launch
@@ -69,27 +86,29 @@ fun HomeScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
-            SymptomTrackerTopAppBar(
-                title = stringResource(R.string.home),
-                canNavigateBack = false,
+    Scaffold(topBar = {
+        SymptomTrackerTopAppBar(
+            title = stringResource(R.string.home),
+            canNavigateBack = false,
+        )
+    }, floatingActionButton = {
+        FloatingActionButton(onClick = { viewModel.updateBottomSheetVisibility(true) }) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = stringResource(R.string.add)
             )
-        },
-        floatingActionButton = {
-            FloatingActionButton(onClick = { viewModel.updateBottomSheetVisibility(true) }) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(R.string.add)
-                )
-            }
-        },
-        modifier = modifier
+        }
+    }, modifier = modifier
     ) { innerPadding ->
         HomeBody(
             onViewFoodLogsClick = navigateToViewFoodLogs,
             onViewSymptomLogs = navigateToViewSymptomLogs,
             onViewMovementLogs = navigateToViewMovementLogs,
+            date = viewModel.uiState.date,
+            isToday = viewModel.uiState.isToday,
+            goToPreviousDate = viewModel::goToPreviousDay,
+            goToNextDate = viewModel::goToNextDay,
+            onDateChanged = viewModel::updateDate,
             logs = viewModel.uiState.logs,
             modifier = Modifier.padding(innerPadding)
         )
@@ -97,22 +116,17 @@ fun HomeScreen(
             ModalBottomSheet(
                 onDismissRequest = { viewModel.updateBottomSheetVisibility(false) },
                 sheetState = sheetState,
-            )
-            {
-                QuickAdd(
-                    onAddFoodClick = {
-                        onQuickAddNavigation()
-                        navigateToAddFood()
-                    },
-                    onAddSymptomClick = {
-                        onQuickAddNavigation()
-                        navigateToAddSymptom()
-                    },
-                    onAddMovementClick = {
-                        onQuickAddNavigation()
-                        navigateToAddMovement()
-                    }
-                )
+            ) {
+                QuickAdd(onAddFoodClick = {
+                    onQuickAddNavigation()
+                    navigateToAddFood()
+                }, onAddSymptomClick = {
+                    onQuickAddNavigation()
+                    navigateToAddSymptom()
+                }, onAddMovementClick = {
+                    onQuickAddNavigation()
+                    navigateToAddMovement()
+                })
             }
         }
     }
@@ -123,6 +137,11 @@ fun HomeBody(
     onViewFoodLogsClick: () -> Unit,
     onViewSymptomLogs: () -> Unit,
     onViewMovementLogs: () -> Unit,
+    date: OffsetDateTime,
+    isToday: Boolean,
+    goToPreviousDate: () -> Unit,
+    goToNextDate: () -> Unit,
+    onDateChanged: (Long) -> Unit,
     logs: List<Log>,
     modifier: Modifier = Modifier,
 ) {
@@ -137,14 +156,86 @@ fun HomeBody(
             onViewSymptomLogs = onViewSymptomLogs,
             onViewMovementLogs = onViewMovementLogs
         )
-        Timeline(logs = logs)
+        HorizontalDivider()
+        DateToggleRow(
+            date = date,
+            isToday = isToday,
+            goToPreviousDate = goToPreviousDate,
+            goToNextDate = goToNextDate,
+            onDateChanged = onDateChanged,
+        )
+        Timeline(
+            logs = logs,
+            onLeftSwipe = goToNextDate,
+            onRightSwipe = goToPreviousDate,
+        )
+    }
+}
+
+@Composable
+fun DateToggleRow(
+    date: OffsetDateTime,
+    isToday: Boolean,
+    goToPreviousDate: () -> Unit,
+    goToNextDate: () -> Unit,
+    onDateChanged: (Long) -> Unit
+) {
+    var showDatePicker by remember { mutableStateOf(false) }
+    if (showDatePicker) {
+        DatePickerModal(
+            onDismissRequest = { showDatePicker = false },
+            onDateSelected = onDateChanged,
+            initialDate = date,
+        )
+    }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        IconButton(onClick = goToPreviousDate) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                contentDescription = stringResource(R.string.previous_day_cd)
+            )
+        }
+        if (isToday) {
+            Text(
+                text = "Today",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier
+                    .weight(1f)
+                    .wrapContentWidth()
+                    .padding(end = 48.dp)
+                    .clickable { showDatePicker = true },
+            )
+        } else {
+            Text(
+                text = date.format(DateTimeFormatter.ISO_LOCAL_DATE),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier
+                    .weight(1f)
+                    .wrapContentWidth()
+                    .clickable { showDatePicker = true },
+            )
+            IconButton(onClick = goToNextDate) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                    contentDescription = stringResource(R.string.next_day_cd)
+                )
+            }
+        }
     }
 }
 
 @Composable
 fun Timeline(
     logs: List<Log>,
+    onLeftSwipe: () -> Unit,
+    onRightSwipe: () -> Unit,
 ) {
+    var swipeOffset by remember { mutableFloatStateOf(0f) }
+
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -152,52 +243,60 @@ fun Timeline(
             text = stringResource(R.string.timeline_title),
             style = MaterialTheme.typography.titleMedium
         )
-        if (logs.isEmpty()) {
-            NoLogsFoundCard()
-        } else {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                items(items = logs) { log ->
-                    when (log) {
-                        is FoodLogWithItems -> LogItemCard(
-                            icon = {
+        Box(modifier = Modifier
+            .fillMaxHeight()
+            .pointerInput(Unit) {
+                detectHorizontalDragGestures(onDragStart = { swipeOffset = 0f }, onDragEnd = {
+                    if (swipeOffset < -200) {
+                        onLeftSwipe()
+                    } else if (swipeOffset > 200) {
+                        onRightSwipe()
+                    }
+                }) { _, dragAmount -> swipeOffset += dragAmount }
+            }) {
+            if (logs.isEmpty()) {
+                NoLogsFoundCard()
+            } else {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    items(items = logs) { log ->
+                        when (log) {
+                            is FoodLogWithItems -> LogItemCard(icon = {
                                 Icon(
                                     painter = painterResource(id = R.drawable.outline_nutrition_24),
                                     contentDescription = stringResource(R.string.add_food_text)
                                 )
                             },
-                            title = stringResource(R.string.add_food_text),
-                            date = log.getDate(),
-                            dateTimeFormatter = DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_hh_mm_ss)),
-                            supportingText = log.items.joinToString { it.name }
-                        )
+                                title = stringResource(R.string.add_food_text),
+                                date = log.getDate(),
+                                dateTimeFormatter = DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_hh_mm_ss)),
+                                supportingText = log.items.joinToString { it.name })
 
-                        is SymptomLogWithSymptoms -> LogItemCard(
-                            icon = {
+                            is SymptomLogWithSymptoms -> LogItemCard(icon = {
                                 Icon(
                                     painter = painterResource(id = R.drawable.outline_symptoms_24),
                                     contentDescription = stringResource(R.string.add_symptom_text)
                                 )
                             },
-                            title = stringResource(R.string.add_symptom_text),
-                            date = log.getDate(),
-                            dateTimeFormatter = DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_hh_mm_ss)),
-                            supportingText = log.items.joinToString { it.name }
-                        )
+                                title = stringResource(R.string.add_symptom_text),
+                                date = log.getDate(),
+                                dateTimeFormatter = DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_hh_mm_ss)),
+                                supportingText = log.items.joinToString { it.name })
 
-                        is MovementLog -> LogItemCard(
-                            icon = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.outline_gastroenterology_24),
-                                    contentDescription = stringResource(R.string.add_movement_text)
-                                )
-                            },
-                            title = stringResource(R.string.add_movement_text),
-                            date = log.getDate(),
-                            dateTimeFormatter = DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_hh_mm_ss)),
-                            supportingText = log.stoolType.getDisplayName(),
-                        )
+                            is MovementLog -> LogItemCard(
+                                icon = {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.outline_gastroenterology_24),
+                                        contentDescription = stringResource(R.string.add_movement_text)
+                                    )
+                                },
+                                title = stringResource(R.string.add_movement_text),
+                                date = log.getDate(),
+                                dateTimeFormatter = DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_hh_mm_ss)),
+                                supportingText = log.stoolType.getDisplayName(),
+                            )
+                        }
                     }
                 }
             }
@@ -281,26 +380,18 @@ fun ViewLogs(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Text(
-            text = "View logs",
-            style = MaterialTheme.typography.titleMedium
+            text = "View logs", style = MaterialTheme.typography.titleMedium
         )
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            ExtendedFloatingActionButton(
-                onClick = { onViewFoodLogs() }
-            ) {
+            ExtendedFloatingActionButton(onClick = { onViewFoodLogs() }) {
                 Text(text = stringResource(R.string.add_food_text))
             }
-            ExtendedFloatingActionButton(
-                onClick = { onViewSymptomLogs() }
-            ) {
+            ExtendedFloatingActionButton(onClick = { onViewSymptomLogs() }) {
                 Text(text = stringResource(R.string.add_symptom_text))
             }
-            ExtendedFloatingActionButton(
-                onClick = { onViewMovementLogs() }
-            ) {
+            ExtendedFloatingActionButton(onClick = { onViewMovementLogs() }) {
                 Text(text = stringResource(R.string.add_movement_text))
             }
         }
@@ -314,6 +405,11 @@ fun HomeBodyWithNoLogsPreview() {
         onViewFoodLogsClick = {},
         onViewSymptomLogs = {},
         onViewMovementLogs = {},
+        date = OffsetDateTime.parse("2023-03-02T00:00:00+00:00"),
+        isToday = true,
+        goToPreviousDate = {},
+        goToNextDate = {},
+        onDateChanged = { _ -> },
         logs = listOf(),
     )
 }
@@ -325,24 +421,25 @@ fun HomeBodyWithLogsPreview() {
         onViewFoodLogsClick = {},
         onViewSymptomLogs = {},
         onViewMovementLogs = {},
+        date = OffsetDateTime.parse("2023-03-02T00:00:00+00:00"),
+        isToday = false,
+        goToPreviousDate = {},
+        goToNextDate = {},
+        onDateChanged = { _ -> },
         logs = listOf(
             FoodLogWithItems(
-                log = FoodLog(1, OffsetDateTime.parse("2023-03-02T08:30:00+00:00")),
-                items = listOf(
+                log = FoodLog(1, OffsetDateTime.parse("2023-03-02T08:30:00+00:00")), items = listOf(
                     Item(1, "Banana"),
                     Item(2, "Oats"),
                     Item(3, "Yogurt"),
                 )
-            ),
-            SymptomLogWithSymptoms(
+            ), SymptomLogWithSymptoms(
                 log = SymptomLog(1, OffsetDateTime.parse("2023-03-02T09:00:00+00:00")),
                 items = listOf(
                     Symptom(1, "Bloating")
                 )
-            ),
-            FoodLogWithItems(
-                log = FoodLog(2, OffsetDateTime.parse("2023-03-02T13:15:00+00:00")),
-                items = listOf(
+            ), FoodLogWithItems(
+                log = FoodLog(2, OffsetDateTime.parse("2023-03-02T13:15:00+00:00")), items = listOf(
                     Item(4, "Chicken"),
                     Item(5, "Rice"),
                     Item(6, "Peppers"),
@@ -350,8 +447,7 @@ fun HomeBodyWithLogsPreview() {
                     Item(8, "Onion"),
                     Item(9, "Olive oil"),
                 )
-            ),
-            MovementLog(
+            ), MovementLog(
                 movementLogId = 1,
                 date = OffsetDateTime.parse("2023-03-02T14:10:00+00:00"),
                 stoolType = StoolType.NORMAL_3,

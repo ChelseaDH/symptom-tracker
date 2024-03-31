@@ -10,11 +10,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.Button
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -207,7 +213,38 @@ fun DateTimeInputRow(
     }
 }
 
-@Preview
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DatePickerModal(
+    onDismissRequest: () -> Unit,
+    onDateSelected: (Long) -> Unit,
+    initialDate: OffsetDateTime,
+) {
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = initialDate.toInstant().toEpochMilli(),
+        selectableDates = object : SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                return utcTimeMillis <= System.currentTimeMillis()
+            }
+        }
+    )
+
+    DatePickerDialog(
+        onDismissRequest = onDismissRequest,
+        confirmButton = {
+            Button(onClick = {
+                datePickerState.selectedDateMillis?.let(onDateSelected)
+                onDismissRequest()
+            }) {
+                Text(text = "OK")
+            }
+        }
+    ) {
+        DatePicker(state = datePickerState)
+    }
+}
+
+@Preview(showBackground = true)
 @Composable
 fun Preview() {
     SymptomTrackerTheme {

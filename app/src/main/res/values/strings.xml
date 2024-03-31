@@ -29,6 +29,8 @@
     <string name="date_label">Date</string>
     <string name="edit_date_cd">Edit date</string>
     <string name="no_logs_found">No logs found</string>
-    <string name="timeline_title">Today\'s timeline</string>
+    <string name="timeline_title">Timeline</string>
     <string name="datetime_format_hh_mm_ss">HH:mm:ss</string>
+    <string name="previous_day_cd">Go to previous day</string>
+    <string name="next_day_cd">Go to next day</string>
 </resources>

@@ -11,36 +11,44 @@ import com.example.symptomtracker.data.movement.MovementRepository
 import com.example.symptomtracker.data.symptom.SymptomRepository
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import java.time.Instant
 import java.time.OffsetDateTime
+import java.time.ZoneId
 
 class HomeScreenViewModel(
     private val foodLogRepository: FoodLogRepository,
     private val symptomRepository: SymptomRepository,
     private val movementRepository: MovementRepository,
 ) : ViewModel() {
-    var uiState by mutableStateOf(UiState())
+    private var now = OffsetDateTime.now()
+    private var today = now.toLocalDate()
+
+    var uiState by mutableStateOf(UiState(date = now))
         private set
 
     init {
         viewModelScope.launch {
-            val date = OffsetDateTime.now()
-            val startDate = date.withHour(0).withMinute(0).withSecond(0)
-            val endDate = date.withHour(23).withMinute(59).withSecond(59)
+            updateLogsForDate()
+        }
+    }
 
-            val foodLogs = foodLogRepository.getAllFoodLogsBetweenDates(startDate, endDate)
-            val symptomLogs = symptomRepository.getAllSymptomLogsBetweenDates(startDate, endDate)
-            val movementLogs = movementRepository.getAllMovementLogsBetweenDates(startDate, endDate)
+    private suspend fun updateLogsForDate(date: OffsetDateTime = OffsetDateTime.now()) {
+        val startDate = date.withHour(0).withMinute(0).withSecond(0)
+        val endDate = date.withHour(23).withMinute(59).withSecond(59)
 
-            combine(foodLogs, symptomLogs, movementLogs) { data1, data2, data3 ->
-                data1 + data2 + data3
-            }.collect { logs ->
-                val sortedLogs = logs.toMutableList()
-                sortedLogs.sortBy { it.getDate() }
+        val foodLogs = foodLogRepository.getAllFoodLogsBetweenDates(startDate, endDate)
+        val symptomLogs = symptomRepository.getAllSymptomLogsBetweenDates(startDate, endDate)
+        val movementLogs = movementRepository.getAllMovementLogsBetweenDates(startDate, endDate)
 
-                uiState = uiState.copy(
-                    logs = sortedLogs
-                )
-            }
+        combine(foodLogs, symptomLogs, movementLogs) { data1, data2, data3 ->
+            data1 + data2 + data3
+        }.collect { logs ->
+            val sortedLogs = logs.toMutableList()
+            sortedLogs.sortBy { it.getDate() }
+
+            uiState = uiState.copy(
+                logs = sortedLogs
+            )
         }
     }
 
@@ -49,9 +57,36 @@ class HomeScreenViewModel(
             showBottomSheet = visible
         )
     }
+
+    private fun updateChosenDate(date: OffsetDateTime) {
+        viewModelScope.launch {
+            uiState = uiState.copy(
+                date = date,
+                isToday = date.toLocalDate().isEqual(today)
+            )
+            updateLogsForDate(date)
+        }
+    }
+
+    fun goToPreviousDay() {
+        updateChosenDate(uiState.date.minusDays(1))
+    }
+
+    fun goToNextDay() {
+        if (!uiState.isToday) {
+            updateChosenDate(uiState.date.plusDays(1))
+        }
+    }
+
+    fun updateDate(m: Long) {
+        val date = OffsetDateTime.ofInstant(Instant.ofEpochMilli(m), ZoneId.systemDefault())
+        updateChosenDate(date)
+    }
 }
 
 data class UiState(
     val showBottomSheet: Boolean = false,
     val logs: List<Log> = listOf(),
+    val isToday: Boolean = true,
+    val date: OffsetDateTime,
 )
