@@ -22,7 +22,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -70,9 +69,6 @@ fun HomeScreen(
     navigateToAddFood: () -> Unit,
     navigateToAddSymptom: () -> Unit,
     navigateToAddMovement: () -> Unit,
-    navigateToViewFoodLogs: () -> Unit,
-    navigateToViewSymptomLogs: () -> Unit,
-    navigateToViewMovementLogs: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeScreenViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
@@ -96,9 +92,6 @@ fun HomeScreen(
         }, modifier = modifier
     ) { innerPadding ->
         HomeBody(
-            onViewFoodLogsClick = navigateToViewFoodLogs,
-            onViewSymptomLogs = navigateToViewSymptomLogs,
-            onViewMovementLogs = navigateToViewMovementLogs,
             date = viewModel.uiState.date,
             isToday = viewModel.uiState.isToday,
             goToPreviousDate = viewModel::goToPreviousDay,
@@ -129,9 +122,6 @@ fun HomeScreen(
 
 @Composable
 fun HomeBody(
-    onViewFoodLogsClick: () -> Unit,
-    onViewSymptomLogs: () -> Unit,
-    onViewMovementLogs: () -> Unit,
     date: OffsetDateTime,
     isToday: Boolean,
     goToPreviousDate: () -> Unit,
@@ -143,15 +133,9 @@ fun HomeBody(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(all = 16.dp),
+            .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
-        ViewLogs(
-            onViewFoodLogs = onViewFoodLogsClick,
-            onViewSymptomLogs = onViewSymptomLogs,
-            onViewMovementLogs = onViewMovementLogs
-        )
-        HorizontalDivider()
         DateToggleRow(
             date = date,
             isToday = isToday,
@@ -363,43 +347,10 @@ fun QuickAdd(
     }
 }
 
-@Composable
-fun ViewLogs(
-    onViewFoodLogs: () -> Unit,
-    onViewSymptomLogs: () -> Unit,
-    onViewMovementLogs: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        Text(
-            text = "View logs", style = MaterialTheme.typography.titleMedium
-        )
-        Row(
-            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            ExtendedFloatingActionButton(onClick = { onViewFoodLogs() }) {
-                Text(text = stringResource(R.string.add_food_text))
-            }
-            ExtendedFloatingActionButton(onClick = { onViewSymptomLogs() }) {
-                Text(text = stringResource(R.string.add_symptom_text))
-            }
-            ExtendedFloatingActionButton(onClick = { onViewMovementLogs() }) {
-                Text(text = stringResource(R.string.add_movement_text))
-            }
-        }
-    }
-}
-
 @Preview
 @Composable
 fun HomeBodyWithNoLogsPreview() {
     HomeBody(
-        onViewFoodLogsClick = {},
-        onViewSymptomLogs = {},
-        onViewMovementLogs = {},
         date = OffsetDateTime.parse("2023-03-02T00:00:00+00:00"),
         isToday = true,
         goToPreviousDate = {},
@@ -413,9 +364,6 @@ fun HomeBodyWithNoLogsPreview() {
 @Composable
 fun HomeBodyWithLogsPreview() {
     HomeBody(
-        onViewFoodLogsClick = {},
-        onViewSymptomLogs = {},
-        onViewMovementLogs = {},
         date = OffsetDateTime.parse("2023-03-02T00:00:00+00:00"),
         isToday = false,
         goToPreviousDate = {},
