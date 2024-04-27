@@ -86,7 +86,11 @@ fun SymptomTrackerNavHost(
         composable(route = Route.ADD_MOVEMENT.name) {
             AddMovementScreen(navigateBack = { navController.navigateUp() })
         }
-        logsScreen()
+        logsScreen(
+            onAddFoodClick = { navController.navigate(Route.ADD_FOOD.name) },
+            onAddSymptomClick = { navController.navigate(Route.ADD_SYMPTOM.name) },
+            onAddMovementClick = { navController.navigate(Route.ADD_MOVEMENT.name) },
+        )
     }
 }
 
