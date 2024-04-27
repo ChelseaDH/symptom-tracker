@@ -14,13 +14,17 @@ import com.example.symptomtracker.ui.components.DateInputFields
 import com.example.symptomtracker.ui.components.DateTimeInput
 import com.example.symptomtracker.ui.components.TimeInputFields
 import com.example.symptomtracker.ui.components.toDate
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.util.Calendar
+import javax.inject.Inject
 
 /**
  * View model to validate and insert Food Logs with Items in to the Room database.
  */
-class FoodEntryViewModel(private val foodLogRepository: FoodLogRepository) : ViewModel() {
+@HiltViewModel
+class FoodEntryViewModel @Inject constructor(private val foodLogRepository: FoodLogRepository) :
+    ViewModel() {
     var uiState by mutableStateOf(FoodLogUiState(calendar = Calendar.getInstance()))
         private set
 

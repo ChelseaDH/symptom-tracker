@@ -1,32 +1,46 @@
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.*
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.symptomtracker.R
 import com.example.symptomtracker.SymptomTrackerTopAppBar
 import com.example.symptomtracker.data.movement.StoolType
 import com.example.symptomtracker.data.movement.getDescription
 import com.example.symptomtracker.data.movement.getDisplayName
-import com.example.symptomtracker.ui.AppViewModelProvider
-import com.example.symptomtracker.ui.components.*
+import com.example.symptomtracker.ui.components.DateInputFields
+import com.example.symptomtracker.ui.components.DateTimeInput
+import com.example.symptomtracker.ui.components.DateTimeInputRow
+import com.example.symptomtracker.ui.components.OutlinedReadonlyTextFieldWithDropdown
+import com.example.symptomtracker.ui.components.TimeInputFields
 import com.example.symptomtracker.ui.movement.MovementEntryViewModel
 import com.example.symptomtracker.ui.movement.MovementUiState
 import com.example.symptomtracker.ui.theme.SymptomTrackerTheme
-import java.util.*
+import java.util.Calendar
 
 @Composable
 fun AddMovementScreen(
     navigateBack: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: MovementEntryViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    viewModel: MovementEntryViewModel = hiltViewModel(),
 ) {
     Scaffold(
         topBar = {
@@ -64,9 +78,10 @@ fun MovementEntryBody(
     onTimeChanged: (TimeInputFields) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier
-        .fillMaxWidth()
-        .padding(all = 16.dp),
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(all = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         LogMovementForm(
@@ -117,8 +132,10 @@ fun MovementKey(modifier: Modifier = Modifier) {
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text(text = stringResource(R.string.stool_type_key),
-            style = MaterialTheme.typography.titleMedium)
+        Text(
+            text = stringResource(R.string.stool_type_key),
+            style = MaterialTheme.typography.titleMedium
+        )
         LazyColumn(modifier = modifier) {
             items(items = StoolType.values()) { stoolType ->
                 ListItem(

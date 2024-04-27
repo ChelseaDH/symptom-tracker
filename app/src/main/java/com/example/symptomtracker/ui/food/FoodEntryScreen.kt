@@ -1,32 +1,47 @@
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.symptomtracker.R
 import com.example.symptomtracker.SymptomTrackerTopAppBar
 import com.example.symptomtracker.data.food.Item
-import com.example.symptomtracker.ui.AppViewModelProvider
-import com.example.symptomtracker.ui.components.*
+import com.example.symptomtracker.ui.components.DateInputFields
+import com.example.symptomtracker.ui.components.DateTimeInput
+import com.example.symptomtracker.ui.components.DateTimeInputRow
+import com.example.symptomtracker.ui.components.OutlinedInputTextFieldWithDropdown
+import com.example.symptomtracker.ui.components.TimeInputFields
 import com.example.symptomtracker.ui.food.FoodEntryViewModel
 import com.example.symptomtracker.ui.food.FoodLogUiState
 import com.example.symptomtracker.ui.theme.SymptomTrackerTheme
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.Calendar
 
 @Composable
 fun AddFoodScreen(
     navigateBack: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: FoodEntryViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    viewModel: FoodEntryViewModel = hiltViewModel(),
 ) {
     val coroutineScope = rememberCoroutineScope()
     Scaffold(
@@ -81,9 +96,10 @@ fun FoodEntryBody(
     onClearChosenItem: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier
-        .fillMaxWidth()
-        .padding(all = 16.dp),
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(all = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         FoodLogItemInput(
@@ -116,9 +132,12 @@ fun FoodLogItemList(
                 headlineContent = { Text(text = item.name) },
                 trailingContent = {
                     IconButton(onClick = { onDeleteItem(item) }) {
-                        Icon(imageVector = Icons.Default.Delete,
+                        Icon(
+                            imageVector = Icons.Default.Delete,
                             contentDescription = stringResource(
-                                R.string.delete_item_cd))
+                                R.string.delete_item_cd
+                            )
+                        )
                     }
                 },
                 modifier = modifier

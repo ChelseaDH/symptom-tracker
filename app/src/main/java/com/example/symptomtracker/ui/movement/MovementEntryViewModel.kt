@@ -12,11 +12,15 @@ import com.example.symptomtracker.ui.components.DateInputFields
 import com.example.symptomtracker.ui.components.DateTimeInput
 import com.example.symptomtracker.ui.components.TimeInputFields
 import com.example.symptomtracker.ui.components.toDate
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Calendar
+import javax.inject.Inject
 
-class MovementEntryViewModel(private val movementRepository: MovementRepository) : ViewModel() {
+@HiltViewModel
+class MovementEntryViewModel @Inject constructor(private val movementRepository: MovementRepository) :
+    ViewModel() {
     var uiState by mutableStateOf(MovementUiState(Calendar.getInstance()))
         private set
 

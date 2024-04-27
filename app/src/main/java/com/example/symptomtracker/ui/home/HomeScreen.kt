@@ -43,7 +43,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.symptomtracker.R
 import com.example.symptomtracker.data.Log
 import com.example.symptomtracker.data.food.FoodLog
@@ -55,7 +55,6 @@ import com.example.symptomtracker.data.movement.getDisplayName
 import com.example.symptomtracker.data.symptom.Symptom
 import com.example.symptomtracker.data.symptom.SymptomLog
 import com.example.symptomtracker.data.symptom.SymptomLogWithSymptoms
-import com.example.symptomtracker.ui.AppViewModelProvider
 import com.example.symptomtracker.ui.components.DatePickerModal
 import com.example.symptomtracker.ui.components.LogItemCard
 import com.example.symptomtracker.ui.components.NoLogsFoundCard
@@ -70,7 +69,7 @@ fun HomeScreen(
     navigateToAddSymptom: () -> Unit,
     navigateToAddMovement: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: HomeScreenViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    viewModel: HomeScreenViewModel = hiltViewModel(),
 ) {
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()

@@ -16,14 +16,18 @@ import com.example.symptomtracker.ui.components.DateInputFields
 import com.example.symptomtracker.ui.components.DateTimeInput
 import com.example.symptomtracker.ui.components.TimeInputFields
 import com.example.symptomtracker.ui.components.toDate
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Calendar
+import javax.inject.Inject
 
 /**
  * View Model to validate and insert symptoms in the Room database.
  */
-class SymptomEntryViewModel(private val symptomRepository: SymptomRepository) : ViewModel() {
+@HiltViewModel
+class SymptomEntryViewModel @Inject constructor(private val symptomRepository: SymptomRepository) :
+    ViewModel() {
     var uiState by mutableStateOf(SymptomUiState(Calendar.getInstance()))
         private set
 

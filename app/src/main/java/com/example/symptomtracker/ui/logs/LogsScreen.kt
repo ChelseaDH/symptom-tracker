@@ -23,19 +23,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.symptomtracker.R
 import com.example.symptomtracker.data.Log
 import com.example.symptomtracker.data.food.FoodLogWithItems
 import com.example.symptomtracker.data.movement.getDisplayName
-import com.example.symptomtracker.ui.AppViewModelProvider
 import com.example.symptomtracker.ui.components.LogItemCard
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun LogsRoute(
     modifier: Modifier = Modifier,
-    viewModel: LogsViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    viewModel: LogsViewModel = hiltViewModel(),
 ) {
     LogsScreen(
         tabs = viewModel.tabs,

@@ -9,13 +9,16 @@ import com.example.symptomtracker.data.Log
 import com.example.symptomtracker.data.food.FoodLogRepository
 import com.example.symptomtracker.data.movement.MovementRepository
 import com.example.symptomtracker.data.symptom.SymptomRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneId
+import javax.inject.Inject
 
-class HomeScreenViewModel(
+@HiltViewModel
+class HomeScreenViewModel @Inject constructor(
     private val foodLogRepository: FoodLogRepository,
     private val symptomRepository: SymptomRepository,
     private val movementRepository: MovementRepository,

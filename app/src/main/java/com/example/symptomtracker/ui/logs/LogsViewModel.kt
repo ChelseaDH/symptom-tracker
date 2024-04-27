@@ -11,9 +11,12 @@ import com.example.symptomtracker.data.movement.MovementLog
 import com.example.symptomtracker.data.movement.MovementRepository
 import com.example.symptomtracker.data.symptom.SymptomLogWithSymptoms
 import com.example.symptomtracker.data.symptom.SymptomRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class LogsViewModel(
+@HiltViewModel
+class LogsViewModel @Inject constructor(
     private val foodLogRepository: FoodLogRepository,
     private val symptomRepository: SymptomRepository,
     private val movementRepository: MovementRepository,

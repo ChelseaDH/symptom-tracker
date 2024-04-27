@@ -26,13 +26,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.symptomtracker.R
 import com.example.symptomtracker.SymptomTrackerTopAppBar
 import com.example.symptomtracker.data.symptom.Severity
 import com.example.symptomtracker.data.symptom.Symptom
 import com.example.symptomtracker.data.symptom.SymptomWithSeverity
-import com.example.symptomtracker.ui.AppViewModelProvider
 import com.example.symptomtracker.ui.components.DateInputFields
 import com.example.symptomtracker.ui.components.DateTimeInput
 import com.example.symptomtracker.ui.components.DateTimeInputRow
@@ -49,7 +48,7 @@ import java.util.Calendar
 @Composable
 fun AddSymptomScreen(
     navigateBack: () -> Unit,
-    viewModel: SymptomEntryViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    viewModel: SymptomEntryViewModel = hiltViewModel(),
 ) {
     val coroutineScope = rememberCoroutineScope()
     Scaffold(

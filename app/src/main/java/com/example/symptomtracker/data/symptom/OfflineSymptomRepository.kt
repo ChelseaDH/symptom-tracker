@@ -2,8 +2,10 @@ package com.example.symptomtracker.data.symptom
 
 import kotlinx.coroutines.flow.Flow
 import java.time.OffsetDateTime
+import javax.inject.Inject
 
-class OfflineSymptomRepository(private val symptomDao: SymptomDao) : SymptomRepository {
+class OfflineSymptomRepository @Inject constructor(private val symptomDao: SymptomDao) :
+    SymptomRepository {
     override fun insertSymptom(symptom: Symptom): Long = symptomDao.insertSymptom(symptom = symptom)
 
     override fun getAllSymptomsStream(): Flow<List<Symptom>> = symptomDao.getAllSymptoms()

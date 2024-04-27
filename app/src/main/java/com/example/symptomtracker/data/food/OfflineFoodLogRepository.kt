@@ -2,8 +2,10 @@ package com.example.symptomtracker.data.food
 
 import kotlinx.coroutines.flow.Flow
 import java.time.OffsetDateTime
+import javax.inject.Inject
 
-class OfflineFoodLogRepository(private val foodLogDao: FoodLogDao) : FoodLogRepository {
+class OfflineFoodLogRepository @Inject constructor(private val foodLogDao: FoodLogDao) :
+    FoodLogRepository {
     override suspend fun insertFoodLogWithItems(foodLogWithItems: FoodLogWithItems) =
         foodLogDao.insertFoodLogWithItems(foodLogWithItems = foodLogWithItems)
 
