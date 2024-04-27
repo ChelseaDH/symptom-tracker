@@ -47,7 +47,7 @@ fun NoLogsFoundCard(modifier: Modifier = Modifier) {
 @Composable
 fun LogItemCard(
     modifier: Modifier = Modifier,
-    icon: @Composable () -> Unit,
+    icon: (@Composable () -> Unit)? = null,
     title: String,
     date: OffsetDateTime,
     dateTimeFormatter: DateTimeFormatter,
@@ -63,7 +63,7 @@ fun LogItemCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                icon()
+                icon?.invoke()
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,
@@ -71,14 +71,14 @@ fun LogItemCard(
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
                     text = date.format(dateTimeFormatter),
-                    style = MaterialTheme.typography.labelSmall,
+                    style = MaterialTheme.typography.labelMedium,
                 )
             }
             Text(
                 text = supportingText,
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
                 fontStyle = FontStyle.Italic,
-                modifier = Modifier.padding(start = 28.dp)
+                modifier = Modifier.padding(start = if (icon !== null) 28.dp else 0.dp)
             )
         }
     }

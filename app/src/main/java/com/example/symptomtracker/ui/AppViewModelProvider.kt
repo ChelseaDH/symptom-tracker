@@ -10,6 +10,7 @@ import com.example.symptomtracker.SymptomTrackerApplication
 import com.example.symptomtracker.ui.food.FoodEntryViewModel
 import com.example.symptomtracker.ui.food.FoodLogListViewModel
 import com.example.symptomtracker.ui.home.HomeScreenViewModel
+import com.example.symptomtracker.ui.logs.LogsViewModel
 import com.example.symptomtracker.ui.movement.MovementEntryViewModel
 import com.example.symptomtracker.ui.movement.MovementLogListViewModel
 import com.example.symptomtracker.ui.symptom.SymptomEntryViewModel
@@ -46,6 +47,14 @@ object AppViewModelProvider {
 
         initializer {
             HomeScreenViewModel(
+                foodLogRepository = symptomTrackerApplication().container.foodLogRepository,
+                symptomRepository = symptomTrackerApplication().container.symptomRepository,
+                movementRepository = symptomTrackerApplication().container.movementRepository,
+            )
+        }
+
+        initializer {
+            LogsViewModel(
                 foodLogRepository = symptomTrackerApplication().container.foodLogRepository,
                 symptomRepository = symptomTrackerApplication().container.symptomRepository,
                 movementRepository = symptomTrackerApplication().container.movementRepository,

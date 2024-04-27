@@ -18,9 +18,9 @@ interface SymptomRepository {
     fun getAllSymptomsStream(): Flow<List<Symptom>>
 
     /**
-     * Retrieves all [SymptomLog] records with their associated [SymptomWithSeverity] objects.
+     * Retrieves all [SymptomLog] records with their associated [Symptom] objects.
      */
-    fun getAllSymptomLogs(): Flow<Map<SymptomLog, List<Symptom>>>
+    fun getAllSymptomLogs(): Flow<List<SymptomLogWithSymptoms>>
 
     /**
      * Retrieves all [SymptomLog] records with their associated [Symptom] records between two given dates.

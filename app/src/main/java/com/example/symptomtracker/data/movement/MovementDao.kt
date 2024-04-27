@@ -12,7 +12,7 @@ interface MovementDao {
     @Insert
     suspend fun insertMovementLog(movementLog: MovementLog)
 
-    @Query("SELECT * FROM movement_log")
+    @Query("SELECT * FROM movement_log ORDER BY date DESC")
     fun getAllMovementLogs(): Flow<List<MovementLog>>
 
     @Transaction

@@ -46,7 +46,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.symptomtracker.R
-import com.example.symptomtracker.SymptomTrackerTopAppBar
 import com.example.symptomtracker.data.Log
 import com.example.symptomtracker.data.food.FoodLog
 import com.example.symptomtracker.data.food.FoodLogWithItems
@@ -86,19 +85,15 @@ fun HomeScreen(
         }
     }
 
-    Scaffold(topBar = {
-        SymptomTrackerTopAppBar(
-            title = stringResource(R.string.home),
-            canNavigateBack = false,
-        )
-    }, floatingActionButton = {
-        FloatingActionButton(onClick = { viewModel.updateBottomSheetVisibility(true) }) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = stringResource(R.string.add)
-            )
-        }
-    }, modifier = modifier
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(onClick = { viewModel.updateBottomSheetVisibility(true) }) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = stringResource(R.string.add)
+                )
+            }
+        }, modifier = modifier
     ) { innerPadding ->
         HomeBody(
             onViewFoodLogsClick = navigateToViewFoodLogs,
@@ -270,7 +265,7 @@ fun Timeline(
                             },
                                 title = stringResource(R.string.add_food_text),
                                 date = log.getDate(),
-                                dateTimeFormatter = DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_hh_mm_ss)),
+                                dateTimeFormatter = DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_hh_mm)),
                                 supportingText = log.items.joinToString { it.name })
 
                             is SymptomLogWithSymptoms -> LogItemCard(icon = {
@@ -281,7 +276,7 @@ fun Timeline(
                             },
                                 title = stringResource(R.string.add_symptom_text),
                                 date = log.getDate(),
-                                dateTimeFormatter = DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_hh_mm_ss)),
+                                dateTimeFormatter = DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_hh_mm)),
                                 supportingText = log.items.joinToString { it.name })
 
                             is MovementLog -> LogItemCard(
@@ -293,7 +288,7 @@ fun Timeline(
                                 },
                                 title = stringResource(R.string.add_movement_text),
                                 date = log.getDate(),
-                                dateTimeFormatter = DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_hh_mm_ss)),
+                                dateTimeFormatter = DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_hh_mm)),
                                 supportingText = log.stoolType.getDisplayName(),
                             )
                         }

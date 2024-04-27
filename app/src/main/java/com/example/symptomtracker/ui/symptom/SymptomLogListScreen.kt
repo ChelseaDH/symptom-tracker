@@ -23,6 +23,7 @@ import com.example.symptomtracker.R
 import com.example.symptomtracker.SymptomTrackerTopAppBar
 import com.example.symptomtracker.data.symptom.Symptom
 import com.example.symptomtracker.data.symptom.SymptomLog
+import com.example.symptomtracker.data.symptom.SymptomLogWithSymptoms
 import com.example.symptomtracker.ui.AppViewModelProvider
 import com.example.symptomtracker.ui.theme.SymptomTrackerTheme
 import java.time.OffsetDateTime
@@ -51,7 +52,7 @@ fun SymptomLogListScreen(
 }
 
 @Composable
-fun SymptomLogList(symptomLogs: Map<SymptomLog, List<Symptom>>, modifier: Modifier = Modifier) {
+fun SymptomLogList(symptomLogs: List<SymptomLogWithSymptoms>, modifier: Modifier = Modifier) {
     LazyColumn(
         modifier = modifier
             .padding(16.dp)
@@ -66,7 +67,7 @@ fun SymptomLogList(symptomLogs: Map<SymptomLog, List<Symptom>>, modifier: Modifi
 
 @Composable
 fun SymptomLogCard(
-    symptomLogWithSymptoms: Pair<SymptomLog, List<Symptom>>,
+    symptomLogWithSymptoms: SymptomLogWithSymptoms,
     modifier: Modifier = Modifier,
 ) {
     ElevatedCard(
@@ -80,12 +81,12 @@ fun SymptomLogCard(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                text = symptomLogWithSymptoms.first.date.toString(),
+                text = symptomLogWithSymptoms.getDate().toString(),
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding()
             )
             HorizontalDivider()
-            SymptomWithSeverityList(symptomsWithSeverity = symptomLogWithSymptoms.second)
+            SymptomWithSeverityList(symptomsWithSeverity = symptomLogWithSymptoms.items)
         }
     }
 }
@@ -107,8 +108,8 @@ fun SymptomWithSeverityList(symptomsWithSeverity: List<Symptom>, modifier: Modif
 fun AddFoodScreenPreview() {
     SymptomTrackerTheme {
         SymptomLogList(
-            symptomLogs = mapOf(
-                Pair(
+            symptomLogs = listOf(
+                SymptomLogWithSymptoms(
                     SymptomLog(1, OffsetDateTime.now()),
                     listOf(Symptom(1, "Bloating"))
                 )

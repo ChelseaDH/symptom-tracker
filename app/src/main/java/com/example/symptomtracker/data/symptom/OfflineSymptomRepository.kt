@@ -8,7 +8,7 @@ class OfflineSymptomRepository(private val symptomDao: SymptomDao) : SymptomRepo
 
     override fun getAllSymptomsStream(): Flow<List<Symptom>> = symptomDao.getAllSymptoms()
 
-    override fun getAllSymptomLogs(): Flow<Map<SymptomLog, List<Symptom>>> =
+    override fun getAllSymptomLogs(): Flow<List<SymptomLogWithSymptoms>> =
         symptomDao.getAllSymptomLogs()
 
     override fun getAllSymptomLogsBetweenDates(

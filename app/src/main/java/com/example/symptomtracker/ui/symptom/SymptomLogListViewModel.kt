@@ -5,8 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.symptomtracker.data.symptom.Symptom
-import com.example.symptomtracker.data.symptom.SymptomLog
+import com.example.symptomtracker.data.symptom.SymptomLogWithSymptoms
 import com.example.symptomtracker.data.symptom.SymptomRepository
 import kotlinx.coroutines.launch
 
@@ -26,5 +25,5 @@ class SymptomLogListViewModel(private val symptomRepository: SymptomRepository) 
 }
 
 data class UiState(
-    val symptomLogs: Map<SymptomLog, List<Symptom>> = mapOf(),
+    val symptomLogs: List<SymptomLogWithSymptoms> = listOf(),
 )

@@ -23,7 +23,7 @@ interface FoodLogDao {
     fun getAllItems(): Flow<List<Item>>
 
     @Transaction
-    @Query("SELECT * FROM food_log")
+    @Query("SELECT * FROM food_log ORDER BY date DESC")
     fun getAllFoodLogs(): Flow<List<FoodLogWithItems>>
 
     @Transaction

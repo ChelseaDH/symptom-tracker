@@ -42,9 +42,9 @@ interface SymptomDao {
 
     @Transaction
     @Query(
-        "SELECT * FROM symptom_log sl JOIN symptom_log_record slr ON slr.symptomLogId = sl.symptomLogId JOIN symptom s ON s.symptomId = slr.symptomId"
+        "SELECT * FROM symptom_log sl JOIN symptom_log_record slr ON slr.symptomLogId = sl.symptomLogId JOIN symptom s ON s.symptomId = slr.symptomId ORDER BY date DESC"
     )
-    fun getAllSymptomLogs(): Flow<Map<SymptomLog, List<Symptom>>>
+    fun getAllSymptomLogs(): Flow<List<SymptomLogWithSymptoms>>
 
     @Transaction
     @Query("SELECT * FROM symptom_log sl JOIN symptom_log_record slr ON slr.symptomLogId = sl.symptomLogId JOIN symptom s ON s.symptomId = slr.symptomId WHERE sl.date BETWEEN :startDate AND :endDate")
