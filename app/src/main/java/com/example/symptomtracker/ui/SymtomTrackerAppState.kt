@@ -8,6 +8,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
+import com.example.symptomtracker.feature.home.navigation.HOME_ROUTE
+import com.example.symptomtracker.feature.home.navigation.navigateToHome
 import com.example.symptomtracker.feature.logs.navigation.LOGS_ROUTE
 import com.example.symptomtracker.feature.logs.navigation.navigateToLogs
 import com.example.symptomtracker.navigation.TopLevelDestination
@@ -30,7 +32,7 @@ class AppState(
 
     val currentTopLevelDestination: TopLevelDestination?
         @Composable get() = when (currentDestination?.route) {
-            Route.HOME.name -> TopLevelDestination.HOME
+            HOME_ROUTE -> TopLevelDestination.HOME
             LOGS_ROUTE -> TopLevelDestination.LOGS
             else -> null
         }
@@ -56,7 +58,7 @@ class AppState(
         }
 
         when (topLevelDestination) {
-            TopLevelDestination.HOME -> navController.navigate(Route.HOME.name, navOptions)
+            TopLevelDestination.HOME -> navController.navigateToHome(navOptions)
             TopLevelDestination.LOGS -> navController.navigateToLogs(navOptions)
         }
     }

@@ -38,7 +38,7 @@ import kotlinx.coroutines.launch
 import java.util.Calendar
 
 @Composable
-fun AddFoodScreen(
+fun FoodEntryScreen(
     navigateBack: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: FoodEntryViewModel = hiltViewModel(),

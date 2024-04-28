@@ -37,7 +37,7 @@ import com.example.symptomtracker.ui.SymptomTrackerTopAppBar
 import java.util.Calendar
 
 @Composable
-fun AddMovementScreen(
+fun MovementEntryScreen(
     navigateBack: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MovementEntryViewModel = hiltViewModel(),

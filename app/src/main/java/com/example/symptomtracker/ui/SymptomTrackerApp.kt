@@ -24,10 +24,6 @@ import com.example.symptomtracker.R
 import com.example.symptomtracker.navigation.SymptomTrackerNavHost
 import com.example.symptomtracker.navigation.TopLevelDestination
 
-enum class Route {
-    HOME, ADD_FOOD, ADD_SYMPTOM, ADD_MOVEMENT
-}
-
 @Composable
 fun SymptomTrackerApp(appState: AppState) {
     val topLevelDestination = appState.currentTopLevelDestination

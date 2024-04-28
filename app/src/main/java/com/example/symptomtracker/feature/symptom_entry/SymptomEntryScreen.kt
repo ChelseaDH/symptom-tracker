@@ -46,7 +46,7 @@ import kotlinx.coroutines.launch
 import java.util.Calendar
 
 @Composable
-fun AddSymptomScreen(
+fun SymptomEntryScreen(
     navigateBack: () -> Unit,
     viewModel: SymptomEntryViewModel = hiltViewModel(),
 ) {
