@@ -42,21 +42,18 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.symptomtracker.R
-import com.example.symptomtracker.core.database.model.FoodLog
 import com.example.symptomtracker.core.database.model.FoodLogWithItems
-import com.example.symptomtracker.core.database.model.Item
 import com.example.symptomtracker.core.database.model.MovementLog
-import com.example.symptomtracker.core.database.model.Symptom
-import com.example.symptomtracker.core.database.model.SymptomLog
 import com.example.symptomtracker.core.database.model.SymptomLogWithSymptoms
 import com.example.symptomtracker.core.model.Log
-import com.example.symptomtracker.core.model.StoolType
 import com.example.symptomtracker.core.model.getDisplayName
 import com.example.symptomtracker.core.ui.DatePickerModal
 import com.example.symptomtracker.core.ui.LogItemCard
+import com.example.symptomtracker.core.ui.LogsPreviewParameterProvider
 import com.example.symptomtracker.core.ui.NoLogsFoundCard
 import kotlinx.coroutines.launch
 import java.time.OffsetDateTime
@@ -361,40 +358,14 @@ fun HomeBodyWithNoLogsPreview() {
 
 @Preview
 @Composable
-fun HomeBodyWithLogsPreview() {
+fun HomeBodyWithLogsPreview(@PreviewParameter(LogsPreviewParameterProvider::class) logs: List<Log>) {
     HomeBody(
         date = OffsetDateTime.parse("2023-03-02T00:00:00+00:00"),
         isToday = false,
         goToPreviousDate = {},
         goToNextDate = {},
         onDateChanged = { _ -> },
-        logs = listOf(
-            FoodLogWithItems(
-                log = FoodLog(1, OffsetDateTime.parse("2023-03-02T08:30:00+00:00")), items = listOf(
-                    Item(1, "Banana"),
-                    Item(2, "Oats"),
-                    Item(3, "Yogurt"),
-                )
-            ), SymptomLogWithSymptoms(
-                log = SymptomLog(1, OffsetDateTime.parse("2023-03-02T09:00:00+00:00")),
-                items = listOf(
-                    Symptom(1, "Bloating")
-                )
-            ), FoodLogWithItems(
-                log = FoodLog(2, OffsetDateTime.parse("2023-03-02T13:15:00+00:00")), items = listOf(
-                    Item(4, "Chicken"),
-                    Item(5, "Rice"),
-                    Item(6, "Peppers"),
-                    Item(7, "Chorizo"),
-                    Item(8, "Onion"),
-                    Item(9, "Olive oil"),
-                )
-            ), MovementLog(
-                movementLogId = 1,
-                date = OffsetDateTime.parse("2023-03-02T14:10:00+00:00"),
-                stoolType = StoolType.NORMAL_3,
-            )
-        )
+        logs = logs,
     )
 }
 

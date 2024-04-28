@@ -21,6 +21,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.symptomtracker.R
@@ -28,6 +29,7 @@ import com.example.symptomtracker.core.database.model.Item
 import com.example.symptomtracker.core.ui.DateInputFields
 import com.example.symptomtracker.core.ui.DateTimeInput
 import com.example.symptomtracker.core.ui.DateTimeInputRow
+import com.example.symptomtracker.core.ui.ItemPreviewParameterProvider
 import com.example.symptomtracker.core.ui.OutlinedInputTextFieldWithDropdown
 import com.example.symptomtracker.core.ui.SymptomTrackerTheme
 import com.example.symptomtracker.core.ui.TimeInputFields
@@ -200,16 +202,11 @@ fun FoodLogItemInput(
 
 @Composable
 @Preview(showSystemUi = true)
-fun AddFoodScreenPreview() {
+fun AddFoodScreenPreview(@PreviewParameter(ItemPreviewParameterProvider::class) items: List<Item>) {
     SymptomTrackerTheme {
         FoodEntryBody(
             foodLogUiState = FoodLogUiState(Calendar.getInstance()).copy(
-                availableItems = listOf(
-                    Item(itemId = 1, name = "Oats"),
-                    Item(itemId = 2, name = "Banana"),
-                    Item(itemId = 3, name = "Egg"),
-                    Item(itemId = 4, name = "Oat milk")
-                ),
+                availableItems = items,
                 chosenItem = null,
             ),
             onChosenItemUpdated = {},

@@ -35,7 +35,7 @@ import com.example.symptomtracker.R
 import com.example.symptomtracker.core.database.model.FoodLogWithItems
 import com.example.symptomtracker.core.model.Log
 import com.example.symptomtracker.core.model.getDisplayName
-import com.example.symptomtracker.core.ui.FoodLogsPreviewProvider
+import com.example.symptomtracker.core.ui.FoodLogsPreviewParameterProvider
 import com.example.symptomtracker.core.ui.LogItemCard
 import java.time.format.DateTimeFormatter
 
@@ -170,7 +170,7 @@ internal fun LogCard(log: Log, supportingText: String) {
 
 @Preview(showBackground = true)
 @Composable
-fun LogsScreenPreview(@PreviewParameter(FoodLogsPreviewProvider::class) foodLogs: List<FoodLogWithItems>) {
+fun LogsScreenPreview(@PreviewParameter(FoodLogsPreviewParameterProvider::class) foodLogs: List<FoodLogWithItems>) {
     LogsScreen(
         tabs = listOf("Food", "Symptom"),
         selectedTabIndex = 0,
