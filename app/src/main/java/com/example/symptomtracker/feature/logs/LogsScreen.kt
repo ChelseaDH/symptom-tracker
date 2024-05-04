@@ -41,6 +41,7 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun LogsRoute(
+    onFoodClick: (Long) -> Unit,
     onAddFoodClick: () -> Unit,
     onAddSymptomClick: () -> Unit,
     onAddMovementClick: () -> Unit,
@@ -54,6 +55,7 @@ fun LogsRoute(
         onSelectedTabChange = viewModel::updateSelectedTab,
         onLeftSwipe = viewModel::goToNextTab,
         onRightSwipe = viewModel::goToPreviousTab,
+        onFoodClick = onFoodClick,
         onAddFoodClick = onAddFoodClick,
         onAddSymptomClick = onAddSymptomClick,
         onAddMovementClick = onAddMovementClick,
@@ -70,6 +72,7 @@ internal fun LogsScreen(
     onSelectedTabChange: (Int) -> Unit,
     onLeftSwipe: () -> Unit,
     onRightSwipe: () -> Unit,
+    onFoodClick: (Long) -> Unit,
     onAddFoodClick: () -> Unit,
     onAddSymptomClick: () -> Unit,
     onAddMovementClick: () -> Unit,
@@ -85,7 +88,11 @@ internal fun LogsScreen(
             fabOnClick = onAddFoodClick
             tabContent = {
                 items(items = tabState.logs) { foodLog ->
-                    LogCard(log = foodLog, foodLog.items.joinToString { it.name })
+                    LogCard(
+                        log = foodLog,
+                        supportingText = foodLog.items.joinToString { it.name },
+                        onClick = { onFoodClick(foodLog.log.foodLogId) }
+                    )
                 }
             }
         }
@@ -159,12 +166,13 @@ internal fun LogsScreen(
 }
 
 @Composable
-internal fun LogCard(log: Log, supportingText: String) {
+internal fun LogCard(log: Log, supportingText: String, onClick: () -> Unit = {}) {
     LogItemCard(
         title = log.getDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
         date = log.getDate(),
         dateTimeFormatter = DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_hh_mm)),
-        supportingText = supportingText
+        supportingText = supportingText,
+        onClick = onClick
     )
 }
 
@@ -178,6 +186,7 @@ fun LogsScreenPreview(@PreviewParameter(FoodLogsPreviewParameterProvider::class)
         onSelectedTabChange = {},
         onLeftSwipe = {},
         onRightSwipe = {},
+        onFoodClick = {},
         onAddFoodClick = {},
         onAddSymptomClick = {},
         onAddMovementClick = {},

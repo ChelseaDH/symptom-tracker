@@ -30,6 +30,7 @@
     <string name="edit_date_cd">Edit date</string>
     <string name="no_logs_found">No logs found</string>
     <string name="timeline_title">Timeline</string>
+    <string name="datetime_format_ddd_dd_mmm">E, d MMM</string>
     <string name="datetime_format_hh_mm">HH:mm</string>
     <string name="previous_day_cd">Go to previous day</string>
     <string name="next_day_cd">Go to next day</string>

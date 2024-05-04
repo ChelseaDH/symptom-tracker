@@ -12,6 +12,8 @@ import com.example.symptomtracker.feature.movement_entry.navigation.movementEntr
 import com.example.symptomtracker.feature.movement_entry.navigation.navigateToMovementEntry
 import com.example.symptomtracker.feature.symptom_entry.navigation.navigateToSymptomEntry
 import com.example.symptomtracker.feature.symptom_entry.navigation.symptomEntryScreen
+import com.example.symptomtracker.feature.view_food.navigation.navigateToViewFood
+import com.example.symptomtracker.feature.view_food.navigation.viewFoodScreen
 
 @Composable
 fun SymptomTrackerNavHost(
@@ -22,8 +24,10 @@ fun SymptomTrackerNavHost(
             navigateToAddFood = navController::navigateToFoodEntry,
             navigateToAddSymptom = navController::navigateToSymptomEntry,
             navigateToAddMovement = navController::navigateToMovementEntry,
+            onFoodClick = navController::navigateToViewFood,
         )
         logsScreen(
+            onFoodClick = navController::navigateToViewFood,
             onAddFoodClick = navController::navigateToFoodEntry,
             onAddSymptomClick = navController::navigateToSymptomEntry,
             onAddMovementClick = navController::navigateToMovementEntry,
@@ -31,5 +35,6 @@ fun SymptomTrackerNavHost(
         foodEntryScreen(navigateBack = navController::navigateUp)
         movementEntryScreen(navigateBack = navController::navigateUp)
         symptomEntryScreen(navigateBack = navController::navigateUp)
+        viewFoodScreen(navigateBack = navController::navigateUp)
     }
 }

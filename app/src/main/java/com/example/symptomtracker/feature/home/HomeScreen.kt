@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -65,6 +66,7 @@ fun HomeScreen(
     navigateToAddFood: () -> Unit,
     navigateToAddSymptom: () -> Unit,
     navigateToAddMovement: () -> Unit,
+    onFoodClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeScreenViewModel = hiltViewModel(),
 ) {
@@ -93,8 +95,9 @@ fun HomeScreen(
             goToPreviousDate = viewModel::goToPreviousDay,
             goToNextDate = viewModel::goToNextDay,
             onDateChanged = viewModel::updateDate,
+            onFoodClick = onFoodClick,
             logs = viewModel.uiState.logs,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding),
         )
         if (viewModel.uiState.showBottomSheet) {
             ModalBottomSheet(
@@ -123,6 +126,7 @@ fun HomeBody(
     goToPreviousDate: () -> Unit,
     goToNextDate: () -> Unit,
     onDateChanged: (Long) -> Unit,
+    onFoodClick: (Long) -> Unit,
     logs: List<Log>,
     modifier: Modifier = Modifier,
 ) {
@@ -143,6 +147,7 @@ fun HomeBody(
             logs = logs,
             onLeftSwipe = goToNextDate,
             onRightSwipe = goToPreviousDate,
+            onFoodClick = onFoodClick,
         )
     }
 }
@@ -208,6 +213,7 @@ fun Timeline(
     logs: List<Log>,
     onLeftSwipe: () -> Unit,
     onRightSwipe: () -> Unit,
+    onFoodClick: (Long) -> Unit,
 ) {
     var swipeOffset by remember { mutableFloatStateOf(0f) }
 
@@ -233,20 +239,24 @@ fun Timeline(
                 NoLogsFoundCard()
             } else {
                 LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     items(items = logs) { log ->
                         when (log) {
-                            is FoodLogWithItems -> LogItemCard(icon = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.outline_nutrition_24),
-                                    contentDescription = stringResource(R.string.add_food_text)
-                                )
-                            },
+                            is FoodLogWithItems -> LogItemCard(
+                                icon = {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.outline_nutrition_24),
+                                        contentDescription = stringResource(R.string.add_food_text)
+                                    )
+                                },
                                 title = stringResource(R.string.add_food_text),
                                 date = log.getDate(),
                                 dateTimeFormatter = DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_hh_mm)),
-                                supportingText = log.items.joinToString { it.name })
+                                supportingText = log.items.joinToString { it.name },
+                                onClick = { onFoodClick(log.log.foodLogId) },
+                            )
 
                             is SymptomLogWithSymptoms -> LogItemCard(icon = {
                                 Icon(
@@ -352,6 +362,7 @@ fun HomeBodyWithNoLogsPreview() {
         goToPreviousDate = {},
         goToNextDate = {},
         onDateChanged = { _ -> },
+        onFoodClick = {},
         logs = listOf(),
     )
 }
@@ -365,6 +376,7 @@ fun HomeBodyWithLogsPreview(@PreviewParameter(LogsPreviewParameterProvider::clas
         goToPreviousDate = {},
         goToNextDate = {},
         onDateChanged = { _ -> },
+        onFoodClick = {},
         logs = logs,
     )
 }

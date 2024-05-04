@@ -11,12 +11,14 @@ const val LOGS_ROUTE = "logs"
 fun NavController.navigateToLogs(navOptions: NavOptions) = navigate(route = LOGS_ROUTE, navOptions)
 
 fun NavGraphBuilder.logsScreen(
+    onFoodClick: (Long) -> Unit,
     onAddFoodClick: () -> Unit,
     onAddSymptomClick: () -> Unit,
     onAddMovementClick: () -> Unit,
 ) {
     composable(route = LOGS_ROUTE) {
         LogsRoute(
+            onFoodClick = onFoodClick,
             onAddFoodClick = onAddFoodClick,
             onAddSymptomClick = onAddSymptomClick,
             onAddMovementClick = onAddMovementClick,

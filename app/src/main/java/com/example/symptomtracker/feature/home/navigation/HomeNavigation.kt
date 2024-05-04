@@ -14,12 +14,14 @@ fun NavGraphBuilder.homeScreen(
     navigateToAddFood: () -> Unit,
     navigateToAddSymptom: () -> Unit,
     navigateToAddMovement: () -> Unit,
+    onFoodClick: (Long) -> Unit,
 ) {
     composable(route = HOME_ROUTE) {
         HomeScreen(
             navigateToAddFood = navigateToAddFood,
             navigateToAddSymptom = navigateToAddSymptom,
             navigateToAddMovement = navigateToAddMovement,
+            onFoodClick = onFoodClick,
         )
     }
 }

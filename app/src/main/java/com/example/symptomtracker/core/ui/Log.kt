@@ -1,5 +1,6 @@
 package com.example.symptomtracker.core.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,8 +18,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.example.symptomtracker.R
+import com.example.symptomtracker.core.database.model.FoodLogWithItems
+import com.example.symptomtracker.core.model.Log
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
@@ -52,8 +56,11 @@ fun LogItemCard(
     date: OffsetDateTime,
     dateTimeFormatter: DateTimeFormatter,
     supportingText: String,
+    onClick: () -> Unit = {},
 ) {
-    ElevatedCard(modifier = modifier) {
+    ElevatedCard(
+        modifier = modifier.clickable(onClick = onClick)
+    ) {
         Column(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -84,6 +91,32 @@ fun LogItemCard(
     }
 }
 
+@Composable
+fun LogDateTime(log: Log) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = log.getDate()
+                .format(DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_ddd_dd_mmm))),
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.secondary,
+        )
+        Text(
+            text = "•",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.secondary,
+        )
+        Text(
+            text = log.getDate()
+                .format(DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_hh_mm))),
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.secondary,
+        )
+    }
+}
+
 @Preview
 @Composable
 fun NoLogsFoundPreview() {
@@ -105,4 +138,15 @@ fun LogItemCardPreview() {
         dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss"),
         supportingText = "banana, oats, yoghurt"
     )
+}
+
+@Preview
+@Composable
+fun LogDateTimePreview(
+    @PreviewParameter(
+        FoodLogPreviewParameterProvider::class,
+        limit = 1
+    ) foodLog: FoodLogWithItems
+) {
+    LogDateTime(log = foodLog)
 }

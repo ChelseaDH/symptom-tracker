@@ -29,3 +29,15 @@ class FoodLogsPreviewParameterProvider : PreviewParameterProvider<List<FoodLogWi
         )
     )
 }
+
+class FoodLogPreviewParameterProvider : PreviewParameterProvider<FoodLogWithItems> {
+    override val values = sequenceOf(
+        FoodLogWithItems(
+            log = FoodLog(1, OffsetDateTime.now()),
+            items = listOf(
+                Item(1, "Banana"),
+                Item(2, "Oats"),
+            )
+        ),
+    )
+}

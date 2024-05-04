@@ -26,6 +26,11 @@ interface FoodLogRepository {
     fun getAllFoodLogs(): Flow<List<FoodLogWithItems>>
 
     /**
+     * Retrieves a [FoodLog] record with a given ID with its associated [Item] records.
+     */
+    suspend fun getFoodLog(id: Long): Flow<FoodLogWithItems>
+
+    /**
      * Retrieves all [FoodLog] records with their associated [Item] records between two given dates.
      */
     fun getAllFoodLogsBetweenDates(

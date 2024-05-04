@@ -37,6 +37,10 @@ interface FoodLogDao {
         endDate: OffsetDateTime
     ): Flow<List<FoodLogWithItems>>
 
+    @Transaction
+    @Query("SELECT * FROM food_log WHERE foodLogId = :id")
+    fun getFoodLog(id: Long): Flow<FoodLogWithItems>
+
     @Insert
     suspend fun insertFoodLogItemCrossRef(foodLogItemCrossRef: FoodLogItemCrossRef)
 
