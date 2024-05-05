@@ -23,6 +23,9 @@ class OfflineSymptomRepository @Inject constructor(private val symptomDao: Sympt
     ): Flow<List<SymptomLogWithSymptoms>> =
         symptomDao.getAllSymptomLogsBetweenDates(startDate, endDate)
 
+    override fun getSymptomLog(id: Long): Flow<SymptomLogWithSymptoms> =
+        symptomDao.getSymptomLog(id)
+
     override suspend fun insertSymptomLogWithSymptom(symptomLogWithSymptoms: SymptomLogWithSymptomsAndSeverity) =
         symptomDao.insertSymptomLogWithSymptoms(symptomLogWithSymptoms)
 }

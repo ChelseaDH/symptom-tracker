@@ -57,4 +57,8 @@ interface SymptomDao {
         startDate: OffsetDateTime,
         endDate: OffsetDateTime
     ): Flow<List<SymptomLogWithSymptoms>>
+
+    @Transaction
+    @Query("SELECT * FROM symptom_log sl JOIN symptom_log_record slr ON slr.symptomLogId = sl.symptomLogId JOIN symptom s ON s.symptomId = slr.symptomId WHERE sl.symptomLogId = :id")
+    fun getSymptomLog(id: Long): Flow<SymptomLogWithSymptoms>
 }

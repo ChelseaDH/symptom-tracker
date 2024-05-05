@@ -67,6 +67,7 @@ fun HomeScreen(
     navigateToAddSymptom: () -> Unit,
     navigateToAddMovement: () -> Unit,
     onFoodClick: (Long) -> Unit,
+    onSymptomClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeScreenViewModel = hiltViewModel(),
 ) {
@@ -96,6 +97,7 @@ fun HomeScreen(
             goToNextDate = viewModel::goToNextDay,
             onDateChanged = viewModel::updateDate,
             onFoodClick = onFoodClick,
+            onSymptomClick = onSymptomClick,
             logs = viewModel.uiState.logs,
             modifier = Modifier.padding(innerPadding),
         )
@@ -127,6 +129,7 @@ fun HomeBody(
     goToNextDate: () -> Unit,
     onDateChanged: (Long) -> Unit,
     onFoodClick: (Long) -> Unit,
+    onSymptomClick: (Long) -> Unit,
     logs: List<Log>,
     modifier: Modifier = Modifier,
 ) {
@@ -148,6 +151,7 @@ fun HomeBody(
             onLeftSwipe = goToNextDate,
             onRightSwipe = goToPreviousDate,
             onFoodClick = onFoodClick,
+            onSymptomClick = onSymptomClick,
         )
     }
 }
@@ -214,6 +218,7 @@ fun Timeline(
     onLeftSwipe: () -> Unit,
     onRightSwipe: () -> Unit,
     onFoodClick: (Long) -> Unit,
+    onSymptomClick: (Long) -> Unit,
 ) {
     var swipeOffset by remember { mutableFloatStateOf(0f) }
 
@@ -258,16 +263,19 @@ fun Timeline(
                                 onClick = { onFoodClick(log.log.foodLogId) },
                             )
 
-                            is SymptomLogWithSymptoms -> LogItemCard(icon = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.outline_symptoms_24),
-                                    contentDescription = stringResource(R.string.add_symptom_text)
-                                )
-                            },
+                            is SymptomLogWithSymptoms -> LogItemCard(
+                                icon = {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.outline_symptoms_24),
+                                        contentDescription = stringResource(R.string.add_symptom_text)
+                                    )
+                                },
                                 title = stringResource(R.string.add_symptom_text),
                                 date = log.getDate(),
                                 dateTimeFormatter = DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_hh_mm)),
-                                supportingText = log.items.joinToString { it.name })
+                                supportingText = log.items.joinToString { it.name },
+                                onClick = { onSymptomClick(log.log.symptomLogId) },
+                            )
 
                             is MovementLog -> LogItemCard(
                                 icon = {
@@ -363,6 +371,7 @@ fun HomeBodyWithNoLogsPreview() {
         goToNextDate = {},
         onDateChanged = { _ -> },
         onFoodClick = {},
+        onSymptomClick = {},
         logs = listOf(),
     )
 }
@@ -377,6 +386,7 @@ fun HomeBodyWithLogsPreview(@PreviewParameter(LogsPreviewParameterProvider::clas
         goToNextDate = {},
         onDateChanged = { _ -> },
         onFoodClick = {},
+        onSymptomClick = {},
         logs = logs,
     )
 }

@@ -43,6 +43,7 @@ import java.time.format.DateTimeFormatter
 fun LogsRoute(
     onFoodClick: (Long) -> Unit,
     onAddFoodClick: () -> Unit,
+    onSymptomClick: (Long) -> Unit,
     onAddSymptomClick: () -> Unit,
     onAddMovementClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -57,6 +58,7 @@ fun LogsRoute(
         onRightSwipe = viewModel::goToPreviousTab,
         onFoodClick = onFoodClick,
         onAddFoodClick = onAddFoodClick,
+        onSymptomClick = onSymptomClick,
         onAddSymptomClick = onAddSymptomClick,
         onAddMovementClick = onAddMovementClick,
         modifier = modifier,
@@ -74,6 +76,7 @@ internal fun LogsScreen(
     onRightSwipe: () -> Unit,
     onFoodClick: (Long) -> Unit,
     onAddFoodClick: () -> Unit,
+    onSymptomClick: (Long) -> Unit,
     onAddSymptomClick: () -> Unit,
     onAddMovementClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -101,7 +104,11 @@ internal fun LogsScreen(
             fabOnClick = onAddSymptomClick
             tabContent = {
                 items(items = tabState.logs) { symptomLog ->
-                    LogCard(log = symptomLog, symptomLog.items.joinToString { it.name })
+                    LogCard(
+                        log = symptomLog,
+                        symptomLog.items.joinToString { it.name },
+                        onClick = { onSymptomClick(symptomLog.log.symptomLogId) }
+                    )
                 }
             }
         }
@@ -188,6 +195,7 @@ fun LogsScreenPreview(@PreviewParameter(FoodLogsPreviewParameterProvider::class)
         onRightSwipe = {},
         onFoodClick = {},
         onAddFoodClick = {},
+        onSymptomClick = {},
         onAddSymptomClick = {},
         onAddMovementClick = {},
     )

@@ -13,6 +13,7 @@ fun NavController.navigateToLogs(navOptions: NavOptions) = navigate(route = LOGS
 fun NavGraphBuilder.logsScreen(
     onFoodClick: (Long) -> Unit,
     onAddFoodClick: () -> Unit,
+    onSymptomClick: (Long) -> Unit,
     onAddSymptomClick: () -> Unit,
     onAddMovementClick: () -> Unit,
 ) {
@@ -20,6 +21,7 @@ fun NavGraphBuilder.logsScreen(
         LogsRoute(
             onFoodClick = onFoodClick,
             onAddFoodClick = onAddFoodClick,
+            onSymptomClick = onSymptomClick,
             onAddSymptomClick = onAddSymptomClick,
             onAddMovementClick = onAddMovementClick,
         )
