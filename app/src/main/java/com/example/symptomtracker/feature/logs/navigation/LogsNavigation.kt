@@ -15,6 +15,7 @@ fun NavGraphBuilder.logsScreen(
     onAddFoodClick: () -> Unit,
     onSymptomClick: (Long) -> Unit,
     onAddSymptomClick: () -> Unit,
+    onMovementClick: (Long) -> Unit,
     onAddMovementClick: () -> Unit,
 ) {
     composable(route = LOGS_ROUTE) {
@@ -23,6 +24,7 @@ fun NavGraphBuilder.logsScreen(
             onAddFoodClick = onAddFoodClick,
             onSymptomClick = onSymptomClick,
             onAddSymptomClick = onAddSymptomClick,
+            onMovementClick = onMovementClick,
             onAddMovementClick = onAddMovementClick,
         )
     }

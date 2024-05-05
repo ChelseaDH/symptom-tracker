@@ -22,4 +22,8 @@ interface MovementDao {
         startDate: OffsetDateTime,
         endDate: OffsetDateTime
     ): Flow<List<MovementLog>>
+
+    @Transaction
+    @Query("SELECT * FROM movement_log WHERE movementLogId = :id")
+    fun getMovementLog(id: Long): Flow<MovementLog>
 }

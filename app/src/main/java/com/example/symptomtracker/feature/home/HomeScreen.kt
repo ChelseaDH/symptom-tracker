@@ -68,6 +68,7 @@ fun HomeScreen(
     navigateToAddMovement: () -> Unit,
     onFoodClick: (Long) -> Unit,
     onSymptomClick: (Long) -> Unit,
+    onMovementClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeScreenViewModel = hiltViewModel(),
 ) {
@@ -98,6 +99,7 @@ fun HomeScreen(
             onDateChanged = viewModel::updateDate,
             onFoodClick = onFoodClick,
             onSymptomClick = onSymptomClick,
+            onMovementClick = onMovementClick,
             logs = viewModel.uiState.logs,
             modifier = Modifier.padding(innerPadding),
         )
@@ -130,6 +132,7 @@ fun HomeBody(
     onDateChanged: (Long) -> Unit,
     onFoodClick: (Long) -> Unit,
     onSymptomClick: (Long) -> Unit,
+    onMovementClick: (Long) -> Unit,
     logs: List<Log>,
     modifier: Modifier = Modifier,
 ) {
@@ -152,6 +155,7 @@ fun HomeBody(
             onRightSwipe = goToPreviousDate,
             onFoodClick = onFoodClick,
             onSymptomClick = onSymptomClick,
+            onMovementClick = onMovementClick,
         )
     }
 }
@@ -219,6 +223,7 @@ fun Timeline(
     onRightSwipe: () -> Unit,
     onFoodClick: (Long) -> Unit,
     onSymptomClick: (Long) -> Unit,
+    onMovementClick: (Long) -> Unit,
 ) {
     var swipeOffset by remember { mutableFloatStateOf(0f) }
 
@@ -288,6 +293,7 @@ fun Timeline(
                                 date = log.getDate(),
                                 dateTimeFormatter = DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_hh_mm)),
                                 supportingText = log.stoolType.getDisplayName(),
+                                onClick = { onMovementClick(log.movementLogId) }
                             )
                         }
                     }
@@ -372,6 +378,7 @@ fun HomeBodyWithNoLogsPreview() {
         onDateChanged = { _ -> },
         onFoodClick = {},
         onSymptomClick = {},
+        onMovementClick = {},
         logs = listOf(),
     )
 }
@@ -387,6 +394,7 @@ fun HomeBodyWithLogsPreview(@PreviewParameter(LogsPreviewParameterProvider::clas
         onDateChanged = { _ -> },
         onFoodClick = {},
         onSymptomClick = {},
+        onMovementClick = {},
         logs = logs,
     )
 }

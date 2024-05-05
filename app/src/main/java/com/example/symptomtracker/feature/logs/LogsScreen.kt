@@ -45,6 +45,7 @@ fun LogsRoute(
     onAddFoodClick: () -> Unit,
     onSymptomClick: (Long) -> Unit,
     onAddSymptomClick: () -> Unit,
+    onMovementClick: (Long) -> Unit,
     onAddMovementClick: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LogsViewModel = hiltViewModel(),
@@ -60,6 +61,7 @@ fun LogsRoute(
         onAddFoodClick = onAddFoodClick,
         onSymptomClick = onSymptomClick,
         onAddSymptomClick = onAddSymptomClick,
+        onMovementClick = onMovementClick,
         onAddMovementClick = onAddMovementClick,
         modifier = modifier,
     )
@@ -78,6 +80,7 @@ internal fun LogsScreen(
     onAddFoodClick: () -> Unit,
     onSymptomClick: (Long) -> Unit,
     onAddSymptomClick: () -> Unit,
+    onMovementClick: (Long) -> Unit,
     onAddMovementClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -106,7 +109,7 @@ internal fun LogsScreen(
                 items(items = tabState.logs) { symptomLog ->
                     LogCard(
                         log = symptomLog,
-                        symptomLog.items.joinToString { it.name },
+                        supportingText = symptomLog.items.joinToString { it.name },
                         onClick = { onSymptomClick(symptomLog.log.symptomLogId) }
                     )
                 }
@@ -116,8 +119,12 @@ internal fun LogsScreen(
         is TabUiState.MovementLogs -> {
             fabOnClick = onAddMovementClick
             tabContent = {
-                items(items = tabState.logs) {
-                    LogCard(log = it, it.stoolType.getDisplayName())
+                items(items = tabState.logs) { movementLog ->
+                    LogCard(
+                        log = movementLog,
+                        supportingText = movementLog.stoolType.getDisplayName(),
+                        onClick = { onMovementClick(movementLog.movementLogId) }
+                    )
                 }
             }
         }
@@ -197,6 +204,7 @@ fun LogsScreenPreview(@PreviewParameter(FoodLogsPreviewParameterProvider::class)
         onAddFoodClick = {},
         onSymptomClick = {},
         onAddSymptomClick = {},
+        onMovementClick = {},
         onAddMovementClick = {},
     )
 }

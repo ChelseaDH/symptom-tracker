@@ -25,4 +25,9 @@ interface MovementRepository {
         startDate: OffsetDateTime,
         endDate: OffsetDateTime
     ): Flow<List<MovementLog>>
+
+    /**
+     * Retrieves a [MovementLog] record with a given ID.
+     */
+    suspend fun getMovementLog(id: Long): Flow<MovementLog>
 }

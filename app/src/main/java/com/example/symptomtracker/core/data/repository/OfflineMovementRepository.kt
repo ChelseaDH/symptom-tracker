@@ -18,4 +18,7 @@ class OfflineMovementRepository @Inject constructor(private val movementDao: Mov
         startDate: OffsetDateTime,
         endDate: OffsetDateTime
     ): Flow<List<MovementLog>> = movementDao.getAllMovementLogsBetweenDates(startDate, endDate)
+
+    override suspend fun getMovementLog(id: Long): Flow<MovementLog> =
+        movementDao.getMovementLog(id)
 }
