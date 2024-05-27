@@ -35,4 +35,8 @@
     <string name="previous_day_cd">Go to previous day</string>
     <string name="next_day_cd">Go to next day</string>
     <string name="feature_logs_title">Logs</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="delete_log_confirmation_title">Delete log?</string>
+    <string name="delete_log_confirmation_body">This will permanently remove the selected log.</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.example.symptomtracker.core.database.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
@@ -25,5 +26,8 @@ interface MovementDao {
 
     @Transaction
     @Query("SELECT * FROM movement_log WHERE movementLogId = :id")
-    fun getMovementLog(id: Long): Flow<MovementLog>
+    fun getMovementLog(id: Long): Flow<MovementLog?>
+
+    @Delete
+    suspend fun deleteLog(movementLog: MovementLog)
 }

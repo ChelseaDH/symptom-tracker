@@ -1,6 +1,7 @@
 package com.example.symptomtracker.core.database.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -60,5 +61,8 @@ interface SymptomDao {
 
     @Transaction
     @Query("SELECT * FROM symptom_log sl JOIN symptom_log_record slr ON slr.symptomLogId = sl.symptomLogId JOIN symptom s ON s.symptomId = slr.symptomId WHERE sl.symptomLogId = :id")
-    fun getSymptomLog(id: Long): Flow<SymptomLogWithSymptoms>
+    fun getSymptomLog(id: Long): Flow<SymptomLogWithSymptoms?>
+
+    @Delete
+    suspend fun deleteLog(symptomLog: SymptomLog)
 }

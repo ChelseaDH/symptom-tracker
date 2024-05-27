@@ -15,20 +15,26 @@ import com.example.symptomtracker.core.ui.ViewLogUiState
 @Composable
 fun ViewFoodRoute(
     navigateBack: () -> Unit,
-    viewModel: ViewFoodViewModel = hiltViewModel()
+    viewModel: ViewFoodViewModel = hiltViewModel(),
 ) {
-    ViewFoodScreen(navigateBack = navigateBack, state = viewModel.uiState)
+    ViewFoodScreen(
+        navigateBack = navigateBack,
+        state = viewModel.uiState,
+        onDelete = viewModel::deleteLog
+    )
 }
 
 @Composable
 fun ViewFoodScreen(
     navigateBack: () -> Unit,
     state: ViewFoodUiState = ViewLogUiState.Loading,
+    onDelete: (FoodLogWithItems) -> Unit,
 ) {
     ViewLogScreen(
         navigateBack = navigateBack,
         uiState = state,
         title = R.string.add_food_text,
+        deleteLog = onDelete,
         bodyContent = {
             it.items.forEach { item ->
                 ListItem(
@@ -50,5 +56,6 @@ fun ViewFoodContentPreview(
     ViewFoodScreen(
         navigateBack = {},
         state = ViewLogUiState.Data(foodLog),
+        onDelete = {},
     )
 }

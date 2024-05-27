@@ -29,5 +29,10 @@ interface MovementRepository {
     /**
      * Retrieves a [MovementLog] record with a given ID.
      */
-    suspend fun getMovementLog(id: Long): Flow<MovementLog>
+    suspend fun getMovementLog(id: Long): Flow<MovementLog?>
+
+    /**
+     * Deletes a [MovementLog].
+     */
+    suspend fun deleteLog(movementLog: MovementLog)
 }

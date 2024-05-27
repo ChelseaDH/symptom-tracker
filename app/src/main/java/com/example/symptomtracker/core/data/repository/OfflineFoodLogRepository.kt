@@ -16,7 +16,7 @@ class OfflineFoodLogRepository @Inject constructor(private val foodLogDao: FoodL
 
     override fun getAllFoodLogs(): Flow<List<FoodLogWithItems>> = foodLogDao.getAllFoodLogs()
 
-    override suspend fun getFoodLog(id: Long): Flow<FoodLogWithItems> = foodLogDao.getFoodLog(id)
+    override suspend fun getFoodLog(id: Long): Flow<FoodLogWithItems?> = foodLogDao.getFoodLog(id)
 
     override fun getAllFoodLogsBetweenDates(
         startDate: OffsetDateTime,
@@ -25,4 +25,7 @@ class OfflineFoodLogRepository @Inject constructor(private val foodLogDao: FoodL
         foodLogDao.getAllFoodLogsBetweenDates(startDate, endDate)
 
     override suspend fun insertItem(item: Item) = foodLogDao.insertItem(item)
+
+    override suspend fun deleteWithItems(foodLogWithItems: FoodLogWithItems) =
+        foodLogDao.deleteLog(foodLogWithItems.log)
 }

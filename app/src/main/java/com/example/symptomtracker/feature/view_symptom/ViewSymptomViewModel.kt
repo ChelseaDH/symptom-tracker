@@ -27,8 +27,18 @@ class ViewSymptomViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             symptomRepository.getSymptomLog(logId).collect { symptomLog ->
-                uiState = ViewLogUiState.Data(symptomLog)
+                uiState = if (symptomLog !== null) {
+                    ViewLogUiState.Data(symptomLog)
+                } else {
+                    ViewLogUiState.Empty
+                }
             }
+        }
+    }
+
+    fun deleteLog(symptomLogWithSymptoms: SymptomLogWithSymptoms) {
+        viewModelScope.launch {
+            symptomRepository.deleteWithSymptoms(symptomLogWithSymptoms)
         }
     }
 }

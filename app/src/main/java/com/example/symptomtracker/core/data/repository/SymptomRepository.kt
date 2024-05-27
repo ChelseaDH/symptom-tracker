@@ -37,10 +37,15 @@ interface SymptomRepository {
     /**
      * Retrieves a [SymptomLog] record with a given ID with its associated [Symptom] records.
      */
-    fun getSymptomLog(id: Long): Flow<SymptomLogWithSymptoms>
+    fun getSymptomLog(id: Long): Flow<SymptomLogWithSymptoms?>
 
     /**
      * Insert [SymptomLog] and associated [Symptom] records via the [SymptomLogWithSymptomsAndSeverity] object.
      */
     suspend fun insertSymptomLogWithSymptom(symptomLogWithSymptoms: SymptomLogWithSymptomsAndSeverity)
+
+    /**
+     * Deletes a [SymptomLog] and its associated [Symptom] records.
+     */
+    suspend fun deleteWithSymptoms(symptomLogWithSymptoms: SymptomLogWithSymptoms)
 }

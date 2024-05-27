@@ -28,8 +28,18 @@ class ViewFoodViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             foodLogRepository.getFoodLog(logId).collect { foodLog ->
-                uiState = ViewLogUiState.Data(foodLog)
+                uiState = if (foodLog !== null) {
+                    ViewLogUiState.Data(foodLog)
+                } else {
+                    ViewLogUiState.Empty
+                }
             }
+        }
+    }
+
+    fun deleteLog(foodLogWithItems: FoodLogWithItems) {
+        viewModelScope.launch {
+            foodLogRepository.deleteWithItems(foodLogWithItems)
         }
     }
 }

@@ -18,18 +18,24 @@ fun ViewMovementRoute(
     navigateBack: () -> Unit,
     viewModel: ViewMovementViewModel = hiltViewModel()
 ) {
-    ViewMovementScreen(navigateBack = navigateBack, state = viewModel.uiState)
+    ViewMovementScreen(
+        navigateBack = navigateBack,
+        deleteLog = viewModel::deleteLog,
+        state = viewModel.uiState,
+    )
 }
 
 @Composable
 fun ViewMovementScreen(
     navigateBack: () -> Unit,
+    deleteLog: (MovementLog) -> Unit,
     state: ViewMovementUiState = ViewLogUiState.Loading,
 ) {
     ViewLogScreen(
         navigateBack = navigateBack,
         uiState = state,
         title = R.string.add_movement_text,
+        deleteLog = deleteLog,
         bodyContent = {
             ListItem(
                 headlineContent = { Text(text = it.stoolType.getDisplayName()) }
@@ -48,6 +54,7 @@ fun ViewMovementContentPreview(
 ) {
     ViewMovementScreen(
         navigateBack = {},
+        deleteLog = {},
         state = ViewLogUiState.Data(log),
     )
 }

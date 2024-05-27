@@ -4,17 +4,28 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.symptomtracker.R
 import com.example.symptomtracker.core.model.Log
 import com.example.symptomtracker.ui.SymptomTrackerTopAppBar
 
@@ -23,33 +34,65 @@ fun <L : Log> ViewLogScreen(
     navigateBack: () -> Unit,
     uiState: ViewLogUiState<L>,
     @StringRes title: Int,
-    bodyContent: @Composable ColumnScope.(L) -> Unit
+    deleteLog: (L) -> Unit = {},
+    bodyContent: @Composable ColumnScope.(L) -> Unit,
+) {
+    when (uiState) {
+        is ViewLogUiState.Loading, ViewLogUiState.Empty -> ViewLogsScreen(navigateBack = navigateBack)
+
+        is ViewLogUiState.Data -> {
+            val openDeleteDialog = remember { mutableStateOf(false) }
+
+            ViewLogsScreen(
+                navigateBack = navigateBack,
+                topBarActions = {
+                    IconButton(onClick = { openDeleteDialog.value = true }) {
+                        Icon(imageVector = Icons.Filled.Delete, contentDescription = null)
+                    }
+                }
+            ) {
+                ViewLogBody(
+                    log = uiState.log,
+                    title = title,
+                    bodyContent = bodyContent,
+                )
+            }
+
+            if (openDeleteDialog.value) {
+                DeleteLogAlertDialog(
+                    onDismissRequest = { openDeleteDialog.value = false },
+                    onDelete = {
+                        deleteLog(uiState.log)
+                        navigateBack()
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+internal fun ViewLogsScreen(
+    navigateBack: () -> Unit,
+    topBarActions: @Composable (RowScope.() -> Unit) = {},
+    content: @Composable ColumnScope.() -> Unit = {},
 ) {
     Scaffold(
         topBar = {
             SymptomTrackerTopAppBar(
                 title = "",
                 canNavigateBack = true,
-                navigateUp = navigateBack
+                navigateUp = navigateBack,
+                actions = topBarActions,
             )
-        },
+        }
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
                 .padding(8.dp)
         ) {
-            when (uiState) {
-                is ViewLogUiState.Loading -> Unit
-
-                is ViewLogUiState.Data -> {
-                    ViewLogBody(
-                        log = uiState.log,
-                        title = title,
-                        bodyContent = bodyContent,
-                    )
-                }
-            }
+            content()
         }
     }
 }
@@ -78,4 +121,40 @@ internal fun <L : Log> ViewLogBody(
             bodyContent(log)
         }
     }
+}
+
+@Composable
+internal fun DeleteLogAlertDialog(
+    onDismissRequest: () -> Unit,
+    onDelete: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        confirmButton = {
+            TextButton(onClick = onDelete) {
+                Text(text = stringResource(id = R.string.action_delete))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismissRequest)
+            {
+                Text(text = stringResource(R.string.action_cancel))
+            }
+        },
+        icon = {
+            Icon(imageVector = Icons.Filled.Delete, contentDescription = null)
+        },
+        title = {
+            Text(text = stringResource(R.string.delete_log_confirmation_title))
+        },
+        text = {
+            Text(text = stringResource(R.string.delete_log_confirmation_body))
+        }
+    )
+}
+
+@Preview
+@Composable
+fun DeleteLogAlertDialogPreview() {
+    DeleteLogAlertDialog(onDismissRequest = {}, onDelete = {})
 }

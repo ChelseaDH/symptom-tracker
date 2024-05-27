@@ -28,8 +28,18 @@ class ViewMovementViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             movementRepository.getMovementLog(logId).collect { log ->
-                uiState = ViewLogUiState.Data(log)
+                uiState = if (log !== null) {
+                    ViewLogUiState.Data(log)
+                } else {
+                    ViewLogUiState.Empty
+                }
             }
+        }
+    }
+
+    fun deleteLog(movementLog: MovementLog) {
+        viewModelScope.launch {
+            movementRepository.deleteLog(movementLog)
         }
     }
 }

@@ -28,7 +28,7 @@ interface FoodLogRepository {
     /**
      * Retrieves a [FoodLog] record with a given ID with its associated [Item] records.
      */
-    suspend fun getFoodLog(id: Long): Flow<FoodLogWithItems>
+    suspend fun getFoodLog(id: Long): Flow<FoodLogWithItems?>
 
     /**
      * Retrieves all [FoodLog] records with their associated [Item] records between two given dates.
@@ -42,4 +42,9 @@ interface FoodLogRepository {
      * Insert [Item] record.
      */
     suspend fun insertItem(item: Item)
+
+    /**
+     * Deletes a [FoodLog] and its associated [Item] records.
+     */
+    suspend fun deleteWithItems(foodLogWithItems: FoodLogWithItems)
 }

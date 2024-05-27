@@ -19,6 +19,7 @@ fun ViewSymptomRoute(
 ) {
     ViewSymptomScreen(
         navigateBack = navigateBack,
+        deleteLog = viewModel::deleteLog,
         state = viewModel.uiState,
     )
 }
@@ -26,12 +27,14 @@ fun ViewSymptomRoute(
 @Composable
 internal fun ViewSymptomScreen(
     navigateBack: () -> Unit,
+    deleteLog: (SymptomLogWithSymptoms) -> Unit,
     state: ViewSymptomUiState = ViewLogUiState.Loading,
 ) {
     ViewLogScreen(
         navigateBack = navigateBack,
         uiState = state,
         title = R.string.add_symptom_text,
+        deleteLog = deleteLog,
         bodyContent = {
             it.items.forEach { item ->
                 ListItem(
@@ -52,6 +55,7 @@ fun ViewSymptomScreenPreview(
 ) {
     ViewSymptomScreen(
         navigateBack = {},
+        deleteLog = {},
         state = ViewLogUiState.Data(symptomLog),
     )
 }
