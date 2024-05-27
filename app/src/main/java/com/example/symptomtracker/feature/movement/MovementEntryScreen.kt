@@ -1,3 +1,6 @@
+package com.example.symptomtracker.feature.movement
+
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.symptomtracker.R
 import com.example.symptomtracker.core.model.StoolType
 import com.example.symptomtracker.core.model.getDescription
@@ -31,26 +33,25 @@ import com.example.symptomtracker.core.ui.DateTimeInputRow
 import com.example.symptomtracker.core.ui.OutlinedReadonlyTextFieldWithDropdown
 import com.example.symptomtracker.core.ui.SymptomTrackerTheme
 import com.example.symptomtracker.core.ui.TimeInputFields
-import com.example.symptomtracker.feature.movement_entry.MovementEntryViewModel
-import com.example.symptomtracker.feature.movement_entry.MovementUiState
 import com.example.symptomtracker.ui.SymptomTrackerTopAppBar
 import java.util.Calendar
 
 @Composable
-fun MovementEntryScreen(
+internal fun MovementEntryScreen(
     navigateBack: () -> Unit,
+    @StringRes titleId: Int,
     modifier: Modifier = Modifier,
-    viewModel: MovementEntryViewModel = hiltViewModel(),
+    viewModel: AbstractMovementEntryViewModel,
 ) {
     Scaffold(
         topBar = {
             SymptomTrackerTopAppBar(
-                title = stringResource(R.string.log_movement_title),
+                title = stringResource(titleId),
                 canNavigateBack = true,
                 navigateUp = navigateBack,
                 actions = {
                     TextButton(onClick = {
-                        viewModel.insertMovementLog()
+                        viewModel.submit()
                         navigateBack()
                     }) {
                         Text(text = stringResource(R.string.save_button_text))
@@ -72,7 +73,7 @@ fun MovementEntryScreen(
 
 @Composable
 fun MovementEntryBody(
-    uiState: MovementUiState,
+    uiState: MovementEntryUiState,
     onChosenStoolTypeUpdated: (StoolType) -> Unit,
     onDateChanged: (DateInputFields) -> Unit,
     onTimeChanged: (TimeInputFields) -> Unit,
@@ -167,7 +168,7 @@ fun Avatar(text: String) {
 fun AddMovementScreenPreview() {
     SymptomTrackerTheme {
         MovementEntryBody(
-            uiState = MovementUiState(Calendar.getInstance()),
+            uiState = MovementEntryUiState(Calendar.getInstance()),
             onChosenStoolTypeUpdated = {},
             onDateChanged = {},
             onTimeChanged = {},

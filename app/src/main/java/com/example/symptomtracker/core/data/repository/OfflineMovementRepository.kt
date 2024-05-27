@@ -24,4 +24,7 @@ class OfflineMovementRepository @Inject constructor(private val movementDao: Mov
 
     override suspend fun deleteLog(movementLog: MovementLog) =
         movementDao.deleteLog(movementLog)
+
+    override suspend fun updateLog(movementLog: MovementLog) =
+        movementDao.updateLog(movementLog = movementLog)
 }

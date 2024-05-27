@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Update
 import com.example.symptomtracker.core.database.model.MovementLog
 import kotlinx.coroutines.flow.Flow
 import java.time.OffsetDateTime
@@ -30,4 +31,7 @@ interface MovementDao {
 
     @Delete
     suspend fun deleteLog(movementLog: MovementLog)
+
+    @Update
+    suspend fun updateLog(movementLog: MovementLog)
 }

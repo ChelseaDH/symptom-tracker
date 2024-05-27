@@ -81,6 +81,18 @@ data class DateTimeInput(
             minute = calendar.get(Calendar.MINUTE),
         ),
     )
+
+    constructor(date: OffsetDateTime) : this(
+        dateInputFields = DateInputFields(
+            year = date.year,
+            month = date.monthValue - 1,
+            day = date.dayOfMonth,
+        ),
+        timeInputFields = TimeInputFields(
+            hour = date.hour,
+            minute = date.minute,
+        )
+    )
 }
 
 fun DateTimeInput.toDate(): OffsetDateTime {

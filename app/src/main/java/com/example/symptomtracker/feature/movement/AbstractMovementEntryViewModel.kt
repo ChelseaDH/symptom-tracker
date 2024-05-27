@@ -1,28 +1,21 @@
-package com.example.symptomtracker.feature.movement_entry
+package com.example.symptomtracker.feature.movement
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.symptomtracker.core.data.repository.MovementRepository
 import com.example.symptomtracker.core.database.model.MovementLog
 import com.example.symptomtracker.core.model.StoolType
 import com.example.symptomtracker.core.ui.DateInputFields
 import com.example.symptomtracker.core.ui.DateTimeInput
 import com.example.symptomtracker.core.ui.TimeInputFields
-import com.example.symptomtracker.core.ui.toDate
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.util.Calendar
-import javax.inject.Inject
 
-@HiltViewModel
-class MovementEntryViewModel @Inject constructor(private val movementRepository: MovementRepository) :
-    ViewModel() {
-    var uiState by mutableStateOf(MovementUiState(Calendar.getInstance()))
+abstract class AbstractMovementEntryViewModel : ViewModel() {
+    var uiState by mutableStateOf(MovementEntryUiState(Calendar.getInstance()))
         private set
+
+    abstract fun submit()
 
     fun updateChosenStoolType(stoolType: StoolType) {
         uiState = uiState.copy(
@@ -46,33 +39,25 @@ class MovementEntryViewModel @Inject constructor(private val movementRepository:
         )
     }
 
-    fun insertMovementLog() {
-        if (validateInsertMovementLog()) {
-            viewModelScope.launch(Dispatchers.IO) {
-                movementRepository.insertMovementLog(uiState.toMovementLog())
-            }
-        }
-    }
-
-    private fun validateInsertMovementLog(uiState: MovementUiState = this.uiState): Boolean {
-        return uiState.chosenStoolType != null
+    protected fun updateFieldsWithLog(movementLog: MovementLog) {
+        uiState = MovementEntryUiState(movementLog = movementLog)
     }
 }
 
-data class MovementUiState(
+data class MovementEntryUiState(
     val chosenStoolType: StoolType? = null,
     val dateTimeInput: DateTimeInput,
-    val isEntryValid: Boolean = false,
 ) {
     constructor(calendar: Calendar) : this(
         dateTimeInput = DateTimeInput(calendar = calendar)
     )
-}
 
-fun MovementUiState.toMovementLog(): MovementLog {
-    return MovementLog(
-        movementLogId = 0,
-        date = dateTimeInput.toDate(),
-        stoolType = chosenStoolType!!
+    constructor(movementLog: MovementLog) : this(
+        chosenStoolType = movementLog.stoolType,
+        dateTimeInput = DateTimeInput(date = movementLog.getDate())
     )
+
+    fun isValid(): Boolean {
+        return this.chosenStoolType !== null
+    }
 }

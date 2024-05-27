@@ -11,6 +11,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,6 +36,7 @@ fun <L : Log> ViewLogScreen(
     uiState: ViewLogUiState<L>,
     @StringRes title: Int,
     deleteLog: (L) -> Unit = {},
+    onEdit: (() -> Unit)? = null,
     bodyContent: @Composable ColumnScope.(L) -> Unit,
 ) {
     when (uiState) {
@@ -46,6 +48,11 @@ fun <L : Log> ViewLogScreen(
             ViewLogsScreen(
                 navigateBack = navigateBack,
                 topBarActions = {
+                    if (onEdit !== null) {
+                        IconButton(onClick = onEdit) {
+                            Icon(imageVector = Icons.Filled.Edit, contentDescription = null)
+                        }
+                    }
                     IconButton(onClick = { openDeleteDialog.value = true }) {
                         Icon(imageVector = Icons.Filled.Delete, contentDescription = null)
                     }

@@ -35,4 +35,9 @@ interface MovementRepository {
      * Deletes a [MovementLog].
      */
     suspend fun deleteLog(movementLog: MovementLog)
+
+    /**
+     * Updates a [MovementLog] record.
+     */
+    suspend fun updateLog(movementLog: MovementLog)
 }

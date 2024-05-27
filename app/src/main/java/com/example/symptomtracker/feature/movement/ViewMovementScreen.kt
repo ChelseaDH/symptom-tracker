@@ -1,4 +1,4 @@
-package com.example.symptomtracker.feature.view_movement
+package com.example.symptomtracker.feature.movement
 
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
@@ -16,11 +16,13 @@ import com.example.symptomtracker.core.ui.ViewLogUiState
 @Composable
 fun ViewMovementRoute(
     navigateBack: () -> Unit,
+    navigateToEdit: () -> Unit,
     viewModel: ViewMovementViewModel = hiltViewModel()
 ) {
     ViewMovementScreen(
         navigateBack = navigateBack,
         deleteLog = viewModel::deleteLog,
+        onEdit = navigateToEdit,
         state = viewModel.uiState,
     )
 }
@@ -29,6 +31,7 @@ fun ViewMovementRoute(
 fun ViewMovementScreen(
     navigateBack: () -> Unit,
     deleteLog: (MovementLog) -> Unit,
+    onEdit: () -> Unit,
     state: ViewMovementUiState = ViewLogUiState.Loading,
 ) {
     ViewLogScreen(
@@ -36,6 +39,7 @@ fun ViewMovementScreen(
         uiState = state,
         title = R.string.add_movement_text,
         deleteLog = deleteLog,
+        onEdit = onEdit,
         bodyContent = {
             ListItem(
                 headlineContent = { Text(text = it.stoolType.getDisplayName()) }
@@ -55,6 +59,7 @@ fun ViewMovementContentPreview(
     ViewMovementScreen(
         navigateBack = {},
         deleteLog = {},
+        onEdit = {},
         state = ViewLogUiState.Data(log),
     )
 }
