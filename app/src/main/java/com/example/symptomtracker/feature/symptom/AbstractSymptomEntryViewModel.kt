@@ -9,9 +9,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.symptomtracker.core.data.repository.SymptomRepository
 import com.example.symptomtracker.core.database.model.Symptom
 import com.example.symptomtracker.core.database.model.SymptomLog
-import com.example.symptomtracker.core.database.model.SymptomLogWithSymptomsAndSeverity
-import com.example.symptomtracker.core.database.model.SymptomWithSeverity
 import com.example.symptomtracker.core.model.Severity
+import com.example.symptomtracker.core.model.SymptomLogWithSymptoms
+import com.example.symptomtracker.core.model.SymptomWithSeverity
 import com.example.symptomtracker.core.ui.DateInputFields
 import com.example.symptomtracker.core.ui.DateTimeInput
 import com.example.symptomtracker.core.ui.TimeInputFields
@@ -140,12 +140,12 @@ abstract class AbstractSymptomEntryViewModel(private val symptomRepository: Symp
         }
     }
 
-    protected fun setUiStateWithLog(symptomLogWithSymptomsAndSeverity: SymptomLogWithSymptomsAndSeverity) {
-        uiState = SymptomEntryUiState(log = symptomLogWithSymptomsAndSeverity).copy(
+    protected fun setUiStateWithLog(symptomLogWithSymptoms: SymptomLogWithSymptoms) {
+        uiState = SymptomEntryUiState(log = symptomLogWithSymptoms).copy(
             searchState = uiState.searchState.copy(results = _allSymptoms)
         )
 
-        _selectedSymptoms = symptomLogWithSymptomsAndSeverity.items.toMutableStateList()
+        _selectedSymptoms = symptomLogWithSymptoms.items.toMutableStateList()
     }
 }
 
@@ -159,7 +159,7 @@ data class SymptomEntryUiState(
         dateTimeInput = DateTimeInput(calendar = calendar)
     )
 
-    constructor(log: SymptomLogWithSymptomsAndSeverity) : this(
+    constructor(log: SymptomLogWithSymptoms) : this(
         selectedSymptoms = log.items, dateTimeInput = DateTimeInput(date = log.getDate())
     )
 
@@ -170,8 +170,8 @@ data class SymptomEntryUiState(
         symptom = searchState.selectedSymptom!!, severity = selectedSeverity!!
     )
 
-    fun toSymptomLogWithSymptoms(id: Long = 0): SymptomLogWithSymptomsAndSeverity =
-        SymptomLogWithSymptomsAndSeverity(
+    fun toSymptomLogWithSymptoms(id: Long = 0): SymptomLogWithSymptoms =
+        SymptomLogWithSymptoms(
             log = SymptomLog(symptomLogId = id, date = dateTimeInput.toDate()),
             items = selectedSymptoms,
         )

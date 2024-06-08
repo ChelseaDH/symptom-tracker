@@ -49,9 +49,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.symptomtracker.R
 import com.example.symptomtracker.core.database.model.FoodLogWithItems
 import com.example.symptomtracker.core.database.model.MovementLog
-import com.example.symptomtracker.core.database.model.SymptomLogWithSymptoms
 import com.example.symptomtracker.core.model.Log
+import com.example.symptomtracker.core.model.SymptomLogWithSymptoms
 import com.example.symptomtracker.core.model.getDisplayName
+import com.example.symptomtracker.core.model.getDisplayString
 import com.example.symptomtracker.core.ui.DatePickerModal
 import com.example.symptomtracker.core.ui.LogItemCard
 import com.example.symptomtracker.core.ui.LogsPreviewParameterProvider
@@ -278,23 +279,21 @@ fun Timeline(
                                 title = stringResource(R.string.add_symptom_text),
                                 date = log.getDate(),
                                 dateTimeFormatter = DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_hh_mm)),
-                                supportingText = log.items.joinToString { it.name },
+                                supportingText = log.items.joinToString { it.getDisplayString() },
                                 onClick = { onSymptomClick(log.log.symptomLogId) },
                             )
 
-                            is MovementLog -> LogItemCard(
-                                icon = {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.outline_gastroenterology_24),
-                                        contentDescription = stringResource(R.string.add_movement_text)
-                                    )
-                                },
+                            is MovementLog -> LogItemCard(icon = {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.outline_gastroenterology_24),
+                                    contentDescription = stringResource(R.string.add_movement_text)
+                                )
+                            },
                                 title = stringResource(R.string.add_movement_text),
                                 date = log.getDate(),
                                 dateTimeFormatter = DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_hh_mm)),
                                 supportingText = log.stoolType.getDisplayName(),
-                                onClick = { onMovementClick(log.movementLogId) }
-                            )
+                                onClick = { onMovementClick(log.movementLogId) })
                         }
                     }
                 }
@@ -327,8 +326,7 @@ fun QuickAdd(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             maxItemsInEachRow = 2
         ) {
-            ExtendedFloatingActionButton(
-                onClick = { onAddFoodClick() },
+            ExtendedFloatingActionButton(onClick = { onAddFoodClick() },
                 text = { Text(text = stringResource(R.string.add_food_text)) },
                 icon = {
                     Icon(
@@ -339,8 +337,7 @@ fun QuickAdd(
                 modifier = Modifier.weight(1f),
                 elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp)
             )
-            ExtendedFloatingActionButton(
-                onClick = { onAddSymptomClick() },
+            ExtendedFloatingActionButton(onClick = { onAddSymptomClick() },
                 text = { Text(text = stringResource(R.string.add_symptom_text)) },
                 icon = {
                     Icon(
@@ -351,8 +348,7 @@ fun QuickAdd(
                 modifier = Modifier.weight(1f),
                 elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp)
             )
-            ExtendedFloatingActionButton(
-                onClick = { onAddMovementClick() },
+            ExtendedFloatingActionButton(onClick = { onAddMovementClick() },
                 text = { Text(text = stringResource(R.string.add_movement_text)) },
                 icon = {
                     Icon(

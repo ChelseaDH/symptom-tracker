@@ -17,9 +17,9 @@ class EditSymptomViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            symptomRepository.getSymptomLogWithSeverities(logId).collect { symptomLog ->
+            symptomRepository.getSymptomLog(logId).collect { symptomLog ->
                 if (symptomLog !== null) {
-                    setUiStateWithLog(symptomLog.toSymptomLogWithSymptomsAndSeverity())
+                    setUiStateWithLog(symptomLog)
                 }
             }
         }

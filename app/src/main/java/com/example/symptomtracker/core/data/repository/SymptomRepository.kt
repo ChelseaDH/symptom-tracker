@@ -2,10 +2,7 @@ package com.example.symptomtracker.core.data.repository
 
 import com.example.symptomtracker.core.database.model.Symptom
 import com.example.symptomtracker.core.database.model.SymptomLog
-import com.example.symptomtracker.core.database.model.SymptomLogWithLinkedRecords
-import com.example.symptomtracker.core.database.model.SymptomLogWithSymptoms
-import com.example.symptomtracker.core.database.model.SymptomLogWithSymptomsAndSeverity
-import com.example.symptomtracker.core.database.model.SymptomWithSeverity
+import com.example.symptomtracker.core.model.SymptomLogWithSymptoms
 import kotlinx.coroutines.flow.Flow
 import java.time.OffsetDateTime
 
@@ -41,12 +38,10 @@ interface SymptomRepository {
      */
     fun getSymptomLog(id: Long): Flow<SymptomLogWithSymptoms?>
 
-    fun getSymptomLogWithSeverities(id: Long): Flow<SymptomLogWithLinkedRecords?>
-
     /**
-     * Insert [SymptomLog] and associated [Symptom] records via the [SymptomLogWithSymptomsAndSeverity] object.
+     * Insert [SymptomLog] and associated [Symptom] records via the [SymptomLogWithSymptoms] object.
      */
-    suspend fun insertSymptomLogWithSymptom(symptomLogWithSymptoms: SymptomLogWithSymptomsAndSeverity)
+    suspend fun insertSymptomLogWithSymptom(symptomLogWithSymptoms: SymptomLogWithSymptoms)
 
     /**
      * Deletes a [SymptomLog] and its associated [Symptom] records.
@@ -54,7 +49,7 @@ interface SymptomRepository {
     suspend fun deleteWithSymptoms(symptomLogWithSymptoms: SymptomLogWithSymptoms)
 
     /**
-     * Deletes a [SymptomLog] and its associated [SymptomWithSeverity] records.
+     * Deletes a [SymptomLog] and its associated [Symptom] records.
      */
-    suspend fun updateLog(log: SymptomLogWithSymptomsAndSeverity)
+    suspend fun updateLog(log: SymptomLogWithSymptoms)
 }

@@ -7,7 +7,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.symptomtracker.R
-import com.example.symptomtracker.core.database.model.SymptomLogWithSymptoms
+import com.example.symptomtracker.core.model.SymptomLogWithSymptoms
+import com.example.symptomtracker.core.model.getDisplayString
 import com.example.symptomtracker.core.ui.SymptomLogPreviewParameterProvider
 import com.example.symptomtracker.core.ui.ViewLogScreen
 import com.example.symptomtracker.core.ui.ViewLogUiState
@@ -42,7 +43,7 @@ internal fun ViewSymptomScreen(
         bodyContent = {
             it.items.forEach { item ->
                 ListItem(
-                    headlineContent = { Text(text = item.name) }
+                    headlineContent = { Text(text = item.getDisplayString()) }
                 )
             }
         }

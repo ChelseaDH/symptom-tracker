@@ -35,6 +35,7 @@ import com.example.symptomtracker.R
 import com.example.symptomtracker.core.database.model.FoodLogWithItems
 import com.example.symptomtracker.core.model.Log
 import com.example.symptomtracker.core.model.getDisplayName
+import com.example.symptomtracker.core.model.getDisplayString
 import com.example.symptomtracker.core.ui.FoodLogsPreviewParameterProvider
 import com.example.symptomtracker.core.ui.LogItemCard
 import java.time.format.DateTimeFormatter
@@ -109,7 +110,7 @@ internal fun LogsScreen(
                 items(items = tabState.logs) { symptomLog ->
                     LogCard(
                         log = symptomLog,
-                        supportingText = symptomLog.items.joinToString { it.name },
+                        supportingText = symptomLog.items.joinToString { it.getDisplayString() },
                         onClick = { onSymptomClick(symptomLog.log.symptomLogId) }
                     )
                 }

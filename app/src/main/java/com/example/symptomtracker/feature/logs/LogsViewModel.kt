@@ -10,7 +10,7 @@ import com.example.symptomtracker.core.data.repository.MovementRepository
 import com.example.symptomtracker.core.data.repository.SymptomRepository
 import com.example.symptomtracker.core.database.model.FoodLogWithItems
 import com.example.symptomtracker.core.database.model.MovementLog
-import com.example.symptomtracker.core.database.model.SymptomLogWithSymptoms
+import com.example.symptomtracker.core.model.SymptomLogWithSymptoms
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

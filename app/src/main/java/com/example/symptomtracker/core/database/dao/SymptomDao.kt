@@ -11,8 +11,7 @@ import com.example.symptomtracker.core.database.model.Symptom
 import com.example.symptomtracker.core.database.model.SymptomLog
 import com.example.symptomtracker.core.database.model.SymptomLogRecord
 import com.example.symptomtracker.core.database.model.SymptomLogWithLinkedRecords
-import com.example.symptomtracker.core.database.model.SymptomLogWithSymptoms
-import com.example.symptomtracker.core.database.model.SymptomLogWithSymptomsAndSeverity
+import com.example.symptomtracker.core.model.SymptomLogWithSymptoms
 import kotlinx.coroutines.flow.Flow
 import java.time.OffsetDateTime
 
@@ -31,7 +30,7 @@ interface SymptomDao {
     suspend fun insertSymptomLogRecord(symptomLogRecord: SymptomLogRecord)
 
     @Transaction
-    suspend fun insertSymptomLogWithSymptoms(symptomLogWithSymptoms: SymptomLogWithSymptomsAndSeverity) {
+    suspend fun insertSymptomLogWithSymptoms(symptomLogWithSymptoms: SymptomLogWithSymptoms) {
         val symptomLogId = insertSymptomLog(symptomLogWithSymptoms.log)
 
         symptomLogWithSymptoms.items.forEach { symptomWithSeverity ->
@@ -49,25 +48,19 @@ interface SymptomDao {
     fun getAllSymptoms(): Flow<List<Symptom>>
 
     @Transaction
-    @Query(
-        "SELECT * FROM symptom_log sl JOIN symptom_log_record slr ON slr.symptomLogId = sl.symptomLogId JOIN symptom s ON s.symptomId = slr.symptomId ORDER BY date DESC"
-    )
-    fun getAllSymptomLogs(): Flow<List<SymptomLogWithSymptoms>>
+    @Query("SELECT * FROM symptom_log")
+    fun getAllSymptomLogs(): Flow<List<SymptomLogWithLinkedRecords>>
 
     @Transaction
-    @Query("SELECT * FROM symptom_log sl JOIN symptom_log_record slr ON slr.symptomLogId = sl.symptomLogId JOIN symptom s ON s.symptomId = slr.symptomId WHERE sl.date BETWEEN :startDate AND :endDate GROUP BY sl.symptomLogId")
+    @Query("SELECT * FROM symptom_log WHERE date BETWEEN :startDate AND :endDate")
     fun getAllSymptomLogsBetweenDates(
         startDate: OffsetDateTime,
         endDate: OffsetDateTime
-    ): Flow<List<SymptomLogWithSymptoms>>
+    ): Flow<List<SymptomLogWithLinkedRecords>>
 
     @Transaction
-    @Query("SELECT * FROM symptom_log sl JOIN symptom_log_record slr ON slr.symptomLogId = sl.symptomLogId JOIN symptom s ON s.symptomId = slr.symptomId WHERE sl.symptomLogId = :id")
-    fun getSymptomLog(id: Long): Flow<SymptomLogWithSymptoms?>
-
-    @Transaction
-    @Query("SELECT * FROM symptom_log sl WHERE sl.symptomLogId = :id")
-    fun getSymptomLogWithLinkedRecords(id: Long): Flow<SymptomLogWithLinkedRecords?>
+    @Query("SELECT * FROM symptom_log WHERE symptomLogId = :id")
+    fun getSymptomLog(id: Long): Flow<SymptomLogWithLinkedRecords?>
 
     @Delete
     suspend fun deleteLog(symptomLog: SymptomLog)
@@ -79,7 +72,7 @@ interface SymptomDao {
     suspend fun updateLog(symptomLog: SymptomLog)
 
     @Transaction
-    suspend fun updateLogWithSymptoms(symptomLogWithSymptoms: SymptomLogWithSymptomsAndSeverity) {
+    suspend fun updateLogWithSymptoms(symptomLogWithSymptoms: SymptomLogWithSymptoms) {
         deleteAllCrossRefItemsForLogById(symptomLogWithSymptoms.log.symptomLogId)
         updateLog(symptomLogWithSymptoms.log)
 

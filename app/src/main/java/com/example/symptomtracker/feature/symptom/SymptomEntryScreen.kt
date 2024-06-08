@@ -29,8 +29,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.symptomtracker.R
 import com.example.symptomtracker.core.database.model.Symptom
-import com.example.symptomtracker.core.database.model.SymptomWithSeverity
 import com.example.symptomtracker.core.model.Severity
+import com.example.symptomtracker.core.model.SymptomWithSeverity
 import com.example.symptomtracker.core.ui.DateInputFields
 import com.example.symptomtracker.core.ui.DateTimeInput
 import com.example.symptomtracker.core.ui.DateTimeInputRow

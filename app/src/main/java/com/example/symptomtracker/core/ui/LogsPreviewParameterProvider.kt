@@ -5,8 +5,13 @@ import com.example.symptomtracker.core.database.model.FoodLog
 import com.example.symptomtracker.core.database.model.FoodLogWithItems
 import com.example.symptomtracker.core.database.model.Item
 import com.example.symptomtracker.core.database.model.MovementLog
+import com.example.symptomtracker.core.database.model.Symptom
+import com.example.symptomtracker.core.database.model.SymptomLog
 import com.example.symptomtracker.core.model.Log
+import com.example.symptomtracker.core.model.Severity
 import com.example.symptomtracker.core.model.StoolType
+import com.example.symptomtracker.core.model.SymptomLogWithSymptoms
+import com.example.symptomtracker.core.model.SymptomWithSeverity
 import java.time.OffsetDateTime
 
 class LogsPreviewParameterProvider : PreviewParameterProvider<List<Log>> {
@@ -32,6 +37,12 @@ class LogsPreviewParameterProvider : PreviewParameterProvider<List<Log>> {
                     Item(5, "Chicken"),
                     Item(6, "Rice"),
                     Item(7, "Beans"),
+                )
+            ),
+            SymptomLogWithSymptoms(
+                log = SymptomLog(1, OffsetDateTime.parse("2023-03-02T13:15:00+00:00")),
+                items = listOf(
+                    SymptomWithSeverity(symptom = Symptom(1, "Bloating"), severity = Severity.MILD)
                 )
             )
         )
