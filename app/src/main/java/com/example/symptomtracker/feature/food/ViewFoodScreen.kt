@@ -1,4 +1,4 @@
-package com.example.symptomtracker.feature.view_food
+package com.example.symptomtracker.feature.food
 
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
@@ -15,12 +15,14 @@ import com.example.symptomtracker.core.ui.ViewLogUiState
 @Composable
 fun ViewFoodRoute(
     navigateBack: () -> Unit,
+    navigateToEdit: () -> Unit,
     viewModel: ViewFoodViewModel = hiltViewModel(),
 ) {
     ViewFoodScreen(
         navigateBack = navigateBack,
         state = viewModel.uiState,
-        onDelete = viewModel::deleteLog
+        onDelete = viewModel::deleteLog,
+        onEdit = navigateToEdit,
     )
 }
 
@@ -29,12 +31,14 @@ fun ViewFoodScreen(
     navigateBack: () -> Unit,
     state: ViewFoodUiState = ViewLogUiState.Loading,
     onDelete: (FoodLogWithItems) -> Unit,
+    onEdit: () -> Unit,
 ) {
     ViewLogScreen(
         navigateBack = navigateBack,
         uiState = state,
         title = R.string.add_food_text,
         deleteLog = onDelete,
+        onEdit = onEdit,
         bodyContent = {
             it.items.forEach { item ->
                 ListItem(
@@ -57,5 +61,6 @@ fun ViewFoodContentPreview(
         navigateBack = {},
         state = ViewLogUiState.Data(foodLog),
         onDelete = {},
+        onEdit = {},
     )
 }

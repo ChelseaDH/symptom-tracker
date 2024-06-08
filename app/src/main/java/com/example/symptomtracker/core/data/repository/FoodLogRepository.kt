@@ -41,10 +41,15 @@ interface FoodLogRepository {
     /**
      * Insert [Item] record.
      */
-    suspend fun insertItem(item: Item)
+    suspend fun insertItem(item: Item): Long
 
     /**
      * Deletes a [FoodLog] and its associated [Item] records.
      */
     suspend fun deleteWithItems(foodLogWithItems: FoodLogWithItems)
+
+    /**
+     * Updates a [FoodLog] and its associated [Item] records.
+     */
+    suspend fun updateLogWithItems(foodLogWithItems: FoodLogWithItems)
 }

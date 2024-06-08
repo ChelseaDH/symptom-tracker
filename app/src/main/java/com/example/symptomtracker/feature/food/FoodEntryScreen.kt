@@ -1,3 +1,4 @@
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,7 +24,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.symptomtracker.R
 import com.example.symptomtracker.core.database.model.Item
 import com.example.symptomtracker.core.ui.DateInputFields
@@ -33,29 +33,31 @@ import com.example.symptomtracker.core.ui.ItemPreviewParameterProvider
 import com.example.symptomtracker.core.ui.OutlinedInputTextFieldWithDropdown
 import com.example.symptomtracker.core.ui.SymptomTrackerTheme
 import com.example.symptomtracker.core.ui.TimeInputFields
-import com.example.symptomtracker.feature.food_entry.FoodEntryViewModel
-import com.example.symptomtracker.feature.food_entry.FoodLogUiState
+import com.example.symptomtracker.feature.food.AbstractFoodEntryViewModel
+import com.example.symptomtracker.feature.food.FoodEntryUiState
+import com.example.symptomtracker.feature.food.SearchState
 import com.example.symptomtracker.ui.SymptomTrackerTopAppBar
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
 @Composable
-fun FoodEntryScreen(
+internal fun FoodEntryScreen(
     navigateBack: () -> Unit,
+    @StringRes titleId: Int,
     modifier: Modifier = Modifier,
-    viewModel: FoodEntryViewModel = hiltViewModel(),
+    viewModel: AbstractFoodEntryViewModel,
 ) {
     val coroutineScope = rememberCoroutineScope()
     Scaffold(
         topBar = {
             SymptomTrackerTopAppBar(
-                title = stringResource(R.string.log_food_title),
+                title = stringResource(titleId),
                 canNavigateBack = true,
                 navigateUp = navigateBack,
                 actions = {
                     TextButton(onClick = {
                         coroutineScope.launch {
-                            viewModel.saveFoodLog()
+                            viewModel.submit()
                             navigateBack()
                         }
                     }) {
@@ -67,19 +69,19 @@ fun FoodEntryScreen(
         modifier = modifier
     ) { innerPadding ->
         FoodEntryBody(
-            foodLogUiState = viewModel.uiState,
-            onChosenItemUpdated = viewModel::updateChosenItem,
-            onNameUpdated = viewModel::updateItemName,
+            uiState = viewModel.uiState,
+            onChosenItemUpdated = viewModel::updateSelectedSearchItem,
+            onNameUpdated = viewModel::updateSearchInput,
             onDateChanged = viewModel::updateDate,
             onTimeChanged = viewModel::updateTime,
             onAddItem = viewModel::addItem,
             onCreateItem = {
                 coroutineScope.launch {
-                    viewModel.insertNewItemFromInput()
+                    viewModel.createNewItemFromInput()
                 }
             },
             onDeleteItem = viewModel::removeItem,
-            onClearChosenItem = viewModel::clearItemInputs,
+            onClearChosenItem = viewModel::clearSearch,
             modifier = Modifier.padding(innerPadding)
         )
     }
@@ -87,7 +89,7 @@ fun FoodEntryScreen(
 
 @Composable
 fun FoodEntryBody(
-    foodLogUiState: FoodLogUiState,
+    uiState: FoodEntryUiState,
     onChosenItemUpdated: (Item) -> Unit,
     onNameUpdated: (String) -> Unit,
     onDateChanged: (DateInputFields) -> Unit,
@@ -105,9 +107,8 @@ fun FoodEntryBody(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         FoodLogItemInput(
-            availableItems = foodLogUiState.availableItems,
-            itemName = foodLogUiState.itemName,
-            dateTimeInput = foodLogUiState.dateTimeInput,
+            searchState = uiState.searchState,
+            dateTimeInput = uiState.dateTimeInput,
             onChosenItemUpdated = onChosenItemUpdated,
             onNameUpdated = onNameUpdated,
             onDateChanged = onDateChanged,
@@ -115,10 +116,9 @@ fun FoodEntryBody(
             onAddItem = onAddItem,
             onCreateItem = onCreateItem,
             onClearChosenItem = onClearChosenItem,
-            canCreateNewItem = foodLogUiState.canCreateNewItemFromInput
         )
         HorizontalDivider()
-        FoodLogItemList(itemList = foodLogUiState.foodLogDetails.items, onDeleteItem = onDeleteItem)
+        FoodLogItemList(itemList = uiState.selectedItems, onDeleteItem = onDeleteItem)
     }
 }
 
@@ -150,10 +150,8 @@ fun FoodLogItemList(
 
 @Composable
 fun FoodLogItemInput(
-    availableItems: List<Item>,
-    itemName: String,
+    searchState: SearchState,
     dateTimeInput: DateTimeInput,
-    canCreateNewItem: Boolean,
     onChosenItemUpdated: (Item) -> Unit,
     onDateChanged: (DateInputFields) -> Unit,
     onTimeChanged: (TimeInputFields) -> Unit,
@@ -174,11 +172,11 @@ fun FoodLogItemInput(
             labelOnTextField = true
         )
         OutlinedInputTextFieldWithDropdown(
-            availableOptions = availableItems,
+            availableOptions = searchState.results,
             getOptionDisplayName = { it.name },
-            textValue = itemName,
+            textValue = searchState.input,
             onTextValueUpdated = onNameUpdated,
-            canCreateOption = canCreateNewItem,
+            canCreateOption = searchState.canCreateNewItem,
             onCreateOption = onCreateItem,
             onClearInput = onClearChosenItem,
             onChosenOptionUpdated = onChosenItemUpdated,
@@ -205,9 +203,8 @@ fun FoodLogItemInput(
 fun AddFoodScreenPreview(@PreviewParameter(ItemPreviewParameterProvider::class) items: List<Item>) {
     SymptomTrackerTheme {
         FoodEntryBody(
-            foodLogUiState = FoodLogUiState(Calendar.getInstance()).copy(
-                availableItems = items,
-                chosenItem = null,
+            uiState = FoodEntryUiState(Calendar.getInstance()).copy(
+                searchState = SearchState(results = items)
             ),
             onChosenItemUpdated = {},
             onNameUpdated = {},

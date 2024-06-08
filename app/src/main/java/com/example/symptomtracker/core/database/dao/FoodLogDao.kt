@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Update
 import com.example.symptomtracker.core.database.model.FoodLog
 import com.example.symptomtracker.core.database.model.FoodLogItemCrossRef
 import com.example.symptomtracker.core.database.model.FoodLogWithItems
@@ -22,7 +23,7 @@ interface FoodLogDao {
     fun insertItems(items: List<Item>): Array<Long>
 
     @Insert
-    suspend fun insertItem(item: Item)
+    suspend fun insertItem(item: Item): Long
 
     @Query("SELECT * FROM item ORDER BY name ASC")
     fun getAllItems(): Flow<List<Item>>
@@ -48,13 +49,12 @@ interface FoodLogDao {
     @Transaction
     suspend fun insertFoodLogWithItems(foodLogWithItems: FoodLogWithItems) {
         val foodLogId = insertFoodLog(foodLogWithItems.log)
-        val itemLogIds = insertItems(foodLogWithItems.items)
 
-        itemLogIds.forEach { itemId ->
+        foodLogWithItems.items.forEach { item ->
             insertFoodLogItemCrossRef(
                 foodLogItemCrossRef = FoodLogItemCrossRef(
                     foodLogId = foodLogId,
-                    itemId = itemId
+                    itemId = item.itemId
                 )
             )
         }
@@ -62,4 +62,25 @@ interface FoodLogDao {
 
     @Delete
     suspend fun deleteLog(foodLog: FoodLog)
+
+    @Query("DELETE FROM food_log_item WHERE foodLogId = :id")
+    suspend fun deleteAllCrossRefItemsForLogById(id: Long)
+
+    @Update
+    suspend fun updateLog(foodLog: FoodLog)
+
+    @Transaction
+    suspend fun updateLogWithItems(foodLogWithItems: FoodLogWithItems) {
+        deleteAllCrossRefItemsForLogById(foodLogWithItems.log.foodLogId)
+        updateLog(foodLogWithItems.log)
+
+        foodLogWithItems.items.forEach { item ->
+            insertFoodLogItemCrossRef(
+                foodLogItemCrossRef = FoodLogItemCrossRef(
+                    foodLogId = foodLogWithItems.log.foodLogId,
+                    itemId = item.itemId,
+                )
+            )
+        }
+    }
 }
