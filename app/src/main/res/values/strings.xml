@@ -12,6 +12,7 @@
     <string name="log_food_title">Log food</string>
     <string name="edit_food_title">Edit food</string>
     <string name="log_symptom_title">Log symptoms</string>
+    <string name="edit_symptom_title">Edit symptoms</string>
     <string name="log_movement_title">Log movement</string>
     <string name="edit_movement_title">Edit movement</string>
     <string name="save_button_text">Save</string>

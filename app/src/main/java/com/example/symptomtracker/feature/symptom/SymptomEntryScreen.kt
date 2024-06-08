@@ -1,3 +1,4 @@
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.symptomtracker.R
 import com.example.symptomtracker.core.database.model.Symptom
 import com.example.symptomtracker.core.database.model.SymptomWithSeverity
@@ -37,30 +37,31 @@ import com.example.symptomtracker.core.ui.DateTimeInputRow
 import com.example.symptomtracker.core.ui.OutlinedInputTextFieldWithDropdown
 import com.example.symptomtracker.core.ui.SymptomTrackerTheme
 import com.example.symptomtracker.core.ui.TimeInputFields
-import com.example.symptomtracker.feature.symptom_entry.SymptomEntryViewModel
-import com.example.symptomtracker.feature.symptom_entry.SymptomInput
-import com.example.symptomtracker.feature.symptom_entry.SymptomLogDetails
-import com.example.symptomtracker.feature.symptom_entry.SymptomUiState
+import com.example.symptomtracker.feature.symptom.AbstractSymptomEntryViewModel
+import com.example.symptomtracker.feature.symptom.SearchState
+import com.example.symptomtracker.feature.symptom.SymptomEntryUiState
 import com.example.symptomtracker.ui.SymptomTrackerTopAppBar
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
 @Composable
-fun SymptomEntryScreen(
+internal fun SymptomEntryScreen(
     navigateBack: () -> Unit,
-    viewModel: SymptomEntryViewModel = hiltViewModel(),
+    @StringRes titleId: Int,
+    modifier: Modifier = Modifier,
+    viewModel: AbstractSymptomEntryViewModel,
 ) {
     val coroutineScope = rememberCoroutineScope()
     Scaffold(
         topBar = {
             SymptomTrackerTopAppBar(
-                title = stringResource(R.string.log_symptom_title),
+                title = stringResource(titleId),
                 canNavigateBack = true,
                 navigateUp = navigateBack,
                 actions = {
                     TextButton(onClick = {
                         coroutineScope.launch {
-                            viewModel.insertSymptomLog()
+                            viewModel.submit()
                             navigateBack()
                         }
                     }) {
@@ -71,24 +72,28 @@ fun SymptomEntryScreen(
         }
     ) { innerPadding ->
         SymptomEntryBody(
-            symptomUiState = viewModel.uiState,
-            onSymptomNameUpdated = viewModel::updateSelectedSymptomName,
-            onCreateSymptom = viewModel::insertSymptom,
-            onClearInput = viewModel::clearSymptomInputs,
-            onSelectedSymptomUpdated = viewModel::updateSelectedSymptom,
+            uiState = viewModel.uiState,
+            onSymptomNameUpdated = viewModel::updateSearchInput,
+            onCreateSymptom = {
+                coroutineScope.launch {
+                    viewModel.createNewSymptomFromInput()
+                }
+            },
+            onClearInput = viewModel::clearSearchAndSeverity,
+            onSelectedSymptomUpdated = viewModel::updateSelectedSearchSymptom,
             onSelectedSeverityUpdated = viewModel::updateSelectedSeverity,
-            onRemoveSymptomFromLog = viewModel::removeSymptomFromLog,
-            onAddSymptomToLog = viewModel::addSymptomWithSeverityToLog,
+            onRemoveSymptomFromLog = viewModel::removeSymptom,
+            onAddSymptomToLog = viewModel::addSymptomWithSeverity,
             onDateChanged = viewModel::updateDate,
             onTimeChanged = viewModel::updateTime,
-            modifier = Modifier.padding(innerPadding)
+            modifier = modifier.padding(innerPadding)
         )
     }
 }
 
 @Composable
 fun SymptomEntryBody(
-    symptomUiState: SymptomUiState,
+    uiState: SymptomEntryUiState,
     onSymptomNameUpdated: (String) -> Unit,
     onCreateSymptom: () -> Unit,
     onClearInput: () -> Unit,
@@ -107,10 +112,9 @@ fun SymptomEntryBody(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         LogSymptomForm(
-            availableSymptoms = symptomUiState.availableSymptoms,
-            symptomInput = symptomUiState.symptomInput,
-            dateTimeInput = symptomUiState.dateTimeInput,
-            canCreateSymptom = symptomUiState.canCreateSymptomFromInput,
+            searchState = uiState.searchState,
+            selectedSeverity = uiState.selectedSeverity,
+            dateTimeInput = uiState.dateTimeInput,
             onSymptomNameUpdated = onSymptomNameUpdated,
             onCreateSymptom = onCreateSymptom,
             onClearInput = onClearInput,
@@ -122,7 +126,7 @@ fun SymptomEntryBody(
         )
         HorizontalDivider()
         SymptomLogList(
-            symptomList = symptomUiState.symptomLogDetails.symptomsWithSeverity,
+            symptomList = uiState.selectedSymptoms,
             onDeleteItem = onRemoveSymptomFromLog
         )
     }
@@ -157,10 +161,9 @@ fun SymptomLogList(
 
 @Composable
 fun LogSymptomForm(
-    availableSymptoms: List<Symptom>,
-    symptomInput: SymptomInput,
+    searchState: SearchState,
+    selectedSeverity: Severity?,
     dateTimeInput: DateTimeInput,
-    canCreateSymptom: Boolean,
     onSymptomNameUpdated: (String) -> Unit,
     onCreateSymptom: () -> Unit,
     onClearInput: () -> Unit,
@@ -182,16 +185,14 @@ fun LogSymptomForm(
             labelOnTextField = true,
         )
         FormNameInput(
-            availableSymptoms = availableSymptoms,
-            symptomName = symptomInput.name,
-            canCreateSymptom = canCreateSymptom,
+            searchState = searchState,
             onSymptomNameUpdated = onSymptomNameUpdated,
             onCreateSymptom = onCreateSymptom,
             onClearInput = onClearInput,
             onSelectedSymptomUpdated = onSelectedSymptomUpdated
         )
         FormSeverityInput(
-            severity = symptomInput.severity,
+            severity = selectedSeverity,
             onSelectionUpdated = onSelectedSeverityUpdated
         )
         FilledTonalButton(
@@ -211,9 +212,7 @@ fun LogSymptomForm(
 
 @Composable
 fun FormNameInput(
-    availableSymptoms: List<Symptom>,
-    symptomName: String,
-    canCreateSymptom: Boolean,
+    searchState: SearchState,
     onSymptomNameUpdated: (String) -> Unit,
     onCreateSymptom: () -> Unit,
     onClearInput: () -> Unit,
@@ -228,10 +227,10 @@ fun FormNameInput(
             text = stringResource(R.string.name_input_label)
         )
         OutlinedInputTextFieldWithDropdown(
-            availableOptions = availableSymptoms,
-            textValue = symptomName,
+            availableOptions = searchState.results,
+            textValue = searchState.input,
             onTextValueUpdated = onSymptomNameUpdated,
-            canCreateOption = canCreateSymptom,
+            canCreateOption = searchState.canCreateNewSymptom,
             onCreateOption = onCreateSymptom,
             onClearInput = onClearInput,
             onChosenOptionUpdated = onSelectedSymptomUpdated,
@@ -282,18 +281,18 @@ fun FormSeverityInput(
 fun AddSymptomScreenPreview() {
     SymptomTrackerTheme {
         SymptomEntryBody(
-            symptomUiState = SymptomUiState(
-                availableSymptoms = listOf(
-                    Symptom(1, "Bloating"),
-                    Symptom(2, "Fatigue"),
-                    Symptom(3, "Nausea")
+            uiState = SymptomEntryUiState(
+                selectedSymptoms = listOf(
+                    SymptomWithSeverity(Symptom(2, "Fatigue"), Severity.MODERATE),
                 ),
-                symptomLogDetails = SymptomLogDetails(
-                    symptomsWithSeverity = listOf(
-                        SymptomWithSeverity(Symptom(2, "Fatigue"), Severity.MODERATE),
+                searchState = SearchState(
+                    results = listOf(
+                        Symptom(1, "Bloating"),
+                        Symptom(2, "Fatigue"),
+                        Symptom(3, "Nausea")
                     )
                 ),
-                symptomInput = SymptomInput(severity = Severity.MILD),
+                selectedSeverity = Severity.MILD,
                 dateTimeInput = DateTimeInput(Calendar.getInstance())
             ),
             onSymptomNameUpdated = {},

@@ -1,4 +1,4 @@
-package com.example.symptomtracker.feature.view_symptom
+package com.example.symptomtracker.feature.symptom
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -9,7 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.symptomtracker.core.data.repository.SymptomRepository
 import com.example.symptomtracker.core.database.model.SymptomLogWithSymptoms
 import com.example.symptomtracker.core.ui.ViewLogUiState
-import com.example.symptomtracker.feature.view_symptom.navigation.SYMPTOM_LOG_ID
+import com.example.symptomtracker.feature.symptom.navigation.SYMPTOM_LOG_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

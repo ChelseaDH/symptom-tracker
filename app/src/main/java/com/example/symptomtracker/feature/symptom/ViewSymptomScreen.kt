@@ -1,4 +1,4 @@
-package com.example.symptomtracker.feature.view_symptom
+package com.example.symptomtracker.feature.symptom
 
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
@@ -15,11 +15,13 @@ import com.example.symptomtracker.core.ui.ViewLogUiState
 @Composable
 fun ViewSymptomRoute(
     navigateBack: () -> Unit,
+    navigateToEdit: () -> Unit,
     viewModel: ViewSymptomViewModel = hiltViewModel()
 ) {
     ViewSymptomScreen(
         navigateBack = navigateBack,
-        deleteLog = viewModel::deleteLog,
+        onDelete = viewModel::deleteLog,
+        onEdit = navigateToEdit,
         state = viewModel.uiState,
     )
 }
@@ -27,14 +29,16 @@ fun ViewSymptomRoute(
 @Composable
 internal fun ViewSymptomScreen(
     navigateBack: () -> Unit,
-    deleteLog: (SymptomLogWithSymptoms) -> Unit,
+    onDelete: (SymptomLogWithSymptoms) -> Unit,
+    onEdit: () -> Unit,
     state: ViewSymptomUiState = ViewLogUiState.Loading,
 ) {
     ViewLogScreen(
         navigateBack = navigateBack,
         uiState = state,
         title = R.string.add_symptom_text,
-        deleteLog = deleteLog,
+        deleteLog = onDelete,
+        onEdit = onEdit,
         bodyContent = {
             it.items.forEach { item ->
                 ListItem(
@@ -55,7 +59,8 @@ fun ViewSymptomScreenPreview(
 ) {
     ViewSymptomScreen(
         navigateBack = {},
-        deleteLog = {},
+        onDelete = {},
+        onEdit = {},
         state = ViewLogUiState.Data(symptomLog),
     )
 }

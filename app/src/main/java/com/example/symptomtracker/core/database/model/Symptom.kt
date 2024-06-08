@@ -50,6 +50,37 @@ data class SymptomLogRecord(
     val severity: Severity,
 )
 
+data class SymptomLogRecordWithSymptom(
+    @Embedded val symptomLogRecord: SymptomLogRecord,
+    @Relation(
+        parentColumn = "symptomId",
+        entityColumn = "symptomId"
+    )
+    val symptom: Symptom
+)
+
+data class SymptomLogWithLinkedRecords(
+    @Embedded val symptomLog: SymptomLog,
+    @Relation(
+        entity = SymptomLogRecord::class,
+        parentColumn = "symptomLogId",
+        entityColumn = "symptomLogId"
+    )
+    val symptomLogRecords: List<SymptomLogRecordWithSymptom>
+) {
+    fun toSymptomLogWithSymptomsAndSeverity(): SymptomLogWithSymptomsAndSeverity {
+        return SymptomLogWithSymptomsAndSeverity(
+            log = symptomLog,
+            items = symptomLogRecords.map {
+                SymptomWithSeverity(
+                    symptom = it.symptom,
+                    severity = it.symptomLogRecord.severity,
+                )
+            }
+        )
+    }
+}
+
 data class SymptomWithSeverity(
     val symptom: Symptom,
     val severity: Severity,
@@ -58,7 +89,9 @@ data class SymptomWithSeverity(
 data class SymptomLogWithSymptomsAndSeverity(
     val log: SymptomLog,
     val items: List<SymptomWithSeverity>,
-)
+) : Log {
+    override fun getDate(): OffsetDateTime = log.date
+}
 
 data class SymptomLogWithSymptoms(
     @Embedded val log: SymptomLog,
