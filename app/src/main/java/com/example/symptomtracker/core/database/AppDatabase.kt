@@ -8,9 +8,9 @@ import androidx.room.TypeConverters
 import com.example.symptomtracker.core.database.dao.FoodLogDao
 import com.example.symptomtracker.core.database.dao.MovementDao
 import com.example.symptomtracker.core.database.dao.SymptomDao
-import com.example.symptomtracker.core.database.model.FoodLog
+import com.example.symptomtracker.core.database.model.FoodItemEntity
+import com.example.symptomtracker.core.database.model.FoodLogEntity
 import com.example.symptomtracker.core.database.model.FoodLogItemCrossRef
-import com.example.symptomtracker.core.database.model.Item
 import com.example.symptomtracker.core.database.model.MovementLog
 import com.example.symptomtracker.core.database.model.Symptom
 import com.example.symptomtracker.core.database.model.SymptomLog
@@ -21,7 +21,7 @@ import com.example.symptomtracker.core.database.util.Converters
  * Database class with singleton Instance object
  */
 @Database(
-    entities = [Symptom::class, SymptomLog::class, SymptomLogRecord::class, FoodLog::class, Item::class, FoodLogItemCrossRef::class, MovementLog::class],
+    entities = [Symptom::class, SymptomLog::class, SymptomLogRecord::class, FoodLogEntity::class, FoodItemEntity::class, FoodLogItemCrossRef::class, MovementLog::class],
     version = 1,
     exportSchema = false
 )

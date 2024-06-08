@@ -7,9 +7,8 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.symptomtracker.core.data.repository.FoodLogRepository
-import com.example.symptomtracker.core.database.model.FoodLog
-import com.example.symptomtracker.core.database.model.FoodLogWithItems
-import com.example.symptomtracker.core.database.model.Item
+import com.example.symptomtracker.core.model.FoodItem
+import com.example.symptomtracker.core.model.FoodLog
 import com.example.symptomtracker.core.ui.DateInputFields
 import com.example.symptomtracker.core.ui.DateTimeInput
 import com.example.symptomtracker.core.ui.TimeInputFields
@@ -21,15 +20,15 @@ abstract class AbstractFoodEntryViewModel(private val foodLogRepository: FoodLog
     ViewModel() {
     var uiState by mutableStateOf(FoodEntryUiState(Calendar.getInstance()))
 
-    private var _selectedItems = listOf<Item>().toMutableStateList()
-    private var _allItems = listOf<Item>()
+    private var _selectedFoodItems = listOf<FoodItem>().toMutableStateList()
+    private var _allFoodItems = listOf<FoodItem>()
 
     abstract suspend fun submit()
 
     init {
         viewModelScope.launch {
-            foodLogRepository.getAllItemsStream().collect {
-                _allItems = it
+            foodLogRepository.getAllItems().collect {
+                _allFoodItems = it
                 uiState = uiState.copy(
                     searchState = uiState.searchState.copy(
                         results = it
@@ -41,29 +40,29 @@ abstract class AbstractFoodEntryViewModel(private val foodLogRepository: FoodLog
 
     fun addItem() {
         if (canAddSelectedItemToLog()) {
-            _selectedItems.add(uiState.searchState.selectedItem!!)
+            _selectedFoodItems.add(uiState.searchState.selectedItem!!)
 
             uiState = uiState.copy(
-                selectedItems = _selectedItems
+                selectedFoodItemEntities = _selectedFoodItems
             )
             clearSearch()
         }
     }
 
-    fun removeItem(item: Item) {
-        _selectedItems.remove(item)
+    fun removeItem(foodItem: FoodItem) {
+        _selectedFoodItems.remove(foodItem)
 
         uiState = uiState.copy(
-            selectedItems = _selectedItems
+            selectedFoodItemEntities = _selectedFoodItems
         )
     }
 
-    fun updateSelectedSearchItem(item: Item) {
+    fun updateSelectedSearchItem(foodItem: FoodItem) {
         uiState = uiState.copy(
             searchState = SearchState(
-                input = item.name,
-                selectedItem = item,
-                results = getSearchResults(item.name),
+                input = foodItem.name,
+                selectedItem = foodItem,
+                results = getSearchResults(foodItem.name),
                 canCreateNewItem = false,
             )
         )
@@ -96,7 +95,7 @@ abstract class AbstractFoodEntryViewModel(private val foodLogRepository: FoodLog
             val item = uiState.searchState.toItem()
             val id = foodLogRepository.insertItem(item)
 
-            updateSelectedSearchItem(item.copy(itemId = id))
+            updateSelectedSearchItem(item.copy(id = id))
         }
     }
 
@@ -117,7 +116,7 @@ abstract class AbstractFoodEntryViewModel(private val foodLogRepository: FoodLog
     }
 
     private fun canCreateNewItemFromInput(itemName: String): Boolean {
-        return itemName.isNotBlank() && _allItems.none {
+        return itemName.isNotBlank() && _allFoodItems.none {
             it.name.equals(
                 itemName, ignoreCase = true
             )
@@ -125,26 +124,28 @@ abstract class AbstractFoodEntryViewModel(private val foodLogRepository: FoodLog
     }
 
     private fun canAddSelectedItemToLog(): Boolean {
-        return uiState.searchState.selectedItem != null && !_selectedItems.contains(uiState.searchState.selectedItem!!)
+        return uiState.searchState.selectedItem != null && !_selectedFoodItems.contains(
+            uiState.searchState.selectedItem!!
+        )
     }
 
-    private fun getSearchResults(itemName: String = uiState.searchState.input): List<Item> {
-        return _allItems.filter { item ->
+    private fun getSearchResults(itemName: String = uiState.searchState.input): List<FoodItem> {
+        return _allFoodItems.filter { item ->
             item.name.contains(itemName, ignoreCase = true)
         }
     }
 
-    protected fun setUiStateWithLog(foodLogWithItems: FoodLogWithItems) {
-        uiState = FoodEntryUiState(foodLogWithItems = foodLogWithItems).copy(
-            searchState = uiState.searchState.copy(results = _allItems)
+    protected fun setUiStateWithLog(foodLog: FoodLog) {
+        uiState = FoodEntryUiState(foodLog = foodLog).copy(
+            searchState = uiState.searchState.copy(results = _allFoodItems)
         )
 
-        _selectedItems = foodLogWithItems.items.toMutableStateList()
+        _selectedFoodItems = foodLog.items.toMutableStateList()
     }
 }
 
 data class FoodEntryUiState(
-    val selectedItems: List<Item> = listOf(),
+    val selectedFoodItemEntities: List<FoodItem> = listOf(),
     val dateTimeInput: DateTimeInput,
     val searchState: SearchState = SearchState(),
 ) {
@@ -152,27 +153,26 @@ data class FoodEntryUiState(
         dateTimeInput = DateTimeInput(calendar = calendar),
     )
 
-    constructor(foodLogWithItems: FoodLogWithItems) : this(
-        selectedItems = foodLogWithItems.items,
-        dateTimeInput = DateTimeInput(date = foodLogWithItems.getDate()),
+    constructor(foodLog: FoodLog) : this(
+        selectedFoodItemEntities = foodLog.items,
+        dateTimeInput = DateTimeInput(date = foodLog.getDate()),
     )
 
     fun isValid(): Boolean =
-        selectedItems.isNotEmpty() && !selectedItems.any { item -> item.name.isBlank() }
+        selectedFoodItemEntities.isNotEmpty() && !selectedFoodItemEntities.any { item -> item.name.isBlank() }
 
-    fun toFoodLogWithItems(id: Long = 0): FoodLogWithItems = FoodLogWithItems(
-        log = FoodLog(foodLogId = id, date = dateTimeInput.toDate()), items = selectedItems
+    fun toFoodLog(id: Long = 0): FoodLog = FoodLog(
+        id = id, date = dateTimeInput.toDate(), items = selectedFoodItemEntities
     )
 }
 
 data class SearchState(
     val input: String = "",
-    val selectedItem: Item? = null,
-    val results: List<Item> = listOf(),
+    val selectedItem: FoodItem? = null,
+    val results: List<FoodItem> = listOf(),
     val canCreateNewItem: Boolean = false,
 ) {
     fun isInputValid(): Boolean = input.isNotEmpty()
 
-    fun toItem(): Item =
-        Item(itemId = 0, name = input.trim().replaceFirstChar { it.uppercaseChar() })
+    fun toItem(): FoodItem = FoodItem(name = input.trim().replaceFirstChar { it.uppercaseChar() })
 }

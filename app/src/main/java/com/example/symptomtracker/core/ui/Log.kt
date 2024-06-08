@@ -21,7 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.example.symptomtracker.R
-import com.example.symptomtracker.core.database.model.FoodLogWithItems
+import com.example.symptomtracker.core.model.FoodLog
 import com.example.symptomtracker.core.model.Log
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -146,7 +146,7 @@ fun LogDateTimePreview(
     @PreviewParameter(
         FoodLogPreviewParameterProvider::class,
         limit = 1
-    ) foodLog: FoodLogWithItems
+    ) foodLog: FoodLog
 ) {
     LogDateTime(log = foodLog)
 }

@@ -32,7 +32,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.symptomtracker.R
-import com.example.symptomtracker.core.database.model.FoodLogWithItems
+import com.example.symptomtracker.core.model.FoodLog
 import com.example.symptomtracker.core.model.Log
 import com.example.symptomtracker.core.model.getDisplayName
 import com.example.symptomtracker.core.model.getDisplayString
@@ -98,7 +98,7 @@ internal fun LogsScreen(
                     LogCard(
                         log = foodLog,
                         supportingText = foodLog.items.joinToString { it.name },
-                        onClick = { onFoodClick(foodLog.log.foodLogId) }
+                        onClick = { onFoodClick(foodLog.id) }
                     )
                 }
             }
@@ -193,7 +193,7 @@ internal fun LogCard(log: Log, supportingText: String, onClick: () -> Unit = {})
 
 @Preview(showBackground = true)
 @Composable
-fun LogsScreenPreview(@PreviewParameter(FoodLogsPreviewParameterProvider::class) foodLogs: List<FoodLogWithItems>) {
+fun LogsScreenPreview(@PreviewParameter(FoodLogsPreviewParameterProvider::class) foodLogs: List<FoodLog>) {
     LogsScreen(
         tabs = listOf("Food", "Symptom"),
         selectedTabIndex = 0,

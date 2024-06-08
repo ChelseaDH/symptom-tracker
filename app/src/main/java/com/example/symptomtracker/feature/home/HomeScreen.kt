@@ -47,8 +47,8 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.symptomtracker.R
-import com.example.symptomtracker.core.database.model.FoodLogWithItems
 import com.example.symptomtracker.core.database.model.MovementLog
+import com.example.symptomtracker.core.model.FoodLog
 import com.example.symptomtracker.core.model.Log
 import com.example.symptomtracker.core.model.SymptomLogWithSymptoms
 import com.example.symptomtracker.core.model.getDisplayName
@@ -255,7 +255,7 @@ fun Timeline(
                 ) {
                     items(items = logs) { log ->
                         when (log) {
-                            is FoodLogWithItems -> LogItemCard(
+                            is FoodLog -> LogItemCard(
                                 icon = {
                                     Icon(
                                         painter = painterResource(id = R.drawable.outline_nutrition_24),
@@ -266,7 +266,7 @@ fun Timeline(
                                 date = log.getDate(),
                                 dateTimeFormatter = DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_hh_mm)),
                                 supportingText = log.items.joinToString { it.name },
-                                onClick = { onFoodClick(log.log.foodLogId) },
+                                onClick = { onFoodClick(log.id) },
                             )
 
                             is SymptomLogWithSymptoms -> LogItemCard(
@@ -326,7 +326,8 @@ fun QuickAdd(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             maxItemsInEachRow = 2
         ) {
-            ExtendedFloatingActionButton(onClick = { onAddFoodClick() },
+            ExtendedFloatingActionButton(
+                onClick = { onAddFoodClick() },
                 text = { Text(text = stringResource(R.string.add_food_text)) },
                 icon = {
                     Icon(
@@ -337,7 +338,8 @@ fun QuickAdd(
                 modifier = Modifier.weight(1f),
                 elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp)
             )
-            ExtendedFloatingActionButton(onClick = { onAddSymptomClick() },
+            ExtendedFloatingActionButton(
+                onClick = { onAddSymptomClick() },
                 text = { Text(text = stringResource(R.string.add_symptom_text)) },
                 icon = {
                     Icon(
@@ -348,7 +350,8 @@ fun QuickAdd(
                 modifier = Modifier.weight(1f),
                 elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp)
             )
-            ExtendedFloatingActionButton(onClick = { onAddMovementClick() },
+            ExtendedFloatingActionButton(
+                onClick = { onAddMovementClick() },
                 text = { Text(text = stringResource(R.string.add_movement_text)) },
                 icon = {
                     Icon(

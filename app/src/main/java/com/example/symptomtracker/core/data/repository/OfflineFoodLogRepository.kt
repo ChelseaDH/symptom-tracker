@@ -1,34 +1,43 @@
 package com.example.symptomtracker.core.data.repository
 
+import com.example.symptomtracker.core.data.model.asEntity
+import com.example.symptomtracker.core.data.model.asFoodLogEntity
 import com.example.symptomtracker.core.database.dao.FoodLogDao
-import com.example.symptomtracker.core.database.model.FoodLogWithItems
-import com.example.symptomtracker.core.database.model.Item
+import com.example.symptomtracker.core.database.model.FoodItemEntity
+import com.example.symptomtracker.core.database.model.PopulatedFoodLog
+import com.example.symptomtracker.core.database.model.asExternalModel
+import com.example.symptomtracker.core.model.FoodItem
+import com.example.symptomtracker.core.model.FoodLog
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import java.time.OffsetDateTime
 import javax.inject.Inject
 
 class OfflineFoodLogRepository @Inject constructor(private val foodLogDao: FoodLogDao) :
     FoodLogRepository {
-    override suspend fun insertFoodLogWithItems(foodLogWithItems: FoodLogWithItems) =
-        foodLogDao.insertFoodLogWithItems(foodLogWithItems = foodLogWithItems)
+    override suspend fun insertFoodLog(foodLog: FoodLog) =
+        foodLogDao.insertFoodLogAndAssociatedRecords(populatedFoodLog = foodLog.asEntity())
 
-    override fun getAllItemsStream() = foodLogDao.getAllItems()
+    override fun getAllItems(): Flow<List<FoodItem>> =
+        foodLogDao.getAllItems().map { it.map(FoodItemEntity::asExternalModel) }
 
-    override fun getAllFoodLogs(): Flow<List<FoodLogWithItems>> = foodLogDao.getAllFoodLogs()
+    override fun getAllFoodLogs(): Flow<List<FoodLog>> =
+        foodLogDao.getAllFoodLogs().map { it.map(PopulatedFoodLog::asExternalModel) }
 
-    override suspend fun getFoodLog(id: Long): Flow<FoodLogWithItems?> = foodLogDao.getFoodLog(id)
+    override suspend fun getFoodLog(id: Long): Flow<FoodLog?> =
+        foodLogDao.getFoodLog(id).map { it?.asExternalModel() }
 
     override fun getAllFoodLogsBetweenDates(
-        startDate: OffsetDateTime,
-        endDate: OffsetDateTime
-    ): Flow<List<FoodLogWithItems>> =
-        foodLogDao.getAllFoodLogsBetweenDates(startDate, endDate)
+        startDate: OffsetDateTime, endDate: OffsetDateTime
+    ): Flow<List<FoodLog>> = foodLogDao.getAllFoodLogsBetweenDates(startDate, endDate)
+        .map { it.map(PopulatedFoodLog::asExternalModel) }
 
-    override suspend fun insertItem(item: Item): Long = foodLogDao.insertItem(item)
+    override suspend fun insertItem(foodItem: FoodItem): Long =
+        foodLogDao.insertItem(foodItemEntity = foodItem.asEntity())
 
-    override suspend fun deleteWithItems(foodLogWithItems: FoodLogWithItems) =
-        foodLogDao.deleteLog(foodLogWithItems.log)
+    override suspend fun deleteFoodLog(foodLog: FoodLog) =
+        foodLogDao.deleteLog(foodLog.asFoodLogEntity())
 
-    override suspend fun updateLogWithItems(foodLogWithItems: FoodLogWithItems) =
-        foodLogDao.updateLogWithItems(foodLogWithItems = foodLogWithItems)
+    override suspend fun updateFoodLog(foodLog: FoodLog) =
+        foodLogDao.updateLogAndAssociatedRecords(populatedFoodLog = foodLog.asEntity())
 }

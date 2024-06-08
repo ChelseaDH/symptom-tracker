@@ -7,7 +7,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.symptomtracker.R
-import com.example.symptomtracker.core.database.model.FoodLogWithItems
+import com.example.symptomtracker.core.model.FoodLog
 import com.example.symptomtracker.core.ui.FoodLogPreviewParameterProvider
 import com.example.symptomtracker.core.ui.ViewLogScreen
 import com.example.symptomtracker.core.ui.ViewLogUiState
@@ -30,32 +30,27 @@ fun ViewFoodRoute(
 fun ViewFoodScreen(
     navigateBack: () -> Unit,
     state: ViewFoodUiState = ViewLogUiState.Loading,
-    onDelete: (FoodLogWithItems) -> Unit,
+    onDelete: (FoodLog) -> Unit,
     onEdit: () -> Unit,
 ) {
-    ViewLogScreen(
-        navigateBack = navigateBack,
+    ViewLogScreen(navigateBack = navigateBack,
         uiState = state,
         title = R.string.add_food_text,
         deleteLog = onDelete,
         onEdit = onEdit,
         bodyContent = {
             it.items.forEach { item ->
-                ListItem(
-                    headlineContent = { Text(text = item.name) }
-                )
+                ListItem(headlineContent = { Text(text = item.name) })
             }
-        }
-    )
+        })
 }
 
 @Preview(showBackground = true)
 @Composable
 fun ViewFoodContentPreview(
     @PreviewParameter(
-        FoodLogPreviewParameterProvider::class,
-        limit = 1
-    ) foodLog: FoodLogWithItems
+        FoodLogPreviewParameterProvider::class, limit = 1
+    ) foodLog: FoodLog
 ) {
     ViewFoodScreen(
         navigateBack = {},

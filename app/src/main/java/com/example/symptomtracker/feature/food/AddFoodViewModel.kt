@@ -9,7 +9,7 @@ class AddFoodViewModel @Inject constructor(private val foodLogRepository: FoodLo
     AbstractFoodEntryViewModel(foodLogRepository) {
     override suspend fun submit() {
         if (uiState.isValid()) {
-            foodLogRepository.insertFoodLogWithItems(uiState.toFoodLogWithItems())
+            foodLogRepository.insertFoodLog(uiState.toFoodLog())
         }
     }
 }

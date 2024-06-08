@@ -25,7 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.example.symptomtracker.R
-import com.example.symptomtracker.core.database.model.Item
+import com.example.symptomtracker.core.model.FoodItem
 import com.example.symptomtracker.core.ui.DateInputFields
 import com.example.symptomtracker.core.ui.DateTimeInput
 import com.example.symptomtracker.core.ui.DateTimeInputRow
@@ -90,13 +90,13 @@ internal fun FoodEntryScreen(
 @Composable
 fun FoodEntryBody(
     uiState: FoodEntryUiState,
-    onChosenItemUpdated: (Item) -> Unit,
+    onChosenItemUpdated: (FoodItem) -> Unit,
     onNameUpdated: (String) -> Unit,
     onDateChanged: (DateInputFields) -> Unit,
     onTimeChanged: (TimeInputFields) -> Unit,
     onAddItem: () -> Unit,
     onCreateItem: () -> Unit,
-    onDeleteItem: (Item) -> Unit,
+    onDeleteItem: (FoodItem) -> Unit,
     onClearChosenItem: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -118,18 +118,21 @@ fun FoodEntryBody(
             onClearChosenItem = onClearChosenItem,
         )
         HorizontalDivider()
-        FoodLogItemList(itemList = uiState.selectedItems, onDeleteItem = onDeleteItem)
+        FoodLogItemList(
+            foodItemEntityList = uiState.selectedFoodItemEntities,
+            onDeleteItem = onDeleteItem
+        )
     }
 }
 
 @Composable
 fun FoodLogItemList(
-    itemList: List<Item>,
-    onDeleteItem: (Item) -> Unit,
+    foodItemEntityList: List<FoodItem>,
+    onDeleteItem: (FoodItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier = modifier) {
-        items(items = itemList, key = { it.itemId }) { item ->
+        items(items = foodItemEntityList, key = { it.id }) { item ->
             ListItem(
                 headlineContent = { Text(text = item.name) },
                 trailingContent = {
@@ -152,7 +155,7 @@ fun FoodLogItemList(
 fun FoodLogItemInput(
     searchState: SearchState,
     dateTimeInput: DateTimeInput,
-    onChosenItemUpdated: (Item) -> Unit,
+    onChosenItemUpdated: (FoodItem) -> Unit,
     onDateChanged: (DateInputFields) -> Unit,
     onTimeChanged: (TimeInputFields) -> Unit,
     onNameUpdated: (String) -> Unit,
@@ -200,11 +203,11 @@ fun FoodLogItemInput(
 
 @Composable
 @Preview(showSystemUi = true)
-fun AddFoodScreenPreview(@PreviewParameter(ItemPreviewParameterProvider::class) items: List<Item>) {
+fun AddFoodScreenPreview(@PreviewParameter(ItemPreviewParameterProvider::class) foodItems: List<FoodItem>) {
     SymptomTrackerTheme {
         FoodEntryBody(
             uiState = FoodEntryUiState(Calendar.getInstance()).copy(
-                searchState = SearchState(results = items)
+                searchState = SearchState(results = foodItems)
             ),
             onChosenItemUpdated = {},
             onNameUpdated = {},

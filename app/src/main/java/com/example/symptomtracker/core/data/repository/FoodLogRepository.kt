@@ -1,55 +1,54 @@
 package com.example.symptomtracker.core.data.repository
 
-import com.example.symptomtracker.core.database.model.FoodLog
-import com.example.symptomtracker.core.database.model.FoodLogWithItems
-import com.example.symptomtracker.core.database.model.Item
+import com.example.symptomtracker.core.model.FoodItem
+import com.example.symptomtracker.core.model.FoodLog
 import kotlinx.coroutines.flow.Flow
 import java.time.OffsetDateTime
 
 /**
- * Repository that provides insert and retrieval of [FoodLogWithItems] and [Item] records from a given data source.
+ * Data layer implementation for [FoodItem] and [FoodLog].
  */
 interface FoodLogRepository {
     /**
-     * Insert [FoodLog] and associated [Item] records via the [FoodLogWithItems] object.
+     * Inserts an item.
      */
-    suspend fun insertFoodLogWithItems(foodLogWithItems: FoodLogWithItems)
+    suspend fun insertItem(foodItem: FoodItem): Long
 
     /**
-     * Retrieves all [Item] records.
+     * Inserts a food log and it's associated items.
      */
-    fun getAllItemsStream(): Flow<List<Item>>
+    suspend fun insertFoodLog(foodLog: FoodLog)
 
     /**
-     * Retrieves all [FoodLog] records with their associated [Item] records.
+     * Get all food item records.
      */
-    fun getAllFoodLogs(): Flow<List<FoodLogWithItems>>
+    fun getAllItems(): Flow<List<FoodItem>>
 
     /**
-     * Retrieves a [FoodLog] record with a given ID with its associated [Item] records.
+     * Get all food logs with their associated items.
      */
-    suspend fun getFoodLog(id: Long): Flow<FoodLogWithItems?>
+    fun getAllFoodLogs(): Flow<List<FoodLog>>
 
     /**
-     * Retrieves all [FoodLog] records with their associated [Item] records between two given dates.
+     * Get a food log with it's associated items, if it exists.
+     */
+    suspend fun getFoodLog(id: Long): Flow<FoodLog?>
+
+    /**
+     * Get all food logs with their associated items between two dates.
      */
     fun getAllFoodLogsBetweenDates(
         startDate: OffsetDateTime,
         endDate: OffsetDateTime
-    ): Flow<List<FoodLogWithItems>>
+    ): Flow<List<FoodLog>>
 
     /**
-     * Insert [Item] record.
+     * Deletes a food log and the links to it's associated items.
      */
-    suspend fun insertItem(item: Item): Long
+    suspend fun deleteFoodLog(foodLog: FoodLog)
 
     /**
-     * Deletes a [FoodLog] and its associated [Item] records.
+     * Updates a food log and it's associated items.
      */
-    suspend fun deleteWithItems(foodLogWithItems: FoodLogWithItems)
-
-    /**
-     * Updates a [FoodLog] and its associated [Item] records.
-     */
-    suspend fun updateLogWithItems(foodLogWithItems: FoodLogWithItems)
+    suspend fun updateFoodLog(foodLog: FoodLog)
 }

@@ -7,7 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.symptomtracker.core.data.repository.FoodLogRepository
-import com.example.symptomtracker.core.database.model.FoodLogWithItems
+import com.example.symptomtracker.core.model.FoodLog
 import com.example.symptomtracker.core.ui.ViewLogUiState
 import com.example.symptomtracker.feature.food.navigation.FOOD_LOG_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -35,11 +35,11 @@ class ViewFoodViewModel @Inject constructor(
         }
     }
 
-    fun deleteLog(foodLogWithItems: FoodLogWithItems) {
+    fun deleteLog(foodLog: FoodLog) {
         viewModelScope.launch {
-            foodLogRepository.deleteWithItems(foodLogWithItems)
+            foodLogRepository.deleteFoodLog(foodLog)
         }
     }
 }
 
-typealias ViewFoodUiState = ViewLogUiState<FoodLogWithItems>
+typealias ViewFoodUiState = ViewLogUiState<FoodLog>
