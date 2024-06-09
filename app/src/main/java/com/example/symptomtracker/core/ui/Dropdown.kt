@@ -52,14 +52,18 @@ fun <T> OutlinedInputTextFieldWithDropdown(
             },
             label = {
                 if (textLabelId != null)
-                    Text(text = stringResource(id = textLabelId),
-                        color = MaterialTheme.colorScheme.onPrimaryContainer)
+                    Text(
+                        text = stringResource(id = textLabelId),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
             },
             modifier = modifier.menuAnchor(),
             trailingIcon = {
                 IconButton(onClick = { onClearInput() }) {
-                    Icon(imageVector = Icons.Default.Clear,
-                        contentDescription = stringResource(id = R.string.clear_input_cd))
+                    Icon(
+                        imageVector = Icons.Default.Clear,
+                        contentDescription = stringResource(id = R.string.clear_input_cd)
+                    )
                 }
             },
             singleLine = true,
@@ -83,7 +87,10 @@ fun <T> OutlinedInputTextFieldWithDropdown(
             }
             if (canCreateOption) {
                 DropdownMenuItem(text = { Text(text = textValue) },
-                    onClick = { onCreateOption() },
+                    onClick = {
+                        selectorExpanded = false
+                        onCreateOption()
+                    },
                     trailingIcon = {
                         Icon(
                             imageVector = Icons.Default.Add,
@@ -118,8 +125,10 @@ fun <T> OutlinedReadonlyTextFieldWithDropdown(
             onValueChange = {},
             label = {
                 if (textLabelId != null)
-                    Text(text = stringResource(id = textLabelId),
-                        color = MaterialTheme.colorScheme.onPrimaryContainer)
+                    Text(
+                        text = stringResource(id = textLabelId),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
             },
             modifier = modifier.menuAnchor(),
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = selectorExpanded) },
