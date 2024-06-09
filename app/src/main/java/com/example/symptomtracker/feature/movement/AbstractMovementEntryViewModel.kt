@@ -54,7 +54,7 @@ data class MovementEntryUiState(
 
     constructor(movementLog: MovementLog) : this(
         chosenStoolType = movementLog.stoolType,
-        dateTimeInput = DateTimeInput(date = movementLog.getDate())
+        dateTimeInput = DateTimeInput(date = movementLog.date)
     )
 
     fun isValid(): Boolean {

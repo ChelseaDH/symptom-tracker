@@ -263,7 +263,7 @@ fun Timeline(
                                     )
                                 },
                                 title = stringResource(R.string.add_food_text),
-                                date = log.getDate(),
+                                date = log.date,
                                 dateTimeFormatter = DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_hh_mm)),
                                 supportingText = log.items.joinToString { it.name },
                                 onClick = { onFoodClick(log.id) },
@@ -277,7 +277,7 @@ fun Timeline(
                                     )
                                 },
                                 title = stringResource(R.string.add_symptom_text),
-                                date = log.getDate(),
+                                date = log.date,
                                 dateTimeFormatter = DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_hh_mm)),
                                 supportingText = log.items.joinToString { it.getDisplayString() },
                                 onClick = { onSymptomClick(log.id) },
@@ -290,7 +290,7 @@ fun Timeline(
                                 )
                             },
                                 title = stringResource(R.string.add_movement_text),
-                                date = log.getDate(),
+                                date = log.date,
                                 dateTimeFormatter = DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_hh_mm)),
                                 supportingText = log.stoolType.getDisplayName(),
                                 onClick = { onMovementClick(log.id) })

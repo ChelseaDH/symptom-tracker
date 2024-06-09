@@ -155,7 +155,7 @@ data class FoodEntryUiState(
 
     constructor(foodLog: FoodLog) : this(
         selectedFoodItemEntities = foodLog.items,
-        dateTimeInput = DateTimeInput(date = foodLog.getDate()),
+        dateTimeInput = DateTimeInput(date = foodLog.date),
     )
 
     fun isValid(): Boolean =

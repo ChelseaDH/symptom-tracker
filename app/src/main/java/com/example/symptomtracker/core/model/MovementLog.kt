@@ -7,8 +7,6 @@ import java.time.OffsetDateTime
  */
 data class MovementLog(
     val id: Long,
-    private val date: OffsetDateTime,
+    override val date: OffsetDateTime,
     val stoolType: StoolType,
-) : Log {
-    override fun getDate(): OffsetDateTime = date
-}
+) : Log()

@@ -20,4 +20,4 @@ fun SymptomLog.asEntity(): PopulatedSymptomLog = PopulatedSymptomLog(
     }
 )
 
-fun SymptomLog.asSymptomLogEntity(): SymptomLogEntity = SymptomLogEntity(id = id, date = getDate())
+fun SymptomLog.asSymptomLogEntity(): SymptomLogEntity = SymptomLogEntity(id = id, date = date)

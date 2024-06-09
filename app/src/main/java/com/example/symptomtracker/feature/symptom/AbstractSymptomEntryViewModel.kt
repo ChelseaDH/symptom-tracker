@@ -159,7 +159,7 @@ data class SymptomEntryUiState(
     )
 
     constructor(log: SymptomLog) : this(
-        selectedSymptoms = log.items, dateTimeInput = DateTimeInput(date = log.getDate())
+        selectedSymptoms = log.items, dateTimeInput = DateTimeInput(date = log.date)
     )
 
     fun isValid(): Boolean =

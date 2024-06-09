@@ -183,8 +183,8 @@ internal fun LogsScreen(
 @Composable
 internal fun LogCard(log: Log, supportingText: String, onClick: () -> Unit = {}) {
     LogItemCard(
-        title = log.getDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
-        date = log.getDate(),
+        title = log.date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+        date = log.date,
         dateTimeFormatter = DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_hh_mm)),
         supportingText = supportingText,
         onClick = onClick

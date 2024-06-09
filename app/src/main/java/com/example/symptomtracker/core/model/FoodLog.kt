@@ -7,8 +7,6 @@ import java.time.OffsetDateTime
  */
 data class FoodLog(
     val id: Long,
-    private val date: OffsetDateTime,
+    override val date: OffsetDateTime,
     val items: List<FoodItem>,
-) : Log {
-    override fun getDate(): OffsetDateTime = date
-}
+) : Log()

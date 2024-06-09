@@ -7,8 +7,6 @@ import java.time.OffsetDateTime
  */
 data class SymptomLog(
     val id: Long,
-    private val date: OffsetDateTime,
+    override val date: OffsetDateTime,
     val items: List<SymptomWithSeverity>,
-) : Log {
-    override fun getDate(): OffsetDateTime = date
-}
+) : Log()

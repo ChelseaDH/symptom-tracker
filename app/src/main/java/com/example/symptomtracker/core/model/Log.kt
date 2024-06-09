@@ -2,6 +2,6 @@ package com.example.symptomtracker.core.model
 
 import java.time.OffsetDateTime
 
-interface Log {
-    fun getDate(): OffsetDateTime
+sealed class Log {
+    abstract val date: OffsetDateTime
 }

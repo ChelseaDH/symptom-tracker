@@ -9,4 +9,4 @@ fun FoodLog.asEntity(): PopulatedFoodLog = PopulatedFoodLog(
     foodItemEntities = items.map { it.asEntity() }
 )
 
-fun FoodLog.asFoodLogEntity(): FoodLogEntity = FoodLogEntity(id = id, date = getDate())
+fun FoodLog.asFoodLogEntity(): FoodLogEntity = FoodLogEntity(id = id, date = date)

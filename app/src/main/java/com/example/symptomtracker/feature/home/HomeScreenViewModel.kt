@@ -47,7 +47,7 @@ class HomeScreenViewModel @Inject constructor(
             data1 + data2 + data3
         }.collect { logs ->
             val sortedLogs = logs.toMutableList()
-            sortedLogs.sortBy { it.getDate() }
+            sortedLogs.sortBy { it.date }
 
             uiState = uiState.copy(
                 logs = sortedLogs

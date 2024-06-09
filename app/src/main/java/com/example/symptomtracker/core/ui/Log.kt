@@ -98,8 +98,7 @@ fun LogDateTime(log: Log) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = log.getDate()
-                .format(DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_ddd_dd_mmm))),
+            text = log.date.format(DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_ddd_dd_mmm))),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.secondary,
         )
@@ -109,8 +108,7 @@ fun LogDateTime(log: Log) {
             color = MaterialTheme.colorScheme.secondary,
         )
         Text(
-            text = log.getDate()
-                .format(DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_hh_mm))),
+            text = log.date.format(DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_hh_mm))),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.secondary,
         )
