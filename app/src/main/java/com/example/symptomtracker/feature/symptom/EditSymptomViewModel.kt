@@ -17,7 +17,7 @@ class EditSymptomViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            symptomRepository.getSymptomLog(logId).collect { symptomLog ->
+            symptomRepository.getSymptomLogById(logId).collect { symptomLog ->
                 if (symptomLog !== null) {
                     setUiStateWithLog(symptomLog)
                 }
@@ -27,7 +27,7 @@ class EditSymptomViewModel @Inject constructor(
 
     override suspend fun submit() {
         if (uiState.isValid()) {
-            symptomRepository.updateLog(uiState.toSymptomLogWithSymptoms(logId))
+            symptomRepository.updateSymptomLog(uiState.toSymptomLog(logId))
         }
     }
 }

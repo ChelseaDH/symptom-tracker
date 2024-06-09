@@ -7,7 +7,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.symptomtracker.R
-import com.example.symptomtracker.core.model.SymptomLogWithSymptoms
+import com.example.symptomtracker.core.model.SymptomLog
 import com.example.symptomtracker.core.model.getDisplayString
 import com.example.symptomtracker.core.ui.SymptomLogPreviewParameterProvider
 import com.example.symptomtracker.core.ui.ViewLogScreen
@@ -30,7 +30,7 @@ fun ViewSymptomRoute(
 @Composable
 internal fun ViewSymptomScreen(
     navigateBack: () -> Unit,
-    onDelete: (SymptomLogWithSymptoms) -> Unit,
+    onDelete: (SymptomLog) -> Unit,
     onEdit: () -> Unit,
     state: ViewSymptomUiState = ViewLogUiState.Loading,
 ) {
@@ -56,7 +56,7 @@ fun ViewSymptomScreenPreview(
     @PreviewParameter(
         SymptomLogPreviewParameterProvider::class,
         limit = 1
-    ) symptomLog: SymptomLogWithSymptoms
+    ) symptomLog: SymptomLog
 ) {
     ViewSymptomScreen(
         navigateBack = {},

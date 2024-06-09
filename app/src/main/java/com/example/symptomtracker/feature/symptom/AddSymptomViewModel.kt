@@ -9,7 +9,7 @@ class AddSymptomViewModel @Inject constructor(private val symptomRepository: Sym
     AbstractSymptomEntryViewModel(symptomRepository) {
     override suspend fun submit() {
         if (uiState.isValid()) {
-            symptomRepository.insertSymptomLogWithSymptom(uiState.toSymptomLogWithSymptoms())
+            symptomRepository.insertSymptomLog(uiState.toSymptomLog())
         }
     }
 }

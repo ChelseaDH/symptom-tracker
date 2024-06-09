@@ -1,55 +1,54 @@
 package com.example.symptomtracker.core.data.repository
 
-import com.example.symptomtracker.core.database.model.Symptom
-import com.example.symptomtracker.core.database.model.SymptomLog
-import com.example.symptomtracker.core.model.SymptomLogWithSymptoms
+import com.example.symptomtracker.core.model.Symptom
+import com.example.symptomtracker.core.model.SymptomLog
 import kotlinx.coroutines.flow.Flow
 import java.time.OffsetDateTime
 
 /**
- * Repository that provides insert of [Symptom] from a given data source.
+ * Data layer implementation for [Symptom] and [SymptomLog].
  */
 interface SymptomRepository {
     /**
-     * Insert [Symptom].
+     * Inserts a symptom.
      */
     suspend fun insertSymptom(symptom: Symptom): Long
 
     /**
-     * Retrieves all [Symptom] records.
+     * Inserts a symptom log and it's associated symptoms with their severities.
      */
-    fun getAllSymptomsStream(): Flow<List<Symptom>>
+    suspend fun insertSymptomLog(symptomLog: SymptomLog)
 
     /**
-     * Retrieves all [SymptomLog] records with their associated [Symptom] objects.
+     * Get all symptom records.
      */
-    fun getAllSymptomLogs(): Flow<List<SymptomLogWithSymptoms>>
+    fun getAllSymptoms(): Flow<List<Symptom>>
 
     /**
-     * Retrieves all [SymptomLog] records with their associated [Symptom] records between two given dates.
+     * Get all symptom logs with their associated symptoms with their severities.
+     */
+    fun getAllSymptomLogs(): Flow<List<SymptomLog>>
+
+    /**
+     * Get all symptom logs with their associated symptoms with their severities between two dates.
      */
     fun getAllSymptomLogsBetweenDates(
         startDate: OffsetDateTime,
         endDate: OffsetDateTime
-    ): Flow<List<SymptomLogWithSymptoms>>
+    ): Flow<List<SymptomLog>>
 
     /**
-     * Retrieves a [SymptomLog] record with a given ID with its associated [Symptom] records.
+     * Get a symptom logs with it's associated symptoms with their severities, if it exists.
      */
-    fun getSymptomLog(id: Long): Flow<SymptomLogWithSymptoms?>
+    fun getSymptomLogById(id: Long): Flow<SymptomLog?>
 
     /**
-     * Insert [SymptomLog] and associated [Symptom] records via the [SymptomLogWithSymptoms] object.
+     * Deletes a symptom log and the links to it's associated symptoms.
      */
-    suspend fun insertSymptomLogWithSymptom(symptomLogWithSymptoms: SymptomLogWithSymptoms)
+    suspend fun deleteSymptomLog(symptomLog: SymptomLog)
 
     /**
-     * Deletes a [SymptomLog] and its associated [Symptom] records.
+     * Updates a symptom log and it's associated symptoms and their severities.
      */
-    suspend fun deleteWithSymptoms(symptomLogWithSymptoms: SymptomLogWithSymptoms)
-
-    /**
-     * Deletes a [SymptomLog] and its associated [Symptom] records.
-     */
-    suspend fun updateLog(log: SymptomLogWithSymptoms)
+    suspend fun updateSymptomLog(symptomLog: SymptomLog)
 }

@@ -111,7 +111,7 @@ internal fun LogsScreen(
                     LogCard(
                         log = symptomLog,
                         supportingText = symptomLog.items.joinToString { it.getDisplayString() },
-                        onClick = { onSymptomClick(symptomLog.log.symptomLogId) }
+                        onClick = { onSymptomClick(symptomLog.id) }
                     )
                 }
             }

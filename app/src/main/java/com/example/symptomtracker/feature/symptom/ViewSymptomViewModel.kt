@@ -7,7 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.symptomtracker.core.data.repository.SymptomRepository
-import com.example.symptomtracker.core.model.SymptomLogWithSymptoms
+import com.example.symptomtracker.core.model.SymptomLog
 import com.example.symptomtracker.core.ui.ViewLogUiState
 import com.example.symptomtracker.feature.symptom.navigation.SYMPTOM_LOG_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,7 +26,7 @@ class ViewSymptomViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            symptomRepository.getSymptomLog(logId).collect { symptomLog ->
+            symptomRepository.getSymptomLogById(logId).collect { symptomLog ->
                 uiState = if (symptomLog !== null) {
                     ViewLogUiState.Data(symptomLog)
                 } else {
@@ -36,11 +36,11 @@ class ViewSymptomViewModel @Inject constructor(
         }
     }
 
-    fun deleteLog(symptomLogWithSymptoms: SymptomLogWithSymptoms) {
+    fun deleteLog(symptomLog: SymptomLog) {
         viewModelScope.launch {
-            symptomRepository.deleteWithSymptoms(symptomLogWithSymptoms)
+            symptomRepository.deleteSymptomLog(symptomLog)
         }
     }
 }
 
-typealias ViewSymptomUiState = ViewLogUiState<SymptomLogWithSymptoms>
+typealias ViewSymptomUiState = ViewLogUiState<SymptomLog>

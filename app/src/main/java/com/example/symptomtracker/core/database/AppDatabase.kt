@@ -12,16 +12,16 @@ import com.example.symptomtracker.core.database.model.FoodItemEntity
 import com.example.symptomtracker.core.database.model.FoodLogEntity
 import com.example.symptomtracker.core.database.model.FoodLogItemCrossRef
 import com.example.symptomtracker.core.database.model.MovementLog
-import com.example.symptomtracker.core.database.model.Symptom
-import com.example.symptomtracker.core.database.model.SymptomLog
-import com.example.symptomtracker.core.database.model.SymptomLogRecord
+import com.example.symptomtracker.core.database.model.SymptomEntity
+import com.example.symptomtracker.core.database.model.SymptomLogEntity
+import com.example.symptomtracker.core.database.model.SymptomLogSymptomCrossRef
 import com.example.symptomtracker.core.database.util.Converters
 
 /**
  * Database class with singleton Instance object
  */
 @Database(
-    entities = [Symptom::class, SymptomLog::class, SymptomLogRecord::class, FoodLogEntity::class, FoodItemEntity::class, FoodLogItemCrossRef::class, MovementLog::class],
+    entities = [SymptomEntity::class, SymptomLogEntity::class, SymptomLogSymptomCrossRef::class, FoodLogEntity::class, FoodItemEntity::class, FoodLogItemCrossRef::class, MovementLog::class],
     version = 1,
     exportSchema = false
 )

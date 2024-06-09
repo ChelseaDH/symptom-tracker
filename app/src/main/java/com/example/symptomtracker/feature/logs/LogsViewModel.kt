@@ -10,7 +10,7 @@ import com.example.symptomtracker.core.data.repository.MovementRepository
 import com.example.symptomtracker.core.data.repository.SymptomRepository
 import com.example.symptomtracker.core.database.model.MovementLog
 import com.example.symptomtracker.core.model.FoodLog
-import com.example.symptomtracker.core.model.SymptomLogWithSymptoms
+import com.example.symptomtracker.core.model.SymptomLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -92,6 +92,6 @@ data class LogsViewUiState(
 sealed interface TabUiState {
     object Loading : TabUiState
     data class FoodLogs(val logs: List<FoodLog>) : TabUiState
-    data class SymptomLogs(val logs: List<SymptomLogWithSymptoms>) : TabUiState
+    data class SymptomLogs(val logs: List<SymptomLog>) : TabUiState
     data class MovementLogs(val logs: List<MovementLog>) : TabUiState
 }

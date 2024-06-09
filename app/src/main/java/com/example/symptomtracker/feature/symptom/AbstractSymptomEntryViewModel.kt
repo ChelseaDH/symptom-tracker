@@ -7,10 +7,9 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.symptomtracker.core.data.repository.SymptomRepository
-import com.example.symptomtracker.core.database.model.Symptom
-import com.example.symptomtracker.core.database.model.SymptomLog
 import com.example.symptomtracker.core.model.Severity
-import com.example.symptomtracker.core.model.SymptomLogWithSymptoms
+import com.example.symptomtracker.core.model.Symptom
+import com.example.symptomtracker.core.model.SymptomLog
 import com.example.symptomtracker.core.model.SymptomWithSeverity
 import com.example.symptomtracker.core.ui.DateInputFields
 import com.example.symptomtracker.core.ui.DateTimeInput
@@ -29,7 +28,7 @@ abstract class AbstractSymptomEntryViewModel(private val symptomRepository: Symp
 
     init {
         viewModelScope.launch {
-            symptomRepository.getAllSymptomsStream().collect {
+            symptomRepository.getAllSymptoms().collect {
                 _allSymptoms = it
                 uiState = uiState.copy(
                     searchState = uiState.searchState.copy(results = it)
@@ -104,7 +103,7 @@ abstract class AbstractSymptomEntryViewModel(private val symptomRepository: Symp
             val symptom = uiState.searchState.toSymptom()
             val id = symptomRepository.insertSymptom(symptom)
 
-            updateSelectedSearchSymptom(symptom.copy(symptomId = id))
+            updateSelectedSearchSymptom(symptom.copy(id = id))
         }
     }
 
@@ -140,12 +139,12 @@ abstract class AbstractSymptomEntryViewModel(private val symptomRepository: Symp
         }
     }
 
-    protected fun setUiStateWithLog(symptomLogWithSymptoms: SymptomLogWithSymptoms) {
-        uiState = SymptomEntryUiState(log = symptomLogWithSymptoms).copy(
+    protected fun setUiStateWithLog(symptomLog: SymptomLog) {
+        uiState = SymptomEntryUiState(log = symptomLog).copy(
             searchState = uiState.searchState.copy(results = _allSymptoms)
         )
 
-        _selectedSymptoms = symptomLogWithSymptoms.items.toMutableStateList()
+        _selectedSymptoms = symptomLog.items.toMutableStateList()
     }
 }
 
@@ -159,7 +158,7 @@ data class SymptomEntryUiState(
         dateTimeInput = DateTimeInput(calendar = calendar)
     )
 
-    constructor(log: SymptomLogWithSymptoms) : this(
+    constructor(log: SymptomLog) : this(
         selectedSymptoms = log.items, dateTimeInput = DateTimeInput(date = log.getDate())
     )
 
@@ -170,9 +169,10 @@ data class SymptomEntryUiState(
         symptom = searchState.selectedSymptom!!, severity = selectedSeverity!!
     )
 
-    fun toSymptomLogWithSymptoms(id: Long = 0): SymptomLogWithSymptoms =
-        SymptomLogWithSymptoms(
-            log = SymptomLog(symptomLogId = id, date = dateTimeInput.toDate()),
+    fun toSymptomLog(id: Long = 0): SymptomLog =
+        SymptomLog(
+            id = id,
+            date = dateTimeInput.toDate(),
             items = selectedSymptoms,
         )
 }
@@ -185,6 +185,5 @@ data class SearchState(
 ) {
     fun isInputValid(): Boolean = input.isNotEmpty()
 
-    fun toSymptom(): Symptom =
-        Symptom(symptomId = 0, name = input.trim().replaceFirstChar { it.uppercaseChar() })
+    fun toSymptom(): Symptom = Symptom(name = input.trim().replaceFirstChar { it.uppercaseChar() })
 }

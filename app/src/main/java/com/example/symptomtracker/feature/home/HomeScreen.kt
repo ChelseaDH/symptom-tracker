@@ -50,7 +50,7 @@ import com.example.symptomtracker.R
 import com.example.symptomtracker.core.database.model.MovementLog
 import com.example.symptomtracker.core.model.FoodLog
 import com.example.symptomtracker.core.model.Log
-import com.example.symptomtracker.core.model.SymptomLogWithSymptoms
+import com.example.symptomtracker.core.model.SymptomLog
 import com.example.symptomtracker.core.model.getDisplayName
 import com.example.symptomtracker.core.model.getDisplayString
 import com.example.symptomtracker.core.ui.DatePickerModal
@@ -269,7 +269,7 @@ fun Timeline(
                                 onClick = { onFoodClick(log.id) },
                             )
 
-                            is SymptomLogWithSymptoms -> LogItemCard(
+                            is SymptomLog -> LogItemCard(
                                 icon = {
                                     Icon(
                                         painter = painterResource(id = R.drawable.outline_symptoms_24),
@@ -280,7 +280,7 @@ fun Timeline(
                                 date = log.getDate(),
                                 dateTimeFormatter = DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_hh_mm)),
                                 supportingText = log.items.joinToString { it.getDisplayString() },
-                                onClick = { onSymptomClick(log.log.symptomLogId) },
+                                onClick = { onSymptomClick(log.id) },
                             )
 
                             is MovementLog -> LogItemCard(icon = {

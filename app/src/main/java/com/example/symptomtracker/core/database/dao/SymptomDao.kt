@@ -7,82 +7,75 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
-import com.example.symptomtracker.core.database.model.Symptom
-import com.example.symptomtracker.core.database.model.SymptomLog
-import com.example.symptomtracker.core.database.model.SymptomLogRecord
-import com.example.symptomtracker.core.database.model.SymptomLogWithLinkedRecords
-import com.example.symptomtracker.core.model.SymptomLogWithSymptoms
+import com.example.symptomtracker.core.database.model.PopulatedSymptomLog
+import com.example.symptomtracker.core.database.model.SymptomEntity
+import com.example.symptomtracker.core.database.model.SymptomLogEntity
+import com.example.symptomtracker.core.database.model.SymptomLogSymptomCrossRef
 import kotlinx.coroutines.flow.Flow
 import java.time.OffsetDateTime
 
 @Dao
 interface SymptomDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertSymptom(symptom: Symptom): Long
+    suspend fun insertSymptom(symptomEntity: SymptomEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertSymptoms(symptoms: List<Symptom>): Array<Long>
+    fun insertSymptoms(symptomEntities: List<SymptomEntity>): Array<Long>
 
     @Insert
-    fun insertSymptomLog(symptomLog: SymptomLog): Long
+    fun insertSymptomLog(symptomLogEntity: SymptomLogEntity): Long
 
     @Insert
-    suspend fun insertSymptomLogRecord(symptomLogRecord: SymptomLogRecord)
+    suspend fun insertSymptomLogRecord(symptomLogSymptomCrossRef: SymptomLogSymptomCrossRef)
 
     @Transaction
-    suspend fun insertSymptomLogWithSymptoms(symptomLogWithSymptoms: SymptomLogWithSymptoms) {
-        val symptomLogId = insertSymptomLog(symptomLogWithSymptoms.log)
+    suspend fun insertSymptomLogAndAssociatedEntities(populatedSymptomLog: PopulatedSymptomLog) {
+        val symptomLogId = insertSymptomLog(populatedSymptomLog.symptomLogEntity)
 
-        symptomLogWithSymptoms.items.forEach { symptomWithSeverity ->
+        populatedSymptomLog.symptomLogRecords.forEach { symptomWithSeverity ->
             insertSymptomLogRecord(
-                symptomLogRecord = SymptomLogRecord(
-                    symptomLogId = symptomLogId,
-                    symptomId = symptomWithSeverity.symptom.symptomId,
-                    severity = symptomWithSeverity.severity,
+                symptomLogSymptomCrossRef = symptomWithSeverity.symptomLogSymptomCrossRef.copy(
+                    symptomLogId = symptomLogId
                 )
             )
         }
     }
 
     @Query("SELECT * FROM symptom ORDER BY name ASC")
-    fun getAllSymptoms(): Flow<List<Symptom>>
+    fun getAllSymptoms(): Flow<List<SymptomEntity>>
 
     @Transaction
     @Query("SELECT * FROM symptom_log")
-    fun getAllSymptomLogs(): Flow<List<SymptomLogWithLinkedRecords>>
+    fun getAllSymptomLogs(): Flow<List<PopulatedSymptomLog>>
 
     @Transaction
     @Query("SELECT * FROM symptom_log WHERE date BETWEEN :startDate AND :endDate")
     fun getAllSymptomLogsBetweenDates(
         startDate: OffsetDateTime,
         endDate: OffsetDateTime
-    ): Flow<List<SymptomLogWithLinkedRecords>>
+    ): Flow<List<PopulatedSymptomLog>>
 
     @Transaction
-    @Query("SELECT * FROM symptom_log WHERE symptomLogId = :id")
-    fun getSymptomLog(id: Long): Flow<SymptomLogWithLinkedRecords?>
+    @Query("SELECT * FROM symptom_log WHERE id = :id")
+    fun getSymptomLog(id: Long): Flow<PopulatedSymptomLog?>
 
     @Delete
-    suspend fun deleteLog(symptomLog: SymptomLog)
+    suspend fun deleteLog(symptomLogEntity: SymptomLogEntity)
 
     @Query("DELETE FROM symptom_log_record WHERE symptomLogId = :id")
     suspend fun deleteAllCrossRefItemsForLogById(id: Long)
 
     @Update
-    suspend fun updateLog(symptomLog: SymptomLog)
+    suspend fun updateLog(symptomLogEntity: SymptomLogEntity)
 
     @Transaction
-    suspend fun updateLogWithSymptoms(symptomLogWithSymptoms: SymptomLogWithSymptoms) {
-        deleteAllCrossRefItemsForLogById(symptomLogWithSymptoms.log.symptomLogId)
-        updateLog(symptomLogWithSymptoms.log)
+    suspend fun updateLogAndAssociatedRecords(populatedSymptomLog: PopulatedSymptomLog) {
+        deleteAllCrossRefItemsForLogById(populatedSymptomLog.symptomLogEntity.id)
+        updateLog(populatedSymptomLog.symptomLogEntity)
 
-        symptomLogWithSymptoms.items.forEach { item ->
+        populatedSymptomLog.symptomLogRecords.forEach { item ->
             insertSymptomLogRecord(
-                symptomLogRecord = SymptomLogRecord(
-                    symptomLogId = symptomLogWithSymptoms.log.symptomLogId,
-                    symptomId = item.symptom.symptomId,
-                    severity = item.severity,
-                )
+                symptomLogSymptomCrossRef = item.symptomLogSymptomCrossRef
             )
         }
     }

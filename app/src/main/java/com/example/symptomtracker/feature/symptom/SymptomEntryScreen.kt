@@ -28,8 +28,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.symptomtracker.R
-import com.example.symptomtracker.core.database.model.Symptom
 import com.example.symptomtracker.core.model.Severity
+import com.example.symptomtracker.core.model.Symptom
 import com.example.symptomtracker.core.model.SymptomWithSeverity
 import com.example.symptomtracker.core.ui.DateInputFields
 import com.example.symptomtracker.core.ui.DateTimeInput
@@ -139,7 +139,7 @@ fun SymptomLogList(
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier = modifier) {
-        items(items = symptomList, key = { it.symptom.symptomId }) { item ->
+        items(items = symptomList, key = { it.symptom.id }) { item ->
             ListItem(
                 headlineContent = { Text(text = item.symptom.name) },
                 supportingContent = { Text(text = item.severity.displayName) },
