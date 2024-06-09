@@ -4,7 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.example.symptomtracker.core.database.model.MovementLog
+import com.example.symptomtracker.core.model.MovementLog
 import com.example.symptomtracker.core.model.StoolType
 import com.example.symptomtracker.core.ui.DateInputFields
 import com.example.symptomtracker.core.ui.DateTimeInput

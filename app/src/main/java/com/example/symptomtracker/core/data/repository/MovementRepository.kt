@@ -1,25 +1,25 @@
 package com.example.symptomtracker.core.data.repository
 
-import com.example.symptomtracker.core.database.model.MovementLog
+import com.example.symptomtracker.core.model.MovementLog
 import kotlinx.coroutines.flow.Flow
 import java.time.OffsetDateTime
 
 /**
- * Repository that provides insert and retrieval of [MovementLog] records from a given data source.
+ * Data layer implementation for [MovementLog].
  */
 interface MovementRepository {
     /**
-     * Insert [MovementLog] record.
+     * Inserts a movement log.
      */
     suspend fun insertMovementLog(movementLog: MovementLog)
 
     /**
-     * Retrieves all [MovementLog] records.
+     * Get all movement log records.
      */
     fun getAllMovementLogs(): Flow<List<MovementLog>>
 
     /**
-     * Retrieves all [MovementLog] records between two given dates.
+     * Get all movement logs between teo dates.
      */
     fun getAllMovementLogsBetweenDates(
         startDate: OffsetDateTime,
@@ -27,17 +27,17 @@ interface MovementRepository {
     ): Flow<List<MovementLog>>
 
     /**
-     * Retrieves a [MovementLog] record with a given ID.
+     * Get a movement log, if it exists.
      */
-    suspend fun getMovementLog(id: Long): Flow<MovementLog?>
+    suspend fun getMovementLogById(id: Long): Flow<MovementLog?>
 
     /**
-     * Deletes a [MovementLog].
+     * Deletes a movement log.
      */
     suspend fun deleteLog(movementLog: MovementLog)
 
     /**
-     * Updates a [MovementLog] record.
+     * Updates a movement log.
      */
     suspend fun updateLog(movementLog: MovementLog)
 }

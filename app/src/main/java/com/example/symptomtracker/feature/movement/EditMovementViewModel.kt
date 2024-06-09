@@ -17,7 +17,7 @@ class EditMovementViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            movementRepository.getMovementLog(logId).collect { log ->
+            movementRepository.getMovementLogById(logId).collect { log ->
                 if (log !== null) {
                     updateFieldsWithLog(movementLog = log)
                 }

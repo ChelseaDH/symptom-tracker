@@ -124,7 +124,7 @@ internal fun LogsScreen(
                     LogCard(
                         log = movementLog,
                         supportingText = movementLog.stoolType.getDisplayName(),
-                        onClick = { onMovementClick(movementLog.movementLogId) }
+                        onClick = { onMovementClick(movementLog.id) }
                     )
                 }
             }

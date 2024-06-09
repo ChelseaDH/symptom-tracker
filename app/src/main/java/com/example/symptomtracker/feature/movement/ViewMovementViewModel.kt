@@ -7,7 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.symptomtracker.core.data.repository.MovementRepository
-import com.example.symptomtracker.core.database.model.MovementLog
+import com.example.symptomtracker.core.model.MovementLog
 import com.example.symptomtracker.core.ui.ViewLogUiState
 import com.example.symptomtracker.feature.movement.navigation.MOVEMENT_LOG_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,7 +27,7 @@ class ViewMovementViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            movementRepository.getMovementLog(logId).collect { log ->
+            movementRepository.getMovementLogById(logId).collect { log ->
                 uiState = if (log !== null) {
                     ViewLogUiState.Data(log)
                 } else {

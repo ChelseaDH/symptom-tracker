@@ -47,9 +47,9 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.symptomtracker.R
-import com.example.symptomtracker.core.database.model.MovementLog
 import com.example.symptomtracker.core.model.FoodLog
 import com.example.symptomtracker.core.model.Log
+import com.example.symptomtracker.core.model.MovementLog
 import com.example.symptomtracker.core.model.SymptomLog
 import com.example.symptomtracker.core.model.getDisplayName
 import com.example.symptomtracker.core.model.getDisplayString
@@ -293,7 +293,7 @@ fun Timeline(
                                 date = log.getDate(),
                                 dateTimeFormatter = DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_hh_mm)),
                                 supportingText = log.stoolType.getDisplayName(),
-                                onClick = { onMovementClick(log.movementLogId) })
+                                onClick = { onMovementClick(log.id) })
                         }
                     }
                 }

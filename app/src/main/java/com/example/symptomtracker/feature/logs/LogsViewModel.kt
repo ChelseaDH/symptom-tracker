@@ -8,8 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.symptomtracker.core.data.repository.FoodLogRepository
 import com.example.symptomtracker.core.data.repository.MovementRepository
 import com.example.symptomtracker.core.data.repository.SymptomRepository
-import com.example.symptomtracker.core.database.model.MovementLog
 import com.example.symptomtracker.core.model.FoodLog
+import com.example.symptomtracker.core.model.MovementLog
 import com.example.symptomtracker.core.model.SymptomLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

@@ -1,10 +1,10 @@
 package com.example.symptomtracker.core.ui
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.example.symptomtracker.core.database.model.MovementLog
 import com.example.symptomtracker.core.model.FoodItem
 import com.example.symptomtracker.core.model.FoodLog
 import com.example.symptomtracker.core.model.Log
+import com.example.symptomtracker.core.model.MovementLog
 import com.example.symptomtracker.core.model.Severity
 import com.example.symptomtracker.core.model.StoolType
 import com.example.symptomtracker.core.model.Symptom
@@ -26,7 +26,7 @@ class LogsPreviewParameterProvider : PreviewParameterProvider<List<Log>> {
                 )
             ),
             MovementLog(
-                movementLogId = 1,
+                id = 1,
                 date = OffsetDateTime.parse("2023-03-02T09:10:00+00:00"),
                 stoolType = StoolType.NORMAL_3,
             ),

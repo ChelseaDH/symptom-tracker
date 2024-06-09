@@ -7,7 +7,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.symptomtracker.R
-import com.example.symptomtracker.core.database.model.MovementLog
+import com.example.symptomtracker.core.model.MovementLog
 import com.example.symptomtracker.core.model.getDisplayName
 import com.example.symptomtracker.core.ui.MovementLogPreviewParameterProvider
 import com.example.symptomtracker.core.ui.ViewLogScreen
