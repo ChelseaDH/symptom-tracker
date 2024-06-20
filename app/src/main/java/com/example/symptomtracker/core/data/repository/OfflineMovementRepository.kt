@@ -23,7 +23,7 @@ class OfflineMovementRepository @Inject constructor(private val movementDao: Mov
     ): Flow<List<MovementLog>> = movementDao.getAllMovementLogsBetweenDates(startDate, endDate)
         .map { it.map(MovementLogEntity::asExternalModel) }
 
-    override suspend fun getMovementLogById(id: Long): Flow<MovementLog?> =
+    override fun getMovementLogById(id: Long): Flow<MovementLog?> =
         movementDao.getMovementLog(id).map { it?.asExternalModel() }
 
     override suspend fun deleteLog(movementLog: MovementLog) =

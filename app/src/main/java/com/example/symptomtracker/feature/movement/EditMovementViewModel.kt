@@ -13,7 +13,7 @@ class EditMovementViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val movementRepository: MovementRepository
 ) : AbstractMovementEntryViewModel() {
-    private val logId: Long = checkNotNull(savedStateHandle[MOVEMENT_LOG_ID])
+    internal val logId: Long = checkNotNull(savedStateHandle[MOVEMENT_LOG_ID])
 
     init {
         viewModelScope.launch {

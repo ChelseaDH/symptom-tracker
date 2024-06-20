@@ -29,7 +29,7 @@ interface MovementRepository {
     /**
      * Get a movement log, if it exists.
      */
-    suspend fun getMovementLogById(id: Long): Flow<MovementLog?>
+    fun getMovementLogById(id: Long): Flow<MovementLog?>
 
     /**
      * Deletes a movement log.

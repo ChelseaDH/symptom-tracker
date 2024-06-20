@@ -3,6 +3,8 @@ package com.example.symptomtracker.feature.movement
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -19,11 +21,13 @@ fun ViewMovementRoute(
     navigateToEdit: () -> Unit,
     viewModel: ViewMovementViewModel = hiltViewModel()
 ) {
+    val uiState: ViewMovementUiState by viewModel.uiState.collectAsState()
+
     ViewMovementScreen(
         navigateBack = navigateBack,
         deleteLog = viewModel::deleteLog,
         onEdit = navigateToEdit,
-        state = viewModel.uiState,
+        state = uiState,
     )
 }
 
