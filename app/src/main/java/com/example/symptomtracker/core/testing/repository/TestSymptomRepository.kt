@@ -27,7 +27,7 @@ class TestSymptomRepository : SymptomRepository {
         symptomLogsFlow.map { symptomLogs ->
             symptomLogs.filter {
                 it.date.isAfter(startDate) && it.date.isBefore(
-                    startDate
+                    endDate
                 )
             }
         }
