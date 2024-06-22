@@ -13,7 +13,7 @@ class EditSymptomViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val symptomRepository: SymptomRepository,
 ) : AbstractSymptomEntryViewModel(symptomRepository) {
-    private val logId: Long = checkNotNull(savedStateHandle[SYMPTOM_LOG_ID])
+    internal val logId: Long = checkNotNull(savedStateHandle[SYMPTOM_LOG_ID])
 
     init {
         viewModelScope.launch {
