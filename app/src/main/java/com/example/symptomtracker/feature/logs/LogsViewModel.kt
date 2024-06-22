@@ -90,7 +90,7 @@ data class LogsViewUiState(
 )
 
 sealed interface TabUiState {
-    object Loading : TabUiState
+    data object Loading : TabUiState
     data class FoodLogs(val logs: List<FoodLog>) : TabUiState
     data class SymptomLogs(val logs: List<SymptomLog>) : TabUiState
     data class MovementLogs(val logs: List<MovementLog>) : TabUiState
