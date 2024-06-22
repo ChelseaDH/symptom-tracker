@@ -3,6 +3,8 @@ package com.example.symptomtracker.feature.food
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -18,9 +20,11 @@ fun ViewFoodRoute(
     navigateToEdit: () -> Unit,
     viewModel: ViewFoodViewModel = hiltViewModel(),
 ) {
+    val uiState: ViewFoodUiState by viewModel.uiState.collectAsState()
+
     ViewFoodScreen(
         navigateBack = navigateBack,
-        state = viewModel.uiState,
+        state = uiState,
         onDelete = viewModel::deleteLog,
         onEdit = navigateToEdit,
     )

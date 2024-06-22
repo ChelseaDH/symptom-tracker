@@ -24,7 +24,7 @@ class OfflineFoodLogRepository @Inject constructor(private val foodLogDao: FoodL
     override fun getAllFoodLogs(): Flow<List<FoodLog>> =
         foodLogDao.getAllFoodLogs().map { it.map(PopulatedFoodLog::asExternalModel) }
 
-    override suspend fun getFoodLog(id: Long): Flow<FoodLog?> =
+    override fun getFoodLog(id: Long): Flow<FoodLog?> =
         foodLogDao.getFoodLog(id).map { it?.asExternalModel() }
 
     override fun getAllFoodLogsBetweenDates(

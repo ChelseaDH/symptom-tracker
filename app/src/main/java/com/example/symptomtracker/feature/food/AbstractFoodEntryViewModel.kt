@@ -43,7 +43,7 @@ abstract class AbstractFoodEntryViewModel(private val foodLogRepository: FoodLog
             _selectedFoodItems.add(uiState.searchState.selectedItem!!)
 
             uiState = uiState.copy(
-                selectedFoodItemEntities = _selectedFoodItems
+                selectedFoodItems = _selectedFoodItems
             )
             clearSearch()
         }
@@ -53,7 +53,7 @@ abstract class AbstractFoodEntryViewModel(private val foodLogRepository: FoodLog
         _selectedFoodItems.remove(foodItem)
 
         uiState = uiState.copy(
-            selectedFoodItemEntities = _selectedFoodItems
+            selectedFoodItems = _selectedFoodItems
         )
     }
 
@@ -145,7 +145,7 @@ abstract class AbstractFoodEntryViewModel(private val foodLogRepository: FoodLog
 }
 
 data class FoodEntryUiState(
-    val selectedFoodItemEntities: List<FoodItem> = listOf(),
+    val selectedFoodItems: List<FoodItem> = listOf(),
     val dateTimeInput: DateTimeInput,
     val searchState: SearchState = SearchState(),
 ) {
@@ -154,15 +154,15 @@ data class FoodEntryUiState(
     )
 
     constructor(foodLog: FoodLog) : this(
-        selectedFoodItemEntities = foodLog.items,
+        selectedFoodItems = foodLog.items,
         dateTimeInput = DateTimeInput(date = foodLog.date),
     )
 
     fun isValid(): Boolean =
-        selectedFoodItemEntities.isNotEmpty() && !selectedFoodItemEntities.any { item -> item.name.isBlank() }
+        selectedFoodItems.isNotEmpty() && !selectedFoodItems.any { item -> item.name.isBlank() }
 
     fun toFoodLog(id: Long = 0): FoodLog = FoodLog(
-        id = id, date = dateTimeInput.toDate(), items = selectedFoodItemEntities
+        id = id, date = dateTimeInput.toDate(), items = selectedFoodItems
     )
 }
 

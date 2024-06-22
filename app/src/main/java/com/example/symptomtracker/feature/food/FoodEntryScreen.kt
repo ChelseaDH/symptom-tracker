@@ -119,7 +119,7 @@ fun FoodEntryBody(
         )
         HorizontalDivider()
         FoodLogItemList(
-            foodItemEntityList = uiState.selectedFoodItemEntities,
+            foodItemEntityList = uiState.selectedFoodItems,
             onDeleteItem = onDeleteItem
         )
     }

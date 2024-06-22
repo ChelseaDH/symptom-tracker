@@ -13,7 +13,7 @@ class EditFoodViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val foodLogRepository: FoodLogRepository,
 ) : AbstractFoodEntryViewModel(foodLogRepository) {
-    private val logId: Long = checkNotNull(savedStateHandle[FOOD_LOG_ID])
+    internal val logId: Long = checkNotNull(savedStateHandle[FOOD_LOG_ID])
 
     init {
         viewModelScope.launch {

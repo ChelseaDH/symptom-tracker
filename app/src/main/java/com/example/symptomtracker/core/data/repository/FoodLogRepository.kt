@@ -32,7 +32,7 @@ interface FoodLogRepository {
     /**
      * Get a food log with it's associated items, if it exists.
      */
-    suspend fun getFoodLog(id: Long): Flow<FoodLog?>
+    fun getFoodLog(id: Long): Flow<FoodLog?>
 
     /**
      * Get all food logs with their associated items between two dates.
