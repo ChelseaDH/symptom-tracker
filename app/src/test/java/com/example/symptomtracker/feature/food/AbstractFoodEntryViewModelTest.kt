@@ -103,6 +103,17 @@ class AbstractFoodEntryViewModelTest {
             ), viewModel.uiState.searchState
         )
 
+        viewModel.updateSearchInput("oats ")
+
+        assertEquals(
+            SearchState(
+                input = "oats ",
+                selectedItem = null,
+                results = listOf(FoodItem(id = 1, name = "oats")),
+                canCreateNewItem = false,
+            ), viewModel.uiState.searchState
+        )
+
         collectJob.cancel()
     }
 

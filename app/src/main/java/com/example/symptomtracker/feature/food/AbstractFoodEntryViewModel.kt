@@ -118,7 +118,7 @@ abstract class AbstractFoodEntryViewModel(private val foodLogRepository: FoodLog
     private fun canCreateNewItemFromInput(itemName: String): Boolean {
         return itemName.isNotBlank() && _allFoodItems.none {
             it.name.equals(
-                itemName, ignoreCase = true
+                itemName.trim(), ignoreCase = true
             )
         }
     }
@@ -131,7 +131,7 @@ abstract class AbstractFoodEntryViewModel(private val foodLogRepository: FoodLog
 
     private fun getSearchResults(itemName: String = uiState.searchState.input): List<FoodItem> {
         return _allFoodItems.filter { item ->
-            item.name.contains(itemName, ignoreCase = true)
+            item.name.contains(itemName.trim(), ignoreCase = true)
         }
     }
 
