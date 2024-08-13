@@ -51,4 +51,9 @@ interface FoodLogRepository {
      * Updates a food log and it's associated items.
      */
     suspend fun updateFoodLog(foodLog: FoodLog)
+
+    /**
+     * Updates a food item.
+     */
+    suspend fun updateFoodItem(foodItem: FoodItem)
 }

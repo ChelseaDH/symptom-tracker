@@ -42,4 +42,10 @@
     <string name="action_cancel">Cancel</string>
     <string name="delete_log_confirmation_title">Delete log?</string>
     <string name="delete_log_confirmation_body">This will permanently remove the selected log.</string>
+    <string name="feature_settings_title">Settings</string>
+    <string name="manage_food_items_title">Food items</string>
+    <string name="manage_food_items_save_cd">Save item %s</string>
+    <string name="manage_food_items_edit_cd">Edit item %s</string>
+    <string name="manage_food_items_cancel_edit_cd">Cancel edit for item %s</string>
+    <string name="no_items_found">No items found</string>
 </resources>

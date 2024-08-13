@@ -65,6 +65,9 @@ interface FoodLogDao {
     @Update
     suspend fun updateLog(foodLogEntity: FoodLogEntity)
 
+    @Update
+    suspend fun updateFoodItem(foodItemEntity: FoodItemEntity)
+
     @Transaction
     suspend fun updateLogAndAssociatedRecords(populatedFoodLog: PopulatedFoodLog) {
         deleteAllCrossRefItemsForLogById(populatedFoodLog.log.id)

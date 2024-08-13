@@ -19,4 +19,9 @@ enum class TopLevelDestination(
         iconTextId = R.string.feature_logs_title,
         titleTextId = R.string.feature_logs_title,
     ),
+    SETTINGS(
+        iconId = R.drawable.outline_settings_24,
+        iconTextId = R.string.feature_settings_title,
+        titleTextId = R.string.feature_settings_title,
+    )
 }

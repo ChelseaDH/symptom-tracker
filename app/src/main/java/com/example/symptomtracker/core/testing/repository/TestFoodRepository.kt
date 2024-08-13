@@ -39,6 +39,8 @@ class TestFoodRepository : FoodLogRepository {
 
     override suspend fun updateFoodLog(foodLog: FoodLog) {}
 
+    override suspend fun updateFoodItem(foodItem: FoodItem) {}
+
     /**
      * A test-only API to allow controlling the list of food items from tests.
      */

@@ -3,10 +3,13 @@ package com.example.symptomtracker.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.example.symptomtracker.feature.settings.navigation.settingsScreen
 import com.example.symptomtracker.feature.food.navigation.addFoodScreen
 import com.example.symptomtracker.feature.food.navigation.editFoodScreen
+import com.example.symptomtracker.feature.food.navigation.manageFoodItemsScreen
 import com.example.symptomtracker.feature.food.navigation.navigateToAddFood
 import com.example.symptomtracker.feature.food.navigation.navigateToEditFood
+import com.example.symptomtracker.feature.food.navigation.navigateToManageFoodItems
 import com.example.symptomtracker.feature.food.navigation.navigateToViewFood
 import com.example.symptomtracker.feature.food.navigation.viewFoodScreen
 import com.example.symptomtracker.feature.home.navigation.HOME_ROUTE
@@ -46,6 +49,7 @@ fun SymptomTrackerNavHost(
             onMovementClick = navController::navigateToViewMovement,
             onAddMovementClick = navController::navigateToAddMovement,
         )
+        settingsScreen(navigateToManageFoodItems = navController::navigateToManageFoodItems)
 
         viewFoodScreen(
             navigateBack = navController::navigateUp,
@@ -53,6 +57,7 @@ fun SymptomTrackerNavHost(
         )
         addFoodScreen(navigateBack = navController::navigateUp)
         editFoodScreen(navigateBack = navController::navigateUp)
+        manageFoodItemsScreen(navigateBack = navController::navigateUp)
 
         viewSymptomScreen(
             navigateBack = navController::navigateUp,

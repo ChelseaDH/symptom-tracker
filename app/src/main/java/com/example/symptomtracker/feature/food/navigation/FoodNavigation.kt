@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.symptomtracker.feature.food.AddFoodScreen
 import com.example.symptomtracker.feature.food.EditFoodScreen
+import com.example.symptomtracker.feature.food.ManageFoodItemsRoute
 import com.example.symptomtracker.feature.food.ViewFoodRoute
 
 const val FOOD_LOG_ID = "foodLogId"
@@ -14,6 +15,7 @@ const val FOOD_LOG_ID = "foodLogId"
 const val ADD_FOOD_ROUTE = "add_food"
 const val EDIT_FOOD_ROUTE = "edit_food"
 const val VIEW_FOOD_ROUTE = "view_food"
+const val MANAGE_ITEMS_ROUTE = "manage_items"
 
 fun NavController.navigateToAddFood() = navigate(route = ADD_FOOD_ROUTE)
 
@@ -50,4 +52,10 @@ fun NavGraphBuilder.viewFoodScreen(
         ViewFoodRoute(navigateBack = navigateBack,
             navigateToEdit = { backStackEntry.arguments?.let { navigateToEdit(it.getLong(FOOD_LOG_ID)) } })
     }
+}
+
+fun NavController.navigateToManageFoodItems() = navigate(route = MANAGE_ITEMS_ROUTE)
+
+fun NavGraphBuilder.manageFoodItemsScreen(navigateBack: () -> Unit) {
+    composable(route = MANAGE_ITEMS_ROUTE) { ManageFoodItemsRoute(navigateBack) }
 }

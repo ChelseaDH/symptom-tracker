@@ -40,4 +40,7 @@ class OfflineFoodLogRepository @Inject constructor(private val foodLogDao: FoodL
 
     override suspend fun updateFoodLog(foodLog: FoodLog) =
         foodLogDao.updateLogAndAssociatedRecords(populatedFoodLog = foodLog.asEntity())
+
+    override suspend fun updateFoodItem(foodItem: FoodItem) =
+        foodLogDao.updateFoodItem(foodItem.asEntity())
 }
