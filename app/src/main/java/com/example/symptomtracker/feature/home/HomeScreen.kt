@@ -87,7 +87,7 @@ fun HomeScreen(
             FloatingActionButton(onClick = { viewModel.updateBottomSheetVisibility(true) }) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(R.string.add)
+                    contentDescription = stringResource(R.string.action_add)
                 )
             }
         }, modifier = modifier

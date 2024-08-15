@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">Symptom Tracker</string>
     <string name="home">Home</string>
-    <string name="add">Add</string>
     <string name="add_food_text">Food</string>
     <string name="add_food_cd">Add food</string>
     <string name="add_symptom_text">Symptom</string>
@@ -15,7 +14,6 @@
     <string name="edit_symptom_title">Edit symptoms</string>
     <string name="log_movement_title">Log movement</string>
     <string name="edit_movement_title">Edit movement</string>
-    <string name="save_button_text">Save</string>
     <string name="delete_item_cd">Delete item</string>
     <string name="clear_input_cd">Clear input</string>
     <string name="dropdown_create_cd">Create new option</string>
@@ -38,14 +36,26 @@
     <string name="previous_day_cd">Go to previous day</string>
     <string name="next_day_cd">Go to next day</string>
     <string name="feature_logs_title">Logs</string>
-    <string name="action_delete">Delete</string>
-    <string name="action_cancel">Cancel</string>
     <string name="delete_log_confirmation_title">Delete log?</string>
     <string name="delete_log_confirmation_body">This will permanently remove the selected log.</string>
     <string name="feature_settings_title">Settings</string>
+
     <string name="manage_food_items_title">Food items</string>
+    <string name="manage_food_items_options_menu_cd">Open options menu for item %s</string>
     <string name="manage_food_items_save_cd">Save item %s</string>
     <string name="manage_food_items_edit_cd">Edit item %s</string>
+    <string name="manage_food_items_delete_cd">Delete item %s</string>
+    <string name="manage_food_items_merge_cd">Merge item %s with another</string>
     <string name="manage_food_items_cancel_edit_cd">Cancel edit for item %s</string>
+    <string name="manage_food_items_direct_delete_dialog">This item will be permanently deleted.</string>
+    <string name="manage_food_items_merge_delete_dialog">This item belongs to at least one food log and must be merged with another before it can be permanently deleted.</string>
+    <string name="manage_food_items_merge_delete_selection_label">Item to merge with:</string>
     <string name="no_items_found">No items found</string>
+
+    <string name="action_add">Add</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_save">Save</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_merge">Merge</string>
 </resources>

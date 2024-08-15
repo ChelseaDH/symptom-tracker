@@ -48,6 +48,11 @@ interface FoodLogRepository {
     suspend fun deleteFoodLog(foodLog: FoodLog)
 
     /**
+     * Deletes a food item.
+     */
+    suspend fun deleteFoodItem(foodItem: FoodItem)
+
+    /**
      * Updates a food log and it's associated items.
      */
     suspend fun updateFoodLog(foodLog: FoodLog)
@@ -56,4 +61,14 @@ interface FoodLogRepository {
      * Updates a food item.
      */
     suspend fun updateFoodItem(foodItem: FoodItem)
+
+    /**
+     * Merges two food items.
+     */
+    suspend fun mergeFoodItems(foodItem: FoodItem, foodItemToMerge: FoodItem)
+
+    /**
+     * Gets a count of the food logs that an item belongs to.
+     */
+    suspend fun getCountOfLogsItemBelongsTo(foodItem: FoodItem): Int
 }

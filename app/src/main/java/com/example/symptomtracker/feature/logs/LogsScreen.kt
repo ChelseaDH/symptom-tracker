@@ -137,7 +137,7 @@ internal fun LogsScreen(
         FloatingActionButton(onClick = fabOnClick) {
             Icon(
                 imageVector = Icons.Default.Add,
-                contentDescription = stringResource(R.string.add)
+                contentDescription = stringResource(R.string.action_add)
             )
         }
     }) { innerPadding ->

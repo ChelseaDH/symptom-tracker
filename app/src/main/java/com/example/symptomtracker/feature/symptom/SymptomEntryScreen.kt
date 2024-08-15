@@ -65,7 +65,7 @@ internal fun SymptomEntryScreen(
                             navigateBack()
                         }
                     }) {
-                        Text(text = stringResource(R.string.save_button_text))
+                        Text(text = stringResource(R.string.action_save))
                     }
                 }
             )

@@ -54,7 +54,7 @@ internal fun MovementEntryScreen(
                         viewModel.submit()
                         navigateBack()
                     }) {
-                        Text(text = stringResource(R.string.save_button_text))
+                        Text(text = stringResource(R.string.action_save))
                     }
                 }
             )

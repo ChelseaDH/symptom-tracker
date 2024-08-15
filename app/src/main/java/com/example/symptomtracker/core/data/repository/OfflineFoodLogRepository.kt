@@ -38,9 +38,21 @@ class OfflineFoodLogRepository @Inject constructor(private val foodLogDao: FoodL
     override suspend fun deleteFoodLog(foodLog: FoodLog) =
         foodLogDao.deleteLog(foodLog.asFoodLogEntity())
 
+    override suspend fun deleteFoodItem(foodItem: FoodItem) =
+        foodLogDao.deleteFoodItem(foodItem.asEntity())
+
     override suspend fun updateFoodLog(foodLog: FoodLog) =
         foodLogDao.updateLogAndAssociatedRecords(populatedFoodLog = foodLog.asEntity())
 
     override suspend fun updateFoodItem(foodItem: FoodItem) =
         foodLogDao.updateFoodItem(foodItem.asEntity())
+
+    override suspend fun mergeFoodItems(foodItem: FoodItem, foodItemToMerge: FoodItem) =
+        foodLogDao.mergeFoodItems(
+            foodItem = foodItem.asEntity(),
+            foodItemToMerge = foodItemToMerge.asEntity()
+        )
+
+    override suspend fun getCountOfLogsItemBelongsTo(foodItem: FoodItem): Int =
+        foodLogDao.getCountOfLogsItemBelongsTo(foodItemId = foodItem.id)
 }

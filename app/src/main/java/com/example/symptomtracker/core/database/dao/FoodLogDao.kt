@@ -62,6 +62,9 @@ interface FoodLogDao {
     @Query("DELETE FROM food_log_item WHERE foodLogId = :id")
     suspend fun deleteAllCrossRefItemsForLogById(id: Long)
 
+    @Query("DELETE FROM food_log_item WHERE itemId = :id")
+    suspend fun deleteAllCrossRefItemsForItemById(id: Long)
+
     @Update
     suspend fun updateLog(foodLogEntity: FoodLogEntity)
 
@@ -82,4 +85,35 @@ interface FoodLogDao {
             )
         }
     }
+
+    @Transaction
+    suspend fun mergeFoodItems(foodItem: FoodItemEntity, foodItemToMerge: FoodItemEntity) {
+        updateFoodItemReferences(oldFoodItemId = foodItemToMerge.id, newFoodItemId = foodItem.id)
+        deleteAllCrossRefItemsForItemById(foodItemToMerge.id)
+        deleteFoodItem(foodItemToMerge)
+    }
+
+    /**
+     * Updates all references to the old food item if the new food item does not already exist in the same log.
+     */
+    @Query(
+        """
+        UPDATE food_log_item
+        SET itemId = :newFoodItemId
+        WHERE itemId = :oldFoodItemId
+        AND NOT EXISTS (
+            SELECT 1
+            FROM food_log_item fli
+            WHERE foodLogId = food_log_item.foodLogId
+            AND itemId = :newFoodItemId
+        )
+    """
+    )
+    suspend fun updateFoodItemReferences(oldFoodItemId: Long, newFoodItemId: Long)
+
+    @Query("SELECT COUNT(*) FROM food_log_item WHERE itemId = :foodItemId")
+    suspend fun getCountOfLogsItemBelongsTo(foodItemId: Long): Int
+
+    @Delete
+    suspend fun deleteFoodItem(foodItemEntity: FoodItemEntity)
 }
