@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -87,18 +89,42 @@ internal fun ManageFoodItemsPage(
                         Text(text = stringResource(id = R.string.no_items_found))
                     }
 
-                    foodItemsState.items.forEach { item ->
-                        FoodItemRow(
-                            foodItem = item,
-                            userActionState = userActionState,
-                            onActionChosen = onActionChosen,
-                            onEditNameChange = onEditNameChange,
-                            onMergeCandidateChosen = onMergeCandidateChosen,
-                            onSubmitAction = onSubmitAction,
-                            onCancelAction = onCancelAction,
-                        )
+                    LazyColumn {
+                        items(items = foodItemsState.items) { item ->
+                            FoodItemRow(
+                                foodItem = item,
+                                onActionChosen = onActionChosen,
+                            )
+                        }
                     }
                 }
+            }
+
+            when (userActionState) {
+                is ActionState.Edit ->
+                    EditDialog(
+                        state = userActionState,
+                        onEditNameChange = onEditNameChange,
+                        onSubmit = onSubmitAction,
+                        onClose = onCancelAction,
+                    )
+
+                is ActionState.Delete.Direct ->
+                    DirectDeleteDialog(
+                        state = userActionState,
+                        onSubmit = onSubmitAction,
+                        onClose = onCancelAction,
+                    )
+
+                is ActionState.Delete.Merge ->
+                    MergeDeleteDialog(
+                        state = userActionState,
+                        onSelectedItemUpdated = onMergeCandidateChosen,
+                        onSubmit = onSubmitAction,
+                        onClose = onCancelAction,
+                    )
+
+                null -> {}
             }
         }
     }
@@ -107,12 +133,7 @@ internal fun ManageFoodItemsPage(
 @Composable
 fun FoodItemRow(
     foodItem: FoodItem,
-    userActionState: ActionState?,
     onActionChosen: (FoodItem, FoodItemAction) -> Unit,
-    onEditNameChange: (String) -> Unit,
-    onMergeCandidateChosen: (FoodItem) -> Unit,
-    onSubmitAction: () -> Unit,
-    onCancelAction: () -> Unit,
 ) {
     var actionMenuOpen by remember { mutableStateOf(false) }
 
@@ -164,33 +185,6 @@ fun FoodItemRow(
             }
         }
     )
-
-    when (userActionState) {
-        is ActionState.Edit ->
-            EditDialog(
-                state = userActionState,
-                onEditNameChange = onEditNameChange,
-                onSubmit = onSubmitAction,
-                onClose = onCancelAction,
-            )
-
-        is ActionState.Delete.Direct ->
-            DirectDeleteDialog(
-                state = userActionState,
-                onSubmit = onSubmitAction,
-                onClose = onCancelAction,
-            )
-
-        is ActionState.Delete.Merge ->
-            MergeDeleteDialog(
-                state = userActionState,
-                onSelectedItemUpdated = onMergeCandidateChosen,
-                onSubmit = onSubmitAction,
-                onClose = onCancelAction,
-            )
-
-        null -> {}
-    }
 }
 
 @Composable
