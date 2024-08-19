@@ -3,7 +3,6 @@ package com.example.symptomtracker.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.example.symptomtracker.feature.settings.navigation.settingsScreen
 import com.example.symptomtracker.feature.food.navigation.addFoodScreen
 import com.example.symptomtracker.feature.food.navigation.editFoodScreen
 import com.example.symptomtracker.feature.food.navigation.manageFoodItemsScreen
@@ -21,6 +20,9 @@ import com.example.symptomtracker.feature.movement.navigation.navigateToAddMovem
 import com.example.symptomtracker.feature.movement.navigation.navigateToEditMovement
 import com.example.symptomtracker.feature.movement.navigation.navigateToViewMovement
 import com.example.symptomtracker.feature.movement.navigation.viewMovementScreen
+import com.example.symptomtracker.feature.settings.navigation.databaseSettingsScreen
+import com.example.symptomtracker.feature.settings.navigation.navigateToDatabaseSettings
+import com.example.symptomtracker.feature.settings.navigation.settingsScreen
 import com.example.symptomtracker.feature.symptom.navigation.addSymptomScreen
 import com.example.symptomtracker.feature.symptom.navigation.editSymptomScreen
 import com.example.symptomtracker.feature.symptom.navigation.navigateToAddSymptom
@@ -49,7 +51,12 @@ fun SymptomTrackerNavHost(
             onMovementClick = navController::navigateToViewMovement,
             onAddMovementClick = navController::navigateToAddMovement,
         )
-        settingsScreen(navigateToManageFoodItems = navController::navigateToManageFoodItems)
+
+        settingsScreen(
+            navigateToManageFoodItems = navController::navigateToManageFoodItems,
+            navigateToDatabaseSettings = navController::navigateToDatabaseSettings,
+        )
+        databaseSettingsScreen(navigateBack = navController::navigateUp)
 
         viewFoodScreen(
             navigateBack = navController::navigateUp,

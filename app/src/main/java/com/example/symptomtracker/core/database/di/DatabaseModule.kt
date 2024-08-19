@@ -3,6 +3,7 @@ package com.example.symptomtracker.core.database.di
 import android.content.Context
 import androidx.room.Room
 import com.example.symptomtracker.core.database.AppDatabase
+import com.example.symptomtracker.core.database.util.DatabaseBackup
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,5 +22,11 @@ internal object DatabaseModule {
             AppDatabase::class.java,
             "app_database"
         ).build()
+    }
+
+    @Provides
+    @Singleton
+    fun providesDatabaseBackup(@ApplicationContext context: Context): DatabaseBackup {
+        return DatabaseBackup(context)
     }
 }

@@ -18,6 +18,7 @@ import com.example.symptomtracker.R
 @Composable
 fun SettingsScreen(
     navigateToManageFoodItems: () -> Unit,
+    navigateToDatabaseSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(modifier = modifier) { innerPadding ->
@@ -40,6 +41,20 @@ fun SettingsScreen(
                     )
                 }
             )
+            ListItem(
+                headlineContent = {
+                    Text(text = "Database backup")
+                },
+                modifier = Modifier.clickable { navigateToDatabaseSettings() },
+                leadingContent = {
+                    Icon(
+                        painter = painterResource(
+                            id = R.drawable.outline_dataset_24
+                        ),
+                        contentDescription = "Database backup"
+                    )
+                }
+            )
         }
     }
 }
@@ -47,5 +62,5 @@ fun SettingsScreen(
 @Preview(showSystemUi = true)
 @Composable
 fun ConfigScreenPreview() {
-    SettingsScreen(navigateToManageFoodItems = { })
+    SettingsScreen(navigateToManageFoodItems = { }, navigateToDatabaseSettings = { })
 }

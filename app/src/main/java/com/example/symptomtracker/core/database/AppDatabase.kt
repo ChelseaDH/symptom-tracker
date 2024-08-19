@@ -32,6 +32,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun movementDao(): MovementDao
 
     companion object {
+        const val DATABASE_NAME = "app_database"
+
         @Volatile
         private var Instance: AppDatabase? = null
 
@@ -40,7 +42,7 @@ abstract class AppDatabase : RoomDatabase() {
                 Room.databaseBuilder(
                     context = context,
                     klass = AppDatabase::class.java,
-                    name = "app_database"
+                    name = DATABASE_NAME,
                 )
                     .fallbackToDestructiveMigration()
                     .build()
