@@ -1,6 +1,7 @@
 package com.example.symptomtracker.core.database
 
 import android.content.Context
+import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -47,7 +48,14 @@ abstract class AppDatabase : RoomDatabase() {
                     .fallbackToDestructiveMigration()
                     .build()
                     .also { Instance = it }
+                    .apply { Log.d("databaseBackUp", "Database created") }
             }
+        }
+
+        fun close() {
+            Instance?.close()
+            Instance = null
+            Log.d("databaseBackUp", "Database closed")
         }
     }
 }

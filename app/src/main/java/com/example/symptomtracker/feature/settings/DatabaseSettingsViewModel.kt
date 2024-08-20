@@ -1,5 +1,7 @@
 package com.example.symptomtracker.feature.settings
 
+import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.symptomtracker.core.database.util.DatabaseBackup
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,6 +18,19 @@ class DatabaseBackupViewModel @Inject constructor(private val databaseBackup: Da
 
         try {
             databaseBackup.downloadDatabase()
+            uiState.value = DatabaseBackupUiState(loading = false, result = Result.Success)
+        } catch (e: Exception) {
+            Log.d("databaseBackUp", "exportDatabase: $e")
+            uiState.value = DatabaseBackupUiState(loading = false, result = Result.Error(e))
+        }
+    }
+
+    fun importDatabase(uri: Uri) {
+        uiState.value = DatabaseBackupUiState(loading = false, result = Result.Success)
+        Log.d("databaseBackUp", "importDatabase: $uri")
+
+        try {
+            databaseBackup.restoreDatabase(uri)
             uiState.value = DatabaseBackupUiState(loading = false, result = Result.Success)
         } catch (e: Exception) {
             uiState.value = DatabaseBackupUiState(loading = false, result = Result.Error(e))

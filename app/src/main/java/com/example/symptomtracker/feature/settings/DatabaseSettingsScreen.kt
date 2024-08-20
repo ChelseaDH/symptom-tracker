@@ -1,5 +1,7 @@
 package com.example.symptomtracker.feature.settings
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -14,7 +16,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,6 +37,7 @@ fun DatabaseSettingsRoute(
         navigateBack = navigateBack,
         uiState = uiState,
         onExportDatabase = viewModel::exportDatabase,
+        onImportDatabase = viewModel::importDatabase,
         onResetState = viewModel::resetUiState,
     )
 }
@@ -42,9 +47,17 @@ internal fun DatabaseSettingsScreen(
     navigateBack: () -> Unit,
     uiState: DatabaseBackupUiState,
     onExportDatabase: () -> Unit,
+    onImportDatabase: (Uri) -> Unit,
     onResetState: () -> Unit,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
+    var showFilePicker by remember { mutableStateOf(false) }
+
+    val launcher = rememberLauncherForActivityResult(contract = OpenDatabaseDocumentContract()) { uri ->
+        if (uri != null) {
+            onImportDatabase(uri)
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -67,6 +80,21 @@ internal fun DatabaseSettingsScreen(
                     )
                 }
             )
+            ListItem(
+                headlineContent = { Text(text = "Import database") },
+                modifier = Modifier.clickable { showFilePicker = true },
+                leadingContent = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.outline_file_upload_24),
+                        contentDescription = "Import database",
+                    )
+                }
+            )
+        }
+
+        if (showFilePicker) {
+            launcher.launch(Unit)
+            showFilePicker = false
         }
 
         LaunchedEffect(uiState) {
@@ -80,7 +108,7 @@ internal fun DatabaseSettingsScreen(
 
                 uiState.result != null -> {
                     snackbarHostState.showSnackbar(
-                        message = if (uiState.result is Result.Success) "Database exported successfully." else "Failed to export database.",
+                        message = if (uiState.result is Result.Success) "Operation successful." else "Operation failed.",
                         duration = SnackbarDuration.Short
                     )
                     onResetState()
@@ -97,6 +125,7 @@ fun DatabaseSettingsScreenPreview() {
         navigateBack = {},
         uiState = DatabaseBackupUiState(loading = false),
         onExportDatabase = {},
+        onImportDatabase = {},
         onResetState = {},
     )
 }
