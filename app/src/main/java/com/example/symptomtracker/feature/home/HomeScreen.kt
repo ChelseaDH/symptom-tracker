@@ -20,9 +20,7 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -31,6 +29,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -54,8 +53,10 @@ import com.example.symptomtracker.core.model.SymptomLog
 import com.example.symptomtracker.core.model.getDisplayName
 import com.example.symptomtracker.core.model.getDisplayString
 import com.example.symptomtracker.core.ui.DatePickerModal
+import com.example.symptomtracker.core.ui.FilledTonalButtonWithIcon
 import com.example.symptomtracker.core.ui.LogItemCard
 import com.example.symptomtracker.core.ui.LogsPreviewParameterProvider
+import com.example.symptomtracker.core.ui.MealieIcon
 import com.example.symptomtracker.core.ui.NoLogsFoundCard
 import kotlinx.coroutines.launch
 import java.time.OffsetDateTime
@@ -70,9 +71,11 @@ fun HomeScreen(
     onFoodClick: (Long) -> Unit,
     onSymptomClick: (Long) -> Unit,
     onMovementClick: (Long) -> Unit,
+    onMealieImport: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeScreenViewModel = hiltViewModel(),
 ) {
+    val mealieIntegrationEnabled by viewModel.mealieIntegrationEnabled.collectAsState()
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
 
@@ -109,16 +112,23 @@ fun HomeScreen(
                 onDismissRequest = { viewModel.updateBottomSheetVisibility(false) },
                 sheetState = sheetState,
             ) {
-                QuickAdd(onAddFoodClick = {
-                    onQuickAddNavigation()
-                    navigateToAddFood()
-                }, onAddSymptomClick = {
-                    onQuickAddNavigation()
-                    navigateToAddSymptom()
-                }, onAddMovementClick = {
-                    onQuickAddNavigation()
-                    navigateToAddMovement()
-                })
+                AddLogsBottomSheetContent(mealieIntegrationEnabled = mealieIntegrationEnabled,
+                    onAddFoodClick = {
+                        onQuickAddNavigation()
+                        navigateToAddFood()
+                    },
+                    onAddSymptomClick = {
+                        onQuickAddNavigation()
+                        navigateToAddSymptom()
+                    },
+                    onAddMovementClick = {
+                        onQuickAddNavigation()
+                        navigateToAddMovement()
+                    },
+                    onImportFoodClick = {
+                        onQuickAddNavigation()
+                        onMealieImport()
+                    })
             }
         }
     }
@@ -304,10 +314,12 @@ fun Timeline(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun QuickAdd(
+internal fun AddLogsBottomSheetContent(
+    mealieIntegrationEnabled: Boolean,
     onAddFoodClick: () -> Unit,
     onAddSymptomClick: () -> Unit,
     onAddMovementClick: () -> Unit,
+    onImportFoodClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -317,50 +329,55 @@ fun QuickAdd(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Text(
-            text = stringResource(R.string.quick_add_title),
+            text = stringResource(R.string.home_manual_add_title),
             style = MaterialTheme.typography.titleMedium
         )
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            maxItemsInEachRow = 2
+            maxItemsInEachRow = 3,
         ) {
-            ExtendedFloatingActionButton(
-                onClick = { onAddFoodClick() },
-                text = { Text(text = stringResource(R.string.add_food_text)) },
+            FilledTonalButtonWithIcon(
+                textId = R.string.add_food_text,
                 icon = {
                     Icon(
                         painter = painterResource(id = R.drawable.outline_nutrition_24),
                         contentDescription = stringResource(R.string.add_food_cd)
                     )
                 },
-                modifier = Modifier.weight(1f),
-                elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp)
+                onClick = onAddFoodClick,
             )
-            ExtendedFloatingActionButton(
-                onClick = { onAddSymptomClick() },
-                text = { Text(text = stringResource(R.string.add_symptom_text)) },
+            FilledTonalButtonWithIcon(
+                textId = R.string.add_symptom_text,
                 icon = {
                     Icon(
                         painter = painterResource(id = R.drawable.outline_symptoms_24),
                         contentDescription = stringResource(R.string.add_symptom_cd)
                     )
                 },
-                modifier = Modifier.weight(1f),
-                elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp)
+                onClick = onAddSymptomClick,
             )
-            ExtendedFloatingActionButton(
-                onClick = { onAddMovementClick() },
-                text = { Text(text = stringResource(R.string.add_movement_text)) },
+            FilledTonalButtonWithIcon(
+                textId = R.string.add_movement_text,
                 icon = {
                     Icon(
                         painter = painterResource(id = R.drawable.outline_gastroenterology_24),
                         contentDescription = stringResource(R.string.add_movement_cd)
                     )
                 },
-                modifier = Modifier.weight(1f),
-                elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp)
+                onClick = onAddMovementClick,
+            )
+        }
+
+        if (mealieIntegrationEnabled) {
+            Text(
+                text = "Import", style = MaterialTheme.typography.titleMedium
+            )
+            FilledTonalButtonWithIcon(
+                textId = R.string.mealie_import_title,
+                icon = { MealieIcon() },
+                onClick = onImportFoodClick,
             )
         }
     }
@@ -382,7 +399,7 @@ fun HomeBodyWithNoLogsPreview() {
     )
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun HomeBodyWithLogsPreview(@PreviewParameter(LogsPreviewParameterProvider::class) logs: List<Log>) {
     HomeBody(
@@ -398,11 +415,25 @@ fun HomeBodyWithLogsPreview(@PreviewParameter(LogsPreviewParameterProvider::clas
     )
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
-fun QuickAddPreview() {
-    QuickAdd(
+fun AddLogsBottomSheetContentPreviewWithIntegration() {
+    AddLogsBottomSheetContent(
+        mealieIntegrationEnabled = true,
         onAddFoodClick = {},
+        onImportFoodClick = {},
+        onAddSymptomClick = {},
+        onAddMovementClick = {},
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun AddLogsBottomSheetContentPreviewWithoutIntegration() {
+    AddLogsBottomSheetContent(
+        mealieIntegrationEnabled = false,
+        onAddFoodClick = {},
+        onImportFoodClick = {},
         onAddSymptomClick = {},
         onAddMovementClick = {},
     )

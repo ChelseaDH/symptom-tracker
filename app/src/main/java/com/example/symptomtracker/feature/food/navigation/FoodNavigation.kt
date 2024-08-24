@@ -9,20 +9,37 @@ import com.example.symptomtracker.feature.food.AddFoodScreen
 import com.example.symptomtracker.feature.food.EditFoodScreen
 import com.example.symptomtracker.feature.food.ManageFoodItemsRoute
 import com.example.symptomtracker.feature.food.ViewFoodRoute
+import com.example.symptomtracker.feature.mealie.navigation.MEALIE_IMPORT_ROUTE
 
 const val FOOD_LOG_ID = "foodLogId"
+const val PREFILL_ITEMS = "prefillItems"
 
 const val ADD_FOOD_ROUTE = "add_food"
 const val EDIT_FOOD_ROUTE = "edit_food"
 const val VIEW_FOOD_ROUTE = "view_food"
 const val MANAGE_ITEMS_ROUTE = "manage_items"
 
-fun NavController.navigateToAddFood() = navigate(route = ADD_FOOD_ROUTE)
+fun NavController.navigateToAddFood(prefillItems: List<String>? = null) {
+    val prefillItemsArg = prefillItems?.joinToString(separator = ",", prefix = "[", postfix = "]")
+    navigate(route = "$ADD_FOOD_ROUTE?$PREFILL_ITEMS=$prefillItemsArg") {
+        // The Mealie import screen is an intermediate page which we don't want to navigate back to
+        popUpTo(MEALIE_IMPORT_ROUTE) {
+            inclusive = true
+        }
+    }
+}
 
 fun NavGraphBuilder.addFoodScreen(
     navigateBack: () -> Unit,
 ) {
-    composable(route = ADD_FOOD_ROUTE) {
+    composable(
+        route = "$ADD_FOOD_ROUTE?$PREFILL_ITEMS={prefillItems}",
+        arguments = listOf(navArgument(PREFILL_ITEMS) {
+            type = NavType.StringType
+            defaultValue = null
+            nullable = true
+        })
+    ) {
         AddFoodScreen(navigateBack = navigateBack)
     }
 }

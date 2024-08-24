@@ -35,6 +35,9 @@ class OfflineFoodLogRepository @Inject constructor(private val foodLogDao: FoodL
     override suspend fun insertItem(foodItem: FoodItem): Long =
         foodLogDao.insertItem(foodItemEntity = foodItem.asEntity())
 
+    override suspend fun insertOrGetItemByName(name: String): FoodItem =
+        FoodItem(id = foodLogDao.insertOrGetItemByName(name), name = name)
+
     override suspend fun deleteFoodLog(foodLog: FoodLog) =
         foodLogDao.deleteLog(foodLog.asFoodLogEntity())
 

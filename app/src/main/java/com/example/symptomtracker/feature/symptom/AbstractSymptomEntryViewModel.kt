@@ -15,6 +15,7 @@ import com.example.symptomtracker.core.ui.DateInputFields
 import com.example.symptomtracker.core.ui.DateTimeInput
 import com.example.symptomtracker.core.ui.TimeInputFields
 import com.example.symptomtracker.core.ui.toDate
+import com.example.symptomtracker.core.util.toFoodItemName
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
@@ -185,5 +186,5 @@ data class SearchState(
 ) {
     fun isInputValid(): Boolean = input.isNotEmpty()
 
-    fun toSymptom(): Symptom = Symptom(name = input.trim().replaceFirstChar { it.uppercaseChar() })
+    fun toSymptom(): Symptom = Symptom(name = input.toFoodItemName())
 }

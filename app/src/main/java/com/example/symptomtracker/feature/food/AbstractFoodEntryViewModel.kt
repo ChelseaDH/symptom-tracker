@@ -13,6 +13,7 @@ import com.example.symptomtracker.core.ui.DateInputFields
 import com.example.symptomtracker.core.ui.DateTimeInput
 import com.example.symptomtracker.core.ui.TimeInputFields
 import com.example.symptomtracker.core.ui.toDate
+import com.example.symptomtracker.core.util.toFoodItemName
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
@@ -142,6 +143,20 @@ abstract class AbstractFoodEntryViewModel(private val foodLogRepository: FoodLog
 
         _selectedFoodItems = foodLog.items.toMutableStateList()
     }
+
+    protected suspend fun setUiStateFromPrefill(items: List<String>) {
+        _selectedFoodItems = items
+            .distinct()
+            .filter { it.isNotBlank() }
+            .map { item ->
+                foodLogRepository.insertOrGetItemByName(item.toFoodItemName())
+            }
+            .toMutableStateList()
+
+        uiState = uiState.copy(
+            selectedFoodItems = _selectedFoodItems
+        )
+    }
 }
 
 data class FoodEntryUiState(
@@ -174,5 +189,5 @@ data class SearchState(
 ) {
     fun isInputValid(): Boolean = input.isNotEmpty()
 
-    fun toItem(): FoodItem = FoodItem(name = input.trim().replaceFirstChar { it.uppercaseChar() })
+    fun toItem(): FoodItem = FoodItem(name = input.toFoodItemName())
 }

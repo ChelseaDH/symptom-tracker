@@ -3,6 +3,7 @@
     <string name="home">Home</string>
     <string name="add_food_text">Food</string>
     <string name="add_food_cd">Add food</string>
+    <string name="add_food_manually">Add food manually</string>
     <string name="add_symptom_text">Symptom</string>
     <string name="add_symptom_cd">Add symptom</string>
     <string name="add_movement_text">Movement</string>
@@ -24,7 +25,8 @@
     <string name="food_logs_title">Food logs</string>
     <string name="movement_logs_title">Movement logs</string>
     <string name="symptom_logs_title">Symptom logs</string>
-    <string name="quick_add_title">Quick add</string>
+    <string name="home_manual_add_title">Manually add</string>
+    <string name="home_import_title">Import</string>
     <string name="time_label">Time</string>
     <string name="edit_time_cd">Edit time</string>
     <string name="date_label">Date</string>
@@ -58,4 +60,27 @@
     <string name="action_delete">Delete</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_merge">Merge</string>
+    <string name="action_next">Next</string>
+    <string name="action_search">Search</string>
+    <string name="action_clear_search">Clear search</string>
+    <string name="action_add_manually">Add manually</string>
+
+    <string name="validation_required">Required</string>
+    <string name="validation_invalid">Invalid</string>
+
+    <string name="mealie_import_title">Log food from Mealie recipe</string>
+    <string name="mealie_import_results_header">Ingredients to import</string>
+    <string name="mealie_import_url_label">Recipe URL:</string>
+    <string name="mealie_import_error_no_ingredients">No ingredients found.</string>
+    <string name="mealie_import_error_api_failure">An error occurred.</string>
+    <string name="mealie_import_error_api_failure_with_message">An error occurred: %s</string>
+    <string name="mealie_import_remove_ingreditent_cd">Remove %1$s from import</string>
+    <string name="mealie_settings_title">Mealie integration</string>
+    <string name="mealie_settings_enable_integration_label">Enable integration</string>
+    <string name="mealie_settings_base_url_label">Base URL</string>
+    <string name="mealie_settings_api_token_label">API token</string>
+    <string name="mealie_settings_check_credentials">Check credentials</string>
+    <string name="mealie_settings_check_credentials_success">Successfully authenticated as %1$s.</string>
+    <string name="mealie_settings_check_credentials_failure">Credentials are invalid.</string>
+    <string name="mealie_import_action_import_food_from_recipe">Import from Mealie recipe</string>
 </resources>

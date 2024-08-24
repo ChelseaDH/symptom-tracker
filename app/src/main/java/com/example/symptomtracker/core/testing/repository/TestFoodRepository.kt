@@ -14,6 +14,8 @@ class TestFoodRepository : FoodLogRepository {
 
     override suspend fun insertItem(foodItem: FoodItem): Long = 1
 
+    override suspend fun insertOrGetItemByName(name: String): FoodItem = FoodItem(name)
+
     override suspend fun insertFoodLog(foodLog: FoodLog) {}
 
     override fun getAllItems(): Flow<List<FoodItem>> = itemsFlow

@@ -10,9 +10,11 @@ import com.example.symptomtracker.core.model.SymptomLog
 import com.example.symptomtracker.core.model.SymptomWithSeverity
 import com.example.symptomtracker.core.testing.repository.TestFoodRepository
 import com.example.symptomtracker.core.testing.repository.TestMovementRepository
+import com.example.symptomtracker.core.testing.repository.TestSettingsRepository
 import com.example.symptomtracker.core.testing.repository.TestSymptomRepository
 import com.example.symptomtracker.utils.MainDispatcherRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -25,6 +27,7 @@ import org.junit.Test
 import org.junit.rules.TestWatcher
 import java.time.OffsetDateTime
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class HomeScreenViewModelTest {
     @get:Rule
     val dispatcherRule: TestWatcher = MainDispatcherRule()
@@ -32,6 +35,7 @@ class HomeScreenViewModelTest {
     private val foodLogRepository = TestFoodRepository()
     private val symptomRepository = TestSymptomRepository()
     private val movementRepository = TestMovementRepository()
+    private val settingsRepository = TestSettingsRepository()
     private lateinit var viewModel: HomeScreenViewModel
 
     @Before
@@ -40,10 +44,10 @@ class HomeScreenViewModelTest {
             foodLogRepository = foodLogRepository,
             symptomRepository = symptomRepository,
             movementRepository = movementRepository,
+            settingsRepository = settingsRepository,
         )
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun uiState_holdsDefaultValues_whenInitialised() = runTest {
         val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.uiState }
@@ -59,7 +63,6 @@ class HomeScreenViewModelTest {
         collectJob.cancel()
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun bottomSheetVisibilityUpdates_whenUpdateBottomSheetVisibilityIsCalled() = runTest {
         val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.uiState }
@@ -73,7 +76,6 @@ class HomeScreenViewModelTest {
         collectJob.cancel()
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun dateUpdates_whenUpdateDateIsCalled() = runTest {
         val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.uiState }
@@ -88,7 +90,6 @@ class HomeScreenViewModelTest {
         collectJob.cancel()
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun dateAndLogsUpdate_whenPreviousAndNextDayAreChosen() = runTest {
         val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.uiState }
@@ -109,6 +110,23 @@ class HomeScreenViewModelTest {
 
         assertTrue(viewModel.uiState.isToday)
         assertEquals(listOf(foodLogs[1], symptomLogs[0]), viewModel.uiState.logs)
+
+        collectJob.cancel()
+    }
+
+    @Test
+    fun whenInitialised_mealieIntegrationEnabledHoldsDefaultValue() = runTest {
+        assertFalse(viewModel.mealieIntegrationEnabled.value)
+    }
+
+    @Test
+    fun whenSettingsAreRetrieved_mealieIntegrationEnabledHoldsExpectedValue() = runTest {
+        val collectJob =
+            launch(UnconfinedTestDispatcher()) { viewModel.mealieIntegrationEnabled.collect() }
+
+        settingsRepository.sendMealieEnabled(true)
+
+        assertTrue(viewModel.mealieIntegrationEnabled.value)
 
         collectJob.cancel()
     }

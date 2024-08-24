@@ -15,6 +15,11 @@ interface FoodLogRepository {
     suspend fun insertItem(foodItem: FoodItem): Long
 
     /**
+     * Inserts an item with a given name if one does not exist, returning the ID of the existing record if it does.
+     */
+    suspend fun insertOrGetItemByName(name: String): FoodItem
+
+    /**
      * Inserts a food log and it's associated items.
      */
     suspend fun insertFoodLog(foodLog: FoodLog)

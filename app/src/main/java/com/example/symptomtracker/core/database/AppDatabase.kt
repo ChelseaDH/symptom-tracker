@@ -5,6 +5,8 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.symptomtracker.core.database.dao.FoodLogDao
 import com.example.symptomtracker.core.database.dao.MovementDao
 import com.example.symptomtracker.core.database.dao.SymptomDao
@@ -22,7 +24,7 @@ import com.example.symptomtracker.core.database.util.Converters
  */
 @Database(
     entities = [SymptomEntity::class, SymptomLogEntity::class, SymptomLogSymptomCrossRef::class, FoodLogEntity::class, FoodItemEntity::class, FoodLogItemCrossRef::class, MovementLogEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -42,9 +44,15 @@ abstract class AppDatabase : RoomDatabase() {
                     klass = AppDatabase::class.java,
                     name = "app_database"
                 )
-                    .fallbackToDestructiveMigration()
+                    .addMigrations(MIGRATION_1_2)
                     .build()
                     .also { Instance = it }
+            }
+        }
+
+        private val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("CREATE UNIQUE INDEX index_item_name ON item (name)")
             }
         }
     }

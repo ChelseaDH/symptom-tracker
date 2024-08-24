@@ -10,19 +10,24 @@ import com.example.symptomtracker.core.model.SymptomLog
 import com.example.symptomtracker.core.model.SymptomWithSeverity
 import com.example.symptomtracker.core.testing.repository.TestFoodRepository
 import com.example.symptomtracker.core.testing.repository.TestMovementRepository
+import com.example.symptomtracker.core.testing.repository.TestSettingsRepository
 import com.example.symptomtracker.core.testing.repository.TestSymptomRepository
 import com.example.symptomtracker.utils.MainDispatcherRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestWatcher
 import java.time.OffsetDateTime
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class LogsViewModelTest {
     @get:Rule
     val dispatcherRule: TestWatcher = MainDispatcherRule()
@@ -30,6 +35,7 @@ class LogsViewModelTest {
     private val foodLogRepository = TestFoodRepository()
     private val symptomRepository = TestSymptomRepository()
     private val movementRepository = TestMovementRepository()
+    private val settingsRepository = TestSettingsRepository()
     private lateinit var viewModel: LogsViewModel
 
     @Before
@@ -38,10 +44,10 @@ class LogsViewModelTest {
             foodLogRepository = foodLogRepository,
             symptomRepository = symptomRepository,
             movementRepository = movementRepository,
+            settingsRepository = settingsRepository,
         )
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun uiState_holdsDefaultValues_whenInitialised() = runTest {
         val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.uiState }
@@ -52,7 +58,6 @@ class LogsViewModelTest {
         collectJob.cancel()
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun uiState_holdsFoodLogs_afterInitialisation() = runTest {
         val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.uiState }
@@ -67,7 +72,6 @@ class LogsViewModelTest {
         collectJob.cancel()
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun uiState_holdsCorrectLogs_whenChosenTabUpdated() = runTest {
         val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.uiState }
@@ -90,6 +94,23 @@ class LogsViewModelTest {
         viewModel.updateSelectedTab(2)
         Assert.assertEquals(2, viewModel.uiState.selectedTabIndex)
         Assert.assertEquals(TabUiState.MovementLogs(movementLogs), viewModel.uiState.tabState)
+
+        collectJob.cancel()
+    }
+
+    @Test
+    fun whenInitialised_mealieIntegrationEnabledHoldsDefaultValue() = runTest {
+        assertFalse(viewModel.mealieIntegrationEnabled.value)
+    }
+
+    @Test
+    fun whenSettingsAreRetrieved_mealieIntegrationEnabledHoldsExpectedValue() = runTest {
+        val collectJob =
+            launch(UnconfinedTestDispatcher()) { viewModel.mealieIntegrationEnabled.collect() }
+
+        settingsRepository.sendMealieEnabled(true)
+
+        assertTrue(viewModel.mealieIntegrationEnabled.value)
 
         collectJob.cancel()
     }

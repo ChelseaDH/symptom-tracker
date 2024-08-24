@@ -21,6 +21,13 @@ interface FoodLogDao {
     @Insert
     suspend fun insertItem(foodItemEntity: FoodItemEntity): Long
 
+    @Query("SELECT id FROM item WHERE name = :name")
+    fun getItemByName(name: String): Long?
+
+    @Transaction
+    suspend fun insertOrGetItemByName(name: String): Long =
+        getItemByName(name) ?: insertItem(FoodItemEntity(id = 0, name = name))
+
     @Query("SELECT * FROM item ORDER BY name ASC")
     fun getAllItems(): Flow<List<FoodItemEntity>>
 

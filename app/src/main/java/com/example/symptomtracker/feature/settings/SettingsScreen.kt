@@ -14,10 +14,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.symptomtracker.R
+import com.example.symptomtracker.core.ui.MealieIcon
 
 @Composable
 fun SettingsScreen(
     navigateToManageFoodItems: () -> Unit,
+    navigateToMealieSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(modifier = modifier) { innerPadding ->
@@ -40,6 +42,14 @@ fun SettingsScreen(
                     )
                 }
             )
+
+            ListItem(
+                headlineContent = {
+                    Text(text = stringResource(id = R.string.mealie_settings_title))
+                },
+                modifier = Modifier.clickable { navigateToMealieSettings() },
+                leadingContent = { MealieIcon() }
+            )
         }
     }
 }
@@ -47,5 +57,5 @@ fun SettingsScreen(
 @Preview(showSystemUi = true)
 @Composable
 fun ConfigScreenPreview() {
-    SettingsScreen(navigateToManageFoodItems = { })
+    SettingsScreen(navigateToManageFoodItems = { }, navigateToMealieSettings = {})
 }

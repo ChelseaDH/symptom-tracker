@@ -13,8 +13,12 @@ fun NavController.navigateToSettings(navOptions: NavOptions) =
 
 fun NavGraphBuilder.settingsScreen(
     navigateToManageFoodItems: () -> Unit,
+    navigateToMealieSettings: () -> Unit,
 ) {
     composable(route = SETTINGS_ROUTE) {
-        SettingsScreen(navigateToManageFoodItems = navigateToManageFoodItems)
+        SettingsScreen(
+            navigateToManageFoodItems = navigateToManageFoodItems,
+            navigateToMealieSettings = navigateToMealieSettings,
+        )
     }
 }

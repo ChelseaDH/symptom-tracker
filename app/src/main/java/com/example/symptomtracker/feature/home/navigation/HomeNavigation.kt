@@ -17,6 +17,7 @@ fun NavGraphBuilder.homeScreen(
     onFoodClick: (Long) -> Unit,
     onSymptomClick: (Long) -> Unit,
     onMovementClick: (Long) -> Unit,
+    navigateToMealieImport: () -> Unit,
 ) {
     composable(route = HOME_ROUTE) {
         HomeScreen(
@@ -26,6 +27,7 @@ fun NavGraphBuilder.homeScreen(
             onFoodClick = onFoodClick,
             onSymptomClick = onSymptomClick,
             onMovementClick = onMovementClick,
+            onMealieImport = navigateToMealieImport,
         )
     }
 }

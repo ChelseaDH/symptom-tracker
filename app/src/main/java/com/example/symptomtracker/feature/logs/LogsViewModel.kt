@@ -7,11 +7,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.symptomtracker.core.data.repository.FoodLogRepository
 import com.example.symptomtracker.core.data.repository.MovementRepository
+import com.example.symptomtracker.core.data.repository.SettingsRepository
 import com.example.symptomtracker.core.data.repository.SymptomRepository
 import com.example.symptomtracker.core.model.FoodLog
 import com.example.symptomtracker.core.model.MovementLog
 import com.example.symptomtracker.core.model.SymptomLog
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,6 +24,7 @@ class LogsViewModel @Inject constructor(
     private val foodLogRepository: FoodLogRepository,
     private val symptomRepository: SymptomRepository,
     private val movementRepository: MovementRepository,
+    private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
     companion object {
         const val FOOD_TAB = "Food"
@@ -30,6 +35,13 @@ class LogsViewModel @Inject constructor(
     val tabs = listOf(FOOD_TAB, SYMPTOM_TAB, MOVEMENT_TAB)
     var uiState by mutableStateOf(LogsViewUiState())
         private set
+
+    val mealieIntegrationEnabled: StateFlow<Boolean> =
+        settingsRepository.isMealieIntegrationEnabled().stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = false,
+        )
 
     init {
         viewModelScope.launch {
