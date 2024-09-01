@@ -1,4 +1,4 @@
-package com.example.symptomtracker.core.ui
+package com.example.symptomtracker.core.designsystem
 
 import android.app.Activity
 import android.os.Build

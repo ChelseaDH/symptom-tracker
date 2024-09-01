@@ -1,8 +1,8 @@
 package com.example.symptomtracker.core.testing.repository
 
-import com.example.symptomtracker.core.data.repository.FoodLogRepository
-import com.example.symptomtracker.core.model.FoodItem
-import com.example.symptomtracker.core.model.FoodLog
+import com.example.symptomtracker.core.domain.repository.FoodLogRepository
+import com.example.symptomtracker.core.domain.model.FoodItem
+import com.example.symptomtracker.core.domain.model.FoodLog
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.map

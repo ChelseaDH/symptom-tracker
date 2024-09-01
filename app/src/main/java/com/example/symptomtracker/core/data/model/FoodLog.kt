@@ -2,7 +2,7 @@ package com.example.symptomtracker.core.data.model
 
 import com.example.symptomtracker.core.database.model.FoodLogEntity
 import com.example.symptomtracker.core.database.model.PopulatedFoodLog
-import com.example.symptomtracker.core.model.FoodLog
+import com.example.symptomtracker.core.domain.model.FoodLog
 
 fun FoodLog.asEntity(): PopulatedFoodLog = PopulatedFoodLog(
     log = asFoodLogEntity(),

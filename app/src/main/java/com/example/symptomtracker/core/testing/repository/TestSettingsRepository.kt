@@ -1,7 +1,7 @@
 package com.example.symptomtracker.core.testing.repository
 
 import com.example.symptomtracker.core.data.model.MealieSettings
-import com.example.symptomtracker.core.data.repository.SettingsRepository
+import com.example.symptomtracker.core.domain.repository.SettingsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 

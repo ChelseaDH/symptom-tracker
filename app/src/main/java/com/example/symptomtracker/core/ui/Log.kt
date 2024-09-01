@@ -21,8 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.example.symptomtracker.R
-import com.example.symptomtracker.core.model.FoodLog
-import com.example.symptomtracker.core.model.Log
+import com.example.symptomtracker.core.domain.model.FoodLog
+import com.example.symptomtracker.core.domain.model.Log
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 

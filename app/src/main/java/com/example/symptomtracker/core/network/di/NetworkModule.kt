@@ -1,6 +1,6 @@
 package com.example.symptomtracker.core.network.di
 
-import com.example.symptomtracker.core.data.repository.SettingsRepository
+import com.example.symptomtracker.core.domain.repository.SettingsRepository
 import com.example.symptomtracker.core.network.DefaultMealieServiceFactory
 import com.example.symptomtracker.core.network.MealieService
 import com.example.symptomtracker.core.network.MealieServiceFactory

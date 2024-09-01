@@ -6,8 +6,9 @@ import com.example.symptomtracker.core.database.dao.FoodLogDao
 import com.example.symptomtracker.core.database.model.FoodItemEntity
 import com.example.symptomtracker.core.database.model.PopulatedFoodLog
 import com.example.symptomtracker.core.database.model.asExternalModel
-import com.example.symptomtracker.core.model.FoodItem
-import com.example.symptomtracker.core.model.FoodLog
+import com.example.symptomtracker.core.domain.repository.FoodLogRepository
+import com.example.symptomtracker.core.domain.model.FoodItem
+import com.example.symptomtracker.core.domain.model.FoodLog
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.time.OffsetDateTime

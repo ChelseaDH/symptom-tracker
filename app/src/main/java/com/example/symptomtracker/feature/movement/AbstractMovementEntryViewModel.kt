@@ -4,11 +4,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.example.symptomtracker.core.model.MovementLog
-import com.example.symptomtracker.core.model.StoolType
-import com.example.symptomtracker.core.ui.DateInputFields
-import com.example.symptomtracker.core.ui.DateTimeInput
-import com.example.symptomtracker.core.ui.TimeInputFields
+import com.example.symptomtracker.core.designsystem.component.DateInputFields
+import com.example.symptomtracker.core.designsystem.component.DateTimeInput
+import com.example.symptomtracker.core.designsystem.component.TimeInputFields
+import com.example.symptomtracker.core.domain.model.MovementLog
+import com.example.symptomtracker.core.domain.model.StoolType
 import java.util.Calendar
 
 abstract class AbstractMovementEntryViewModel : ViewModel() {

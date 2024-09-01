@@ -1,8 +1,8 @@
 package com.example.symptomtracker.feature.movement
 
 import androidx.lifecycle.SavedStateHandle
-import com.example.symptomtracker.core.model.MovementLog
-import com.example.symptomtracker.core.model.StoolType
+import com.example.symptomtracker.core.domain.model.MovementLog
+import com.example.symptomtracker.core.domain.model.StoolType
 import com.example.symptomtracker.core.testing.repository.TestMovementRepository
 import com.example.symptomtracker.core.ui.ViewLogUiState
 import com.example.symptomtracker.feature.movement.navigation.MOVEMENT_LOG_ID

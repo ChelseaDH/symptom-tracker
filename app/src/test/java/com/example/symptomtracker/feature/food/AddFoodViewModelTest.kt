@@ -1,7 +1,7 @@
 package com.example.symptomtracker.feature.food
 
 import androidx.lifecycle.SavedStateHandle
-import com.example.symptomtracker.core.model.FoodItem
+import com.example.symptomtracker.core.domain.model.FoodItem
 import com.example.symptomtracker.core.testing.repository.TestFoodRepository
 import com.example.symptomtracker.feature.food.navigation.PREFILL_ITEMS
 import com.example.symptomtracker.utils.MainDispatcherRule

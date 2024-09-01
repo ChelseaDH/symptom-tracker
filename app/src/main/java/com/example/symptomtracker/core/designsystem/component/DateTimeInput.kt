@@ -1,4 +1,4 @@
-package com.example.symptomtracker.core.ui
+package com.example.symptomtracker.core.designsystem.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.symptomtracker.R
+import com.example.symptomtracker.core.designsystem.SymptomTrackerTheme
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneId

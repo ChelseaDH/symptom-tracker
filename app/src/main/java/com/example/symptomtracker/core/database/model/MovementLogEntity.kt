@@ -2,8 +2,8 @@ package com.example.symptomtracker.core.database.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.symptomtracker.core.model.MovementLog
-import com.example.symptomtracker.core.model.StoolType
+import com.example.symptomtracker.core.domain.model.MovementLog
+import com.example.symptomtracker.core.domain.model.StoolType
 import java.time.OffsetDateTime
 
 /**

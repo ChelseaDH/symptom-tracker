@@ -1,8 +1,8 @@
 package com.example.symptomtracker.core.data.model
 
 import com.example.symptomtracker.core.database.model.MovementLogEntity
-import com.example.symptomtracker.core.model.MovementLog
-import com.example.symptomtracker.core.model.StoolType
+import com.example.symptomtracker.core.domain.model.MovementLog
+import com.example.symptomtracker.core.domain.model.StoolType
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.time.OffsetDateTime

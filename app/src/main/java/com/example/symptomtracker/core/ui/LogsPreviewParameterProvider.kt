@@ -1,15 +1,15 @@
 package com.example.symptomtracker.core.ui
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.example.symptomtracker.core.model.FoodItem
-import com.example.symptomtracker.core.model.FoodLog
-import com.example.symptomtracker.core.model.Log
-import com.example.symptomtracker.core.model.MovementLog
-import com.example.symptomtracker.core.model.Severity
-import com.example.symptomtracker.core.model.StoolType
-import com.example.symptomtracker.core.model.Symptom
-import com.example.symptomtracker.core.model.SymptomLog
-import com.example.symptomtracker.core.model.SymptomWithSeverity
+import com.example.symptomtracker.core.domain.model.FoodItem
+import com.example.symptomtracker.core.domain.model.FoodLog
+import com.example.symptomtracker.core.domain.model.Log
+import com.example.symptomtracker.core.domain.model.MovementLog
+import com.example.symptomtracker.core.domain.model.Severity
+import com.example.symptomtracker.core.domain.model.StoolType
+import com.example.symptomtracker.core.domain.model.Symptom
+import com.example.symptomtracker.core.domain.model.SymptomLog
+import com.example.symptomtracker.core.domain.model.SymptomWithSeverity
 import java.time.OffsetDateTime
 
 class LogsPreviewParameterProvider : PreviewParameterProvider<List<Log>> {

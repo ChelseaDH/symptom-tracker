@@ -9,7 +9,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.symptomtracker.R
-import com.example.symptomtracker.core.model.FoodLog
+import com.example.symptomtracker.core.domain.model.FoodLog
 import com.example.symptomtracker.core.ui.FoodLogPreviewParameterProvider
 import com.example.symptomtracker.core.ui.ViewLogScreen
 import com.example.symptomtracker.core.ui.ViewLogUiState

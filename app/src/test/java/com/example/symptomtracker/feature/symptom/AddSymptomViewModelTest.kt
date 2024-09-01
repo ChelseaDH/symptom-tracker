@@ -1,7 +1,7 @@
 package com.example.symptomtracker.feature.symptom
 
-import com.example.symptomtracker.core.model.Symptom
-import com.example.symptomtracker.core.model.SymptomWithSeverity
+import com.example.symptomtracker.core.domain.model.Symptom
+import com.example.symptomtracker.core.domain.model.SymptomWithSeverity
 import com.example.symptomtracker.core.testing.repository.TestSymptomRepository
 import com.example.symptomtracker.utils.MainDispatcherRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi

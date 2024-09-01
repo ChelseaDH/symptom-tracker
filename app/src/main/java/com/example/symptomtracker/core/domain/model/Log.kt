@@ -1,4 +1,4 @@
-package com.example.symptomtracker.core.model
+package com.example.symptomtracker.core.domain.model
 
 import java.time.OffsetDateTime
 

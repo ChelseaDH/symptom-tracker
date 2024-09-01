@@ -1,8 +1,8 @@
 package com.example.symptomtracker.feature.food
 
 import androidx.lifecycle.SavedStateHandle
-import com.example.symptomtracker.core.model.FoodItem
-import com.example.symptomtracker.core.model.FoodLog
+import com.example.symptomtracker.core.domain.model.FoodItem
+import com.example.symptomtracker.core.domain.model.FoodLog
 import com.example.symptomtracker.core.testing.repository.TestFoodRepository
 import com.example.symptomtracker.core.ui.ViewLogUiState
 import com.example.symptomtracker.feature.food.navigation.FOOD_LOG_ID

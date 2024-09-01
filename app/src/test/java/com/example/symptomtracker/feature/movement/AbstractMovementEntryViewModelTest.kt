@@ -1,8 +1,8 @@
 package com.example.symptomtracker.feature.movement
 
-import com.example.symptomtracker.core.model.StoolType
-import com.example.symptomtracker.core.ui.DateInputFields
-import com.example.symptomtracker.core.ui.TimeInputFields
+import com.example.symptomtracker.core.designsystem.component.DateInputFields
+import com.example.symptomtracker.core.designsystem.component.TimeInputFields
+import com.example.symptomtracker.core.domain.model.StoolType
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before

@@ -1,4 +1,4 @@
-package com.example.symptomtracker.core.domain
+package com.example.symptomtracker.core.domain.usecase
 
 import com.example.symptomtracker.core.network.MealieServiceFactory
 import kotlinx.coroutines.Dispatchers

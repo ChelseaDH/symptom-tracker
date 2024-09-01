@@ -1,4 +1,4 @@
-package com.example.symptomtracker.core.data.repository
+package com.example.symptomtracker.core.domain.repository
 
 import com.example.symptomtracker.core.data.model.MealieSettings
 import kotlinx.coroutines.flow.Flow

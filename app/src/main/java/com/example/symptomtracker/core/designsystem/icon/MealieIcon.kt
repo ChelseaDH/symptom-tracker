@@ -1,4 +1,4 @@
-package com.example.symptomtracker.core.ui
+package com.example.symptomtracker.core.designsystem.icon
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon

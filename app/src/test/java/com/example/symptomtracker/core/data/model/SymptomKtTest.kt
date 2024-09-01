@@ -1,7 +1,7 @@
 package com.example.symptomtracker.core.data.model
 
 import com.example.symptomtracker.core.database.model.SymptomEntity
-import com.example.symptomtracker.core.model.Symptom
+import com.example.symptomtracker.core.domain.model.Symptom
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

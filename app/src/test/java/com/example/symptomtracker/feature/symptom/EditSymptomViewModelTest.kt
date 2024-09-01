@@ -1,14 +1,14 @@
 package com.example.symptomtracker.feature.symptom
 
 import androidx.lifecycle.SavedStateHandle
-import com.example.symptomtracker.core.model.Severity
-import com.example.symptomtracker.core.model.Symptom
-import com.example.symptomtracker.core.model.SymptomLog
-import com.example.symptomtracker.core.model.SymptomWithSeverity
+import com.example.symptomtracker.core.designsystem.component.DateInputFields
+import com.example.symptomtracker.core.designsystem.component.DateTimeInput
+import com.example.symptomtracker.core.designsystem.component.TimeInputFields
+import com.example.symptomtracker.core.domain.model.Severity
+import com.example.symptomtracker.core.domain.model.Symptom
+import com.example.symptomtracker.core.domain.model.SymptomLog
+import com.example.symptomtracker.core.domain.model.SymptomWithSeverity
 import com.example.symptomtracker.core.testing.repository.TestSymptomRepository
-import com.example.symptomtracker.core.ui.DateInputFields
-import com.example.symptomtracker.core.ui.DateTimeInput
-import com.example.symptomtracker.core.ui.TimeInputFields
 import com.example.symptomtracker.feature.symptom.navigation.SYMPTOM_LOG_ID
 import com.example.symptomtracker.utils.MainDispatcherRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi

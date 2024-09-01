@@ -1,4 +1,4 @@
-package com.example.symptomtracker.core.model
+package com.example.symptomtracker.core.domain.model
 
 enum class StoolType(val type: Int) {
     SEVERE_CONSTIPATION(1),

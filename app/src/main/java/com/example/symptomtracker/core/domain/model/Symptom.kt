@@ -1,8 +1,5 @@
-package com.example.symptomtracker.core.model
+package com.example.symptomtracker.core.domain.model
 
-/**
- * External data layer representation of a symptom.
- */
 data class Symptom(
     val id: Long,
     val name: String

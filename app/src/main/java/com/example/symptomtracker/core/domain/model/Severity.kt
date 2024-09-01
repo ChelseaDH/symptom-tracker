@@ -1,4 +1,4 @@
-package com.example.symptomtracker.core.model
+package com.example.symptomtracker.core.domain.model
 
 enum class Severity(val displayName: String) {
     MILD(displayName = "Mild"),

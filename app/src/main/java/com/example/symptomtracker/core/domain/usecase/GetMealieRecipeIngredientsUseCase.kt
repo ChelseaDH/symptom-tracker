@@ -1,6 +1,6 @@
-package com.example.symptomtracker.core.domain
+package com.example.symptomtracker.core.domain.usecase
 
-import com.example.symptomtracker.core.model.Ingredient
+import com.example.symptomtracker.core.domain.model.Ingredient
 import com.example.symptomtracker.core.network.MealieService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

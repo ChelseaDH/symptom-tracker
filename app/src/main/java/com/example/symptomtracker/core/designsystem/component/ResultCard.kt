@@ -1,4 +1,4 @@
-package com.example.symptomtracker.core.ui
+package com.example.symptomtracker.core.designsystem.component
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +19,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.symptomtracker.core.designsystem.SymptomTrackerTheme
+import com.example.symptomtracker.core.designsystem.success
 
 @Composable
 fun ErrorCard(

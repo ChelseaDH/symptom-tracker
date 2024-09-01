@@ -1,9 +1,9 @@
 package com.example.symptomtracker.feature.mealie
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.example.symptomtracker.core.domain.MealieCredentialsValidation
-import com.example.symptomtracker.core.model.TextInput
-import com.example.symptomtracker.core.model.TextValidationError
+import com.example.symptomtracker.core.designsystem.component.TextInput
+import com.example.symptomtracker.core.designsystem.component.TextValidationError
+import com.example.symptomtracker.core.domain.usecase.MealieCredentialsValidation
 
 class MealieSettingsStateProvider : PreviewParameterProvider<MealieSettingsUiState> {
     override val values: Sequence<MealieSettingsUiState>

@@ -1,10 +1,10 @@
 package com.example.symptomtracker.feature.food
 
-import com.example.symptomtracker.core.data.repository.FoodLogRepository
-import com.example.symptomtracker.core.model.FoodItem
+import com.example.symptomtracker.core.designsystem.component.DateInputFields
+import com.example.symptomtracker.core.designsystem.component.TimeInputFields
+import com.example.symptomtracker.core.domain.repository.FoodLogRepository
+import com.example.symptomtracker.core.domain.model.FoodItem
 import com.example.symptomtracker.core.testing.repository.TestFoodRepository
-import com.example.symptomtracker.core.ui.DateInputFields
-import com.example.symptomtracker.core.ui.TimeInputFields
 import com.example.symptomtracker.utils.MainDispatcherRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch

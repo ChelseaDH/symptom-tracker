@@ -1,6 +1,8 @@
 package com.example.symptomtracker.core.domain
 
-import com.example.symptomtracker.core.model.Ingredient
+import com.example.symptomtracker.core.domain.model.Ingredient
+import com.example.symptomtracker.core.domain.usecase.GetMealieRecipeIngredientsUseCase
+import com.example.symptomtracker.core.domain.usecase.MealieRecipeIngredientsResult
 import com.example.symptomtracker.core.network.MealieService
 import com.example.symptomtracker.core.network.model.MealieRecipe
 import kotlinx.coroutines.runBlocking

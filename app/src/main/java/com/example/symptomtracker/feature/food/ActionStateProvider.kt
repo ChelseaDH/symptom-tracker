@@ -1,7 +1,7 @@
 package com.example.symptomtracker.feature.food
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.example.symptomtracker.core.model.FoodItem
+import com.example.symptomtracker.core.domain.model.FoodItem
 
 class EditActionStateProvider : PreviewParameterProvider<ActionState.Edit> {
     override val values: Sequence<ActionState.Edit>

@@ -1,7 +1,7 @@
 package com.example.symptomtracker.core.ui
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.example.symptomtracker.core.model.FoodItem
+import com.example.symptomtracker.core.domain.model.FoodItem
 
 class ItemPreviewParameterProvider : PreviewParameterProvider<List<FoodItem>> {
     override val values: Sequence<List<FoodItem>> = sequenceOf(

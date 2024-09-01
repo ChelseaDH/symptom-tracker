@@ -3,8 +3,8 @@ package com.example.symptomtracker.feature.movement
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.symptomtracker.core.data.repository.MovementRepository
-import com.example.symptomtracker.core.model.MovementLog
+import com.example.symptomtracker.core.domain.repository.MovementRepository
+import com.example.symptomtracker.core.domain.model.MovementLog
 import com.example.symptomtracker.core.ui.ViewLogUiState
 import com.example.symptomtracker.feature.movement.navigation.MOVEMENT_LOG_ID
 import dagger.hilt.android.lifecycle.HiltViewModel

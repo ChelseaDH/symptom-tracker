@@ -3,7 +3,7 @@ package com.example.symptomtracker.core.database.model
 import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
-import com.example.symptomtracker.core.model.FoodLog
+import com.example.symptomtracker.core.domain.model.FoodLog
 
 /**
  * Represents a fully populated food log.

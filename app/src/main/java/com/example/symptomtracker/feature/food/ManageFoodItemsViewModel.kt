@@ -2,8 +2,8 @@ package com.example.symptomtracker.feature.food
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.symptomtracker.core.data.repository.FoodLogRepository
-import com.example.symptomtracker.core.model.FoodItem
+import com.example.symptomtracker.core.domain.repository.FoodLogRepository
+import com.example.symptomtracker.core.domain.model.FoodItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

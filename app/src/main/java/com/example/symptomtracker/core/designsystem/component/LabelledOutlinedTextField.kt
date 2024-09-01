@@ -1,4 +1,4 @@
-package com.example.symptomtracker.core.ui
+package com.example.symptomtracker.core.designsystem.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,8 +16,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.example.symptomtracker.R
-import com.example.symptomtracker.core.model.TextInput
-import com.example.symptomtracker.core.model.TextValidationError
+import com.example.symptomtracker.core.designsystem.SymptomTrackerTheme
+import com.example.symptomtracker.core.ui.TextInputProvider
 
 @Composable
 fun LabelledOutlinedTextField(
@@ -62,6 +62,27 @@ fun LabelledOutlinedTextField(
             keyboardActions = keyboardActions,
         )
     }
+}
+
+data class TextInput(
+    val value: String,
+    val validationError: TextValidationError? = null,
+) {
+    fun findValidationError(
+        errors: List<TextValidationError>,
+        validityCheck: ((String) -> Boolean)? = null
+    ): TextValidationError? {
+        return errors.firstOrNull { error ->
+            when (error) {
+                TextValidationError.BLANK -> value.isBlank()
+                TextValidationError.INVALID -> validityCheck?.invoke(value) == false
+            }
+        }
+    }
+}
+
+enum class TextValidationError {
+    BLANK, INVALID
 }
 
 @Preview(showBackground = true)

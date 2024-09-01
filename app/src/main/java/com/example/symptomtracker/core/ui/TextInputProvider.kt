@@ -1,8 +1,8 @@
 package com.example.symptomtracker.core.ui
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.example.symptomtracker.core.model.TextInput
-import com.example.symptomtracker.core.model.TextValidationError
+import com.example.symptomtracker.core.designsystem.component.TextInput
+import com.example.symptomtracker.core.designsystem.component.TextValidationError
 
 class TextInputProvider : PreviewParameterProvider<TextInput> {
     override val values: Sequence<TextInput>

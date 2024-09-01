@@ -1,8 +1,5 @@
-package com.example.symptomtracker.core.model
+package com.example.symptomtracker.core.domain.model
 
-/**
- * External data layer representation of a food item.
- */
 data class FoodItem(
     val id: Long,
     val name: String,

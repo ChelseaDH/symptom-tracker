@@ -5,11 +5,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.symptomtracker.core.data.repository.FoodLogRepository
-import com.example.symptomtracker.core.data.repository.MovementRepository
-import com.example.symptomtracker.core.data.repository.SettingsRepository
-import com.example.symptomtracker.core.data.repository.SymptomRepository
-import com.example.symptomtracker.core.model.Log
+import com.example.symptomtracker.core.domain.repository.FoodLogRepository
+import com.example.symptomtracker.core.domain.repository.MovementRepository
+import com.example.symptomtracker.core.domain.repository.SettingsRepository
+import com.example.symptomtracker.core.domain.repository.SymptomRepository
+import com.example.symptomtracker.core.domain.model.Log
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

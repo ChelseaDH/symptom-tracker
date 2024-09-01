@@ -2,7 +2,7 @@ package com.example.symptomtracker.core.database.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.symptomtracker.core.model.Symptom
+import com.example.symptomtracker.core.domain.model.Symptom
 
 /**
  * Defines a symptom that a user may log against a symptom log.

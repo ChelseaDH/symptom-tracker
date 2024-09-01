@@ -4,7 +4,7 @@ import com.example.symptomtracker.core.database.model.PopulatedSymptomLog
 import com.example.symptomtracker.core.database.model.SymptomLogEntity
 import com.example.symptomtracker.core.database.model.SymptomLogRecordWithSymptom
 import com.example.symptomtracker.core.database.model.SymptomLogSymptomCrossRef
-import com.example.symptomtracker.core.model.SymptomLog
+import com.example.symptomtracker.core.domain.model.SymptomLog
 
 fun SymptomLog.asEntity(): PopulatedSymptomLog = PopulatedSymptomLog(
     symptomLogEntity = asSymptomLogEntity(),

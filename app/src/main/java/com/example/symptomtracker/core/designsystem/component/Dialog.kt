@@ -1,4 +1,4 @@
-package com.example.symptomtracker.core.ui
+package com.example.symptomtracker.core.designsystem.component
 
 import androidx.annotation.StringRes
 import androidx.compose.material3.AlertDialog

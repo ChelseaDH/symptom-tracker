@@ -40,15 +40,15 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.symptomtracker.R
-import com.example.symptomtracker.core.model.FoodLog
-import com.example.symptomtracker.core.model.Log
-import com.example.symptomtracker.core.model.getDisplayName
-import com.example.symptomtracker.core.model.getDisplayString
-import com.example.symptomtracker.core.ui.FilledTonalButtonWithIcon
+import com.example.symptomtracker.core.designsystem.SymptomTrackerTheme
+import com.example.symptomtracker.core.designsystem.component.FilledTonalButtonWithIcon
+import com.example.symptomtracker.core.designsystem.icon.MealieIcon
+import com.example.symptomtracker.core.domain.model.FoodLog
+import com.example.symptomtracker.core.domain.model.Log
+import com.example.symptomtracker.core.domain.model.getDisplayName
+import com.example.symptomtracker.core.domain.model.getDisplayString
 import com.example.symptomtracker.core.ui.FoodLogsPreviewParameterProvider
 import com.example.symptomtracker.core.ui.LogItemCard
-import com.example.symptomtracker.core.ui.MealieIcon
-import com.example.symptomtracker.core.ui.SymptomTrackerTheme
 import java.time.format.DateTimeFormatter
 
 @Composable

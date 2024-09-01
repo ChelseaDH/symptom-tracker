@@ -2,7 +2,7 @@ package com.example.symptomtracker.feature.symptom
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.example.symptomtracker.core.data.repository.SymptomRepository
+import com.example.symptomtracker.core.domain.repository.SymptomRepository
 import com.example.symptomtracker.feature.symptom.navigation.SYMPTOM_LOG_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

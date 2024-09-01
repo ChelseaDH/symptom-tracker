@@ -1,7 +1,7 @@
 package com.example.symptomtracker.core.testing.repository
 
-import com.example.symptomtracker.core.data.repository.MovementRepository
-import com.example.symptomtracker.core.model.MovementLog
+import com.example.symptomtracker.core.domain.repository.MovementRepository
+import com.example.symptomtracker.core.domain.model.MovementLog
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.map

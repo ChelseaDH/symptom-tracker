@@ -1,11 +1,11 @@
 package com.example.symptomtracker.feature.mealie
 
 import android.webkit.URLUtil
-import com.example.symptomtracker.core.domain.GetMealieRecipeIngredientsUseCase
-import com.example.symptomtracker.core.domain.MealieRecipeIngredientsResult
-import com.example.symptomtracker.core.model.Ingredient
-import com.example.symptomtracker.core.model.TextInput
-import com.example.symptomtracker.core.model.TextValidationError
+import com.example.symptomtracker.core.designsystem.component.TextInput
+import com.example.symptomtracker.core.designsystem.component.TextValidationError
+import com.example.symptomtracker.core.domain.usecase.GetMealieRecipeIngredientsUseCase
+import com.example.symptomtracker.core.domain.usecase.MealieRecipeIngredientsResult
+import com.example.symptomtracker.core.domain.model.Ingredient
 import com.example.symptomtracker.utils.MainDispatcherRule
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals

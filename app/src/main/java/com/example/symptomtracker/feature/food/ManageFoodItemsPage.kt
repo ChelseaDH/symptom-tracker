@@ -35,10 +35,10 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.symptomtracker.R
-import com.example.symptomtracker.core.model.FoodItem
-import com.example.symptomtracker.core.ui.Dialog
+import com.example.symptomtracker.core.designsystem.SymptomTrackerTheme
+import com.example.symptomtracker.core.designsystem.component.Dialog
+import com.example.symptomtracker.core.domain.model.FoodItem
 import com.example.symptomtracker.core.ui.ItemPreviewParameterProvider
-import com.example.symptomtracker.core.ui.SymptomTrackerTheme
 import com.example.symptomtracker.ui.SymptomTrackerTopAppBar
 
 @Composable

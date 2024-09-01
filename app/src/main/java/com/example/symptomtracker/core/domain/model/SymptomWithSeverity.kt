@@ -1,8 +1,5 @@
-package com.example.symptomtracker.core.model
+package com.example.symptomtracker.core.domain.model
 
-/**
- * External data layer representation of a symptom with it's associated severity.
- */
 data class SymptomWithSeverity(
     val symptom: Symptom,
     val severity: Severity,

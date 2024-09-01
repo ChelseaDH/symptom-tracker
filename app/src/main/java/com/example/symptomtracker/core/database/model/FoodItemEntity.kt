@@ -3,7 +3,7 @@ package com.example.symptomtracker.core.database.model
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.example.symptomtracker.core.model.FoodItem
+import com.example.symptomtracker.core.domain.model.FoodItem
 
 /**
  * Defines an item that a user may record against a food log.

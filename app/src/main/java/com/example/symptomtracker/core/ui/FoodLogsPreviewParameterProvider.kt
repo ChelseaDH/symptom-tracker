@@ -1,8 +1,8 @@
 package com.example.symptomtracker.core.ui
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.example.symptomtracker.core.model.FoodItem
-import com.example.symptomtracker.core.model.FoodLog
+import com.example.symptomtracker.core.domain.model.FoodItem
+import com.example.symptomtracker.core.domain.model.FoodLog
 import java.time.OffsetDateTime
 
 class FoodLogsPreviewParameterProvider : PreviewParameterProvider<List<FoodLog>> {

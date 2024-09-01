@@ -1,7 +1,7 @@
-package com.example.symptomtracker.core.data.repository
+package com.example.symptomtracker.core.domain.repository
 
-import com.example.symptomtracker.core.model.Symptom
-import com.example.symptomtracker.core.model.SymptomLog
+import com.example.symptomtracker.core.domain.model.Symptom
+import com.example.symptomtracker.core.domain.model.SymptomLog
 import kotlinx.coroutines.flow.Flow
 import java.time.OffsetDateTime
 

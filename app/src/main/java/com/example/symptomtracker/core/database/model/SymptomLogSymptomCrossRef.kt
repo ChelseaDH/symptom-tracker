@@ -3,7 +3,7 @@ package com.example.symptomtracker.core.database.model
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
-import com.example.symptomtracker.core.model.Severity
+import com.example.symptomtracker.core.domain.model.Severity
 
 /**
  * Cross reference for many to many relationship between [SymptomLogEntity] and [SymptomEntity].

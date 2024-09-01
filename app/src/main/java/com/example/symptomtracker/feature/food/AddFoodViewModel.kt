@@ -2,7 +2,7 @@ package com.example.symptomtracker.feature.food
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.example.symptomtracker.core.data.repository.FoodLogRepository
+import com.example.symptomtracker.core.domain.repository.FoodLogRepository
 import com.example.symptomtracker.feature.food.navigation.PREFILL_ITEMS
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

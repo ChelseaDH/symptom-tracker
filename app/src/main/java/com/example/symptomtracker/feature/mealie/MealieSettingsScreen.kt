@@ -27,12 +27,12 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.symptomtracker.R
-import com.example.symptomtracker.core.domain.MealieCredentialsValidation
-import com.example.symptomtracker.core.model.TextInput
-import com.example.symptomtracker.core.ui.ErrorCard
-import com.example.symptomtracker.core.ui.LabelledOutlinedTextField
-import com.example.symptomtracker.core.ui.SuccessCard
-import com.example.symptomtracker.core.ui.SymptomTrackerTheme
+import com.example.symptomtracker.core.designsystem.SymptomTrackerTheme
+import com.example.symptomtracker.core.designsystem.component.ErrorCard
+import com.example.symptomtracker.core.designsystem.component.LabelledOutlinedTextField
+import com.example.symptomtracker.core.designsystem.component.SuccessCard
+import com.example.symptomtracker.core.designsystem.component.TextInput
+import com.example.symptomtracker.core.domain.usecase.MealieCredentialsValidation
 import com.example.symptomtracker.ui.SymptomTrackerTopAppBar
 
 @Composable

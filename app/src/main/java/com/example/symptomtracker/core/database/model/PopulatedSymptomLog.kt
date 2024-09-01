@@ -2,8 +2,8 @@ package com.example.symptomtracker.core.database.model
 
 import androidx.room.Embedded
 import androidx.room.Relation
-import com.example.symptomtracker.core.model.SymptomLog
-import com.example.symptomtracker.core.model.SymptomWithSeverity
+import com.example.symptomtracker.core.domain.model.SymptomLog
+import com.example.symptomtracker.core.domain.model.SymptomWithSeverity
 
 /**
  * Represents a symptom log cross ref will a fully populated symptom.

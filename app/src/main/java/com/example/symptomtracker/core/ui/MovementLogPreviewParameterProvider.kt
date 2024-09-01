@@ -1,8 +1,8 @@
 package com.example.symptomtracker.core.ui
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.example.symptomtracker.core.model.MovementLog
-import com.example.symptomtracker.core.model.StoolType
+import com.example.symptomtracker.core.domain.model.MovementLog
+import com.example.symptomtracker.core.domain.model.StoolType
 import java.time.OffsetDateTime
 
 class MovementLogPreviewParameterProvider : PreviewParameterProvider<MovementLog> {

@@ -3,8 +3,8 @@ package com.example.symptomtracker.feature.food
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.symptomtracker.core.data.repository.FoodLogRepository
-import com.example.symptomtracker.core.model.FoodLog
+import com.example.symptomtracker.core.domain.repository.FoodLogRepository
+import com.example.symptomtracker.core.domain.model.FoodLog
 import com.example.symptomtracker.core.ui.ViewLogUiState
 import com.example.symptomtracker.feature.food.navigation.FOOD_LOG_ID
 import dagger.hilt.android.lifecycle.HiltViewModel

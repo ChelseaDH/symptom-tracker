@@ -1,6 +1,6 @@
 package com.example.symptomtracker.core.ui
 
-import com.example.symptomtracker.core.model.Log
+import com.example.symptomtracker.core.domain.model.Log
 
 sealed interface ViewLogUiState<out L : Log> {
     data object Loading : ViewLogUiState<Nothing>

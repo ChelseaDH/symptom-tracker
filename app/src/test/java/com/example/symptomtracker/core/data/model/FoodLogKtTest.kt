@@ -3,8 +3,8 @@ package com.example.symptomtracker.core.data.model
 import com.example.symptomtracker.core.database.model.FoodItemEntity
 import com.example.symptomtracker.core.database.model.FoodLogEntity
 import com.example.symptomtracker.core.database.model.PopulatedFoodLog
-import com.example.symptomtracker.core.model.FoodItem
-import com.example.symptomtracker.core.model.FoodLog
+import com.example.symptomtracker.core.domain.model.FoodItem
+import com.example.symptomtracker.core.domain.model.FoodLog
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.time.OffsetDateTime

@@ -1,6 +1,6 @@
 package com.example.symptomtracker.feature.symptom
 
-import com.example.symptomtracker.core.data.repository.SymptomRepository
+import com.example.symptomtracker.core.domain.repository.SymptomRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

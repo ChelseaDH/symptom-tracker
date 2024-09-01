@@ -1,8 +1,8 @@
 package com.example.symptomtracker.core.testing.repository
 
-import com.example.symptomtracker.core.data.repository.SymptomRepository
-import com.example.symptomtracker.core.model.Symptom
-import com.example.symptomtracker.core.model.SymptomLog
+import com.example.symptomtracker.core.domain.repository.SymptomRepository
+import com.example.symptomtracker.core.domain.model.Symptom
+import com.example.symptomtracker.core.domain.model.SymptomLog
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.map

@@ -2,10 +2,10 @@ package com.example.symptomtracker.feature.mealie
 
 import android.webkit.URLUtil
 import com.example.symptomtracker.core.data.model.MealieSettings
-import com.example.symptomtracker.core.domain.MealieCredentialsValidation
-import com.example.symptomtracker.core.domain.ValidateMealieCredentialsUseCase
-import com.example.symptomtracker.core.model.TextInput
-import com.example.symptomtracker.core.model.TextValidationError
+import com.example.symptomtracker.core.designsystem.component.TextInput
+import com.example.symptomtracker.core.designsystem.component.TextValidationError
+import com.example.symptomtracker.core.domain.usecase.MealieCredentialsValidation
+import com.example.symptomtracker.core.domain.usecase.ValidateMealieCredentialsUseCase
 import com.example.symptomtracker.core.testing.repository.TestSettingsRepository
 import com.example.symptomtracker.utils.MainDispatcherRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi

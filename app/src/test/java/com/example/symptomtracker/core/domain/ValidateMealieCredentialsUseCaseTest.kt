@@ -1,5 +1,7 @@
 package com.example.symptomtracker.core.domain
 
+import com.example.symptomtracker.core.domain.usecase.MealieCredentialsValidation
+import com.example.symptomtracker.core.domain.usecase.ValidateMealieCredentialsUseCase
 import com.example.symptomtracker.core.network.MealieService
 import com.example.symptomtracker.core.network.MealieServiceFactory
 import com.example.symptomtracker.core.network.model.MealieUser

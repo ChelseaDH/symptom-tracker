@@ -1,12 +1,12 @@
 package com.example.symptomtracker.feature.movement
 
 import androidx.lifecycle.SavedStateHandle
-import com.example.symptomtracker.core.model.MovementLog
-import com.example.symptomtracker.core.model.StoolType
+import com.example.symptomtracker.core.designsystem.component.DateInputFields
+import com.example.symptomtracker.core.designsystem.component.DateTimeInput
+import com.example.symptomtracker.core.designsystem.component.TimeInputFields
+import com.example.symptomtracker.core.domain.model.MovementLog
+import com.example.symptomtracker.core.domain.model.StoolType
 import com.example.symptomtracker.core.testing.repository.TestMovementRepository
-import com.example.symptomtracker.core.ui.DateInputFields
-import com.example.symptomtracker.core.ui.DateTimeInput
-import com.example.symptomtracker.core.ui.TimeInputFields
 import com.example.symptomtracker.feature.movement.navigation.MOVEMENT_LOG_ID
 import com.example.symptomtracker.utils.MainDispatcherRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi

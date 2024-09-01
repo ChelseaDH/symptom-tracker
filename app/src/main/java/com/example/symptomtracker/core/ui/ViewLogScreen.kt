@@ -25,7 +25,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.symptomtracker.R
-import com.example.symptomtracker.core.model.Log
+import com.example.symptomtracker.core.designsystem.component.Dialog
+import com.example.symptomtracker.core.domain.model.Log
 import com.example.symptomtracker.ui.SymptomTrackerTopAppBar
 
 @Composable

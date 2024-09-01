@@ -3,11 +3,11 @@ package com.example.symptomtracker.feature.mealie
 import android.webkit.URLUtil
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.symptomtracker.core.data.repository.SettingsRepository
-import com.example.symptomtracker.core.domain.MealieCredentialsValidation
-import com.example.symptomtracker.core.domain.ValidateMealieCredentialsUseCase
-import com.example.symptomtracker.core.model.TextInput
-import com.example.symptomtracker.core.model.TextValidationError
+import com.example.symptomtracker.core.designsystem.component.TextInput
+import com.example.symptomtracker.core.designsystem.component.TextValidationError
+import com.example.symptomtracker.core.domain.repository.SettingsRepository
+import com.example.symptomtracker.core.domain.usecase.MealieCredentialsValidation
+import com.example.symptomtracker.core.domain.usecase.ValidateMealieCredentialsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

@@ -14,7 +14,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.symptomtracker.R
-import com.example.symptomtracker.core.ui.MealieIcon
+import com.example.symptomtracker.core.designsystem.icon.MealieIcon
 
 @Composable
 fun SettingsScreen(

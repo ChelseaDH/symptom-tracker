@@ -4,7 +4,8 @@ import com.example.symptomtracker.core.data.model.asEntity
 import com.example.symptomtracker.core.database.dao.MovementDao
 import com.example.symptomtracker.core.database.model.MovementLogEntity
 import com.example.symptomtracker.core.database.model.asExternalModel
-import com.example.symptomtracker.core.model.MovementLog
+import com.example.symptomtracker.core.domain.model.MovementLog
+import com.example.symptomtracker.core.domain.repository.MovementRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.time.OffsetDateTime
