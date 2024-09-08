@@ -25,6 +25,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestWatcher
+import java.time.LocalDate
 import java.time.OffsetDateTime
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -78,16 +79,13 @@ class HomeScreenViewModelTest {
 
     @Test
     fun dateUpdates_whenUpdateDateIsCalled() = runTest {
-        val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.uiState }
-
         assertTrue(viewModel.uiState.isToday)
+        val date = LocalDate.of(2020, 5, 22)
 
-        viewModel.updateDate(1716379200000)
+        viewModel.updateDate(date)
 
         assertFalse(viewModel.uiState.isToday)
-        assertEquals(1716379200, viewModel.uiState.date.toEpochSecond())
-
-        collectJob.cancel()
+        assertEquals(date, viewModel.uiState.date)
     }
 
     @Test

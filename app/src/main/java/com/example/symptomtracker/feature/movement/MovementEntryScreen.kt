@@ -25,16 +25,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.symptomtracker.R
 import com.example.symptomtracker.core.designsystem.SymptomTrackerTheme
-import com.example.symptomtracker.core.designsystem.component.DateInputFields
 import com.example.symptomtracker.core.designsystem.component.DateTimeInput
 import com.example.symptomtracker.core.designsystem.component.DateTimeInputRow
 import com.example.symptomtracker.core.designsystem.component.OutlinedReadonlyTextFieldWithDropdown
-import com.example.symptomtracker.core.designsystem.component.TimeInputFields
 import com.example.symptomtracker.core.domain.model.StoolType
 import com.example.symptomtracker.core.domain.model.getDescription
 import com.example.symptomtracker.core.domain.model.getDisplayName
 import com.example.symptomtracker.ui.SymptomTrackerTopAppBar
-import java.util.Calendar
+import java.time.LocalDate
+import java.time.LocalTime
 
 @Composable
 internal fun MovementEntryScreen(
@@ -45,8 +44,7 @@ internal fun MovementEntryScreen(
 ) {
     Scaffold(
         topBar = {
-            SymptomTrackerTopAppBar(
-                title = stringResource(titleId),
+            SymptomTrackerTopAppBar(title = stringResource(titleId),
                 canNavigateBack = true,
                 navigateUp = navigateBack,
                 actions = {
@@ -56,10 +54,8 @@ internal fun MovementEntryScreen(
                     }) {
                         Text(text = stringResource(R.string.action_save))
                     }
-                }
-            )
-        },
-        modifier = modifier
+                })
+        }, modifier = modifier
     ) { innerPadding ->
         MovementEntryBody(
             uiState = viewModel.uiState,
@@ -75,8 +71,8 @@ internal fun MovementEntryScreen(
 fun MovementEntryBody(
     uiState: MovementEntryUiState,
     onChosenStoolTypeUpdated: (StoolType) -> Unit,
-    onDateChanged: (DateInputFields) -> Unit,
-    onTimeChanged: (TimeInputFields) -> Unit,
+    onDateChanged: (LocalDate) -> Unit,
+    onTimeChanged: (LocalTime) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -102,8 +98,8 @@ fun LogMovementForm(
     stoolType: StoolType?,
     dateTimeInput: DateTimeInput,
     onChosenStoolTypeUpdated: (StoolType) -> Unit,
-    onDateChanged: (DateInputFields) -> Unit,
-    onTimeChanged: (TimeInputFields) -> Unit,
+    onDateChanged: (LocalDate) -> Unit,
+    onTimeChanged: (LocalTime) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -130,8 +126,7 @@ fun LogMovementForm(
 @Composable
 fun MovementKey(modifier: Modifier = Modifier) {
     Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        modifier = modifier, verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Text(
             text = stringResource(R.string.stool_type_key),
@@ -168,7 +163,7 @@ fun Avatar(text: String) {
 fun AddMovementScreenPreview() {
     SymptomTrackerTheme {
         MovementEntryBody(
-            uiState = MovementEntryUiState(Calendar.getInstance()),
+            uiState = MovementEntryUiState(),
             onChosenStoolTypeUpdated = {},
             onDateChanged = {},
             onTimeChanged = {},

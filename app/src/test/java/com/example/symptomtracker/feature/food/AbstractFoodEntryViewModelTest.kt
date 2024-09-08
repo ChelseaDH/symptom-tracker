@@ -1,9 +1,8 @@
 package com.example.symptomtracker.feature.food
 
-import com.example.symptomtracker.core.designsystem.component.DateInputFields
-import com.example.symptomtracker.core.designsystem.component.TimeInputFields
-import com.example.symptomtracker.core.domain.repository.FoodLogRepository
+import com.example.symptomtracker.core.designsystem.component.DateTimeInput
 import com.example.symptomtracker.core.domain.model.FoodItem
+import com.example.symptomtracker.core.domain.repository.FoodLogRepository
 import com.example.symptomtracker.core.testing.repository.TestFoodRepository
 import com.example.symptomtracker.utils.MainDispatcherRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -15,6 +14,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestWatcher
+import java.time.LocalDate
+import java.time.LocalTime
 
 class AbstractFoodEntryViewModelTest {
     @get:Rule
@@ -186,21 +187,27 @@ class AbstractFoodEntryViewModelTest {
     }
 
     @Test
-    fun dateInputFieldsUpdate_whenUpdateDateIsCalled() = runTest {
-        val dateInputFields = DateInputFields(year = 2024, month = 2, day = 1)
+    fun whenUpdateDateIsCalled_thenDateInputFieldsUpdate() = runTest {
+        viewModel.uiState = FoodEntryUiState(
+            dateTimeInput = DateTimeInput(date = LocalDate.now())
+        )
+        val date = LocalDate.of(2020, 5, 22)
 
-        viewModel.updateDate(dateInputFields)
+        viewModel.updateDate(date)
 
-        assertEquals(dateInputFields, viewModel.uiState.dateTimeInput.dateInputFields)
+        assertEquals(date, viewModel.uiState.dateTimeInput.date)
     }
 
     @Test
     fun timeInputFieldsUpdate_whenUpdateTimeIsCalled() = runTest {
-        val timeInputField = TimeInputFields(hour = 10, minute = 25)
+        viewModel.uiState = FoodEntryUiState(
+            dateTimeInput = DateTimeInput(time = LocalTime.now())
+        )
+        val time = LocalTime.of(12, 2, 22)
 
-        viewModel.updateTime(timeInputField)
+        viewModel.updateTime(time)
 
-        assertEquals(timeInputField, viewModel.uiState.dateTimeInput.timeInputFields)
+        assertEquals(time, viewModel.uiState.dateTimeInput.time)
     }
 }
 

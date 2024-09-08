@@ -6,20 +6,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.symptomtracker.core.designsystem.component.DateInputFields
 import com.example.symptomtracker.core.designsystem.component.DateTimeInput
-import com.example.symptomtracker.core.designsystem.component.TimeInputFields
-import com.example.symptomtracker.core.designsystem.component.toDate
-import com.example.symptomtracker.core.domain.repository.FoodLogRepository
 import com.example.symptomtracker.core.domain.model.FoodItem
 import com.example.symptomtracker.core.domain.model.FoodLog
+import com.example.symptomtracker.core.domain.repository.FoodLogRepository
 import com.example.symptomtracker.core.util.toFoodItemName
 import kotlinx.coroutines.launch
-import java.util.Calendar
+import java.time.LocalDate
+import java.time.LocalTime
 
 abstract class AbstractFoodEntryViewModel(private val foodLogRepository: FoodLogRepository) :
     ViewModel() {
-    var uiState by mutableStateOf(FoodEntryUiState(Calendar.getInstance()))
+    var uiState by mutableStateOf(FoodEntryUiState())
 
     private var _selectedFoodItems = listOf<FoodItem>().toMutableStateList()
     private var _allFoodItems = listOf<FoodItem>()
@@ -100,18 +98,18 @@ abstract class AbstractFoodEntryViewModel(private val foodLogRepository: FoodLog
         }
     }
 
-    fun updateDate(dateInputFields: DateInputFields) {
+    fun updateDate(date: LocalDate) {
         uiState = uiState.copy(
             dateTimeInput = uiState.dateTimeInput.copy(
-                dateInputFields = dateInputFields
+                date = date
             )
         )
     }
 
-    fun updateTime(timeInputFields: TimeInputFields) {
+    fun updateTime(time: LocalTime) {
         uiState = uiState.copy(
             dateTimeInput = uiState.dateTimeInput.copy(
-                timeInputFields = timeInputFields
+                time = time
             )
         )
     }
@@ -161,13 +159,9 @@ abstract class AbstractFoodEntryViewModel(private val foodLogRepository: FoodLog
 
 data class FoodEntryUiState(
     val selectedFoodItems: List<FoodItem> = listOf(),
-    val dateTimeInput: DateTimeInput,
+    val dateTimeInput: DateTimeInput = DateTimeInput(),
     val searchState: SearchState = SearchState(),
 ) {
-    constructor(calendar: Calendar) : this(
-        dateTimeInput = DateTimeInput(calendar = calendar),
-    )
-
     constructor(foodLog: FoodLog) : this(
         selectedFoodItems = foodLog.items,
         dateTimeInput = DateTimeInput(date = foodLog.date),

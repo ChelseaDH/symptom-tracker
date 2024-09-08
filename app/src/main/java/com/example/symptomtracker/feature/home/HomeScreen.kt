@@ -59,7 +59,7 @@ import com.example.symptomtracker.core.ui.LogItemCard
 import com.example.symptomtracker.core.ui.LogsPreviewParameterProvider
 import com.example.symptomtracker.core.ui.NoLogsFoundCard
 import kotlinx.coroutines.launch
-import java.time.OffsetDateTime
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -136,11 +136,11 @@ fun HomeScreen(
 
 @Composable
 fun HomeBody(
-    date: OffsetDateTime,
+    date: LocalDate,
     isToday: Boolean,
     goToPreviousDate: () -> Unit,
     goToNextDate: () -> Unit,
-    onDateChanged: (Long) -> Unit,
+    onDateChanged: (LocalDate) -> Unit,
     onFoodClick: (Long) -> Unit,
     onSymptomClick: (Long) -> Unit,
     onMovementClick: (Long) -> Unit,
@@ -173,18 +173,18 @@ fun HomeBody(
 
 @Composable
 fun DateToggleRow(
-    date: OffsetDateTime,
+    date: LocalDate,
     isToday: Boolean,
     goToPreviousDate: () -> Unit,
     goToNextDate: () -> Unit,
-    onDateChanged: (Long) -> Unit
+    onDateChanged: (LocalDate) -> Unit
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
     if (showDatePicker) {
         DatePickerModal(
+            date = date,
             onDismissRequest = { showDatePicker = false },
             onDateSelected = onDateChanged,
-            initialDate = date,
         )
     }
 
@@ -387,7 +387,7 @@ internal fun AddLogsBottomSheetContent(
 @Composable
 fun HomeBodyWithNoLogsPreview() {
     HomeBody(
-        date = OffsetDateTime.parse("2023-03-02T00:00:00+00:00"),
+        date = LocalDate.now(),
         isToday = true,
         goToPreviousDate = {},
         goToNextDate = {},
@@ -403,7 +403,7 @@ fun HomeBodyWithNoLogsPreview() {
 @Composable
 fun HomeBodyWithLogsPreview(@PreviewParameter(LogsPreviewParameterProvider::class) logs: List<Log>) {
     HomeBody(
-        date = OffsetDateTime.parse("2023-03-02T00:00:00+00:00"),
+        date = LocalDate.now(),
         isToday = false,
         goToPreviousDate = {},
         goToNextDate = {},

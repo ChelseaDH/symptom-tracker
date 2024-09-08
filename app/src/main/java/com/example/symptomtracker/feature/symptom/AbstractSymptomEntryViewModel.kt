@@ -6,22 +6,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.symptomtracker.core.designsystem.component.DateInputFields
 import com.example.symptomtracker.core.designsystem.component.DateTimeInput
-import com.example.symptomtracker.core.designsystem.component.TimeInputFields
-import com.example.symptomtracker.core.designsystem.component.toDate
-import com.example.symptomtracker.core.domain.repository.SymptomRepository
 import com.example.symptomtracker.core.domain.model.Severity
 import com.example.symptomtracker.core.domain.model.Symptom
 import com.example.symptomtracker.core.domain.model.SymptomLog
 import com.example.symptomtracker.core.domain.model.SymptomWithSeverity
+import com.example.symptomtracker.core.domain.repository.SymptomRepository
 import com.example.symptomtracker.core.util.toFoodItemName
 import kotlinx.coroutines.launch
-import java.util.Calendar
+import java.time.LocalDate
+import java.time.LocalTime
 
 abstract class AbstractSymptomEntryViewModel(private val symptomRepository: SymptomRepository) :
     ViewModel() {
-    var uiState by mutableStateOf(SymptomEntryUiState(Calendar.getInstance()))
+    var uiState by mutableStateOf(SymptomEntryUiState())
         private set
 
     private var _allSymptoms = listOf<Symptom>()
@@ -108,18 +106,18 @@ abstract class AbstractSymptomEntryViewModel(private val symptomRepository: Symp
         }
     }
 
-    fun updateDate(dateInputFields: DateInputFields) {
+    fun updateDate(date: LocalDate) {
         uiState = uiState.copy(
             dateTimeInput = uiState.dateTimeInput.copy(
-                dateInputFields = dateInputFields
+                date = date
             )
         )
     }
 
-    fun updateTime(timeInputFields: TimeInputFields) {
+    fun updateTime(time: LocalTime) {
         uiState = uiState.copy(
             dateTimeInput = uiState.dateTimeInput.copy(
-                timeInputFields = timeInputFields
+                time = time
             )
         )
     }
@@ -151,14 +149,10 @@ abstract class AbstractSymptomEntryViewModel(private val symptomRepository: Symp
 
 data class SymptomEntryUiState(
     val selectedSymptoms: List<SymptomWithSeverity> = listOf(),
-    val dateTimeInput: DateTimeInput,
+    val dateTimeInput: DateTimeInput = DateTimeInput(),
     val searchState: SearchState = SearchState(),
     val selectedSeverity: Severity? = null,
 ) {
-    constructor(calendar: Calendar) : this(
-        dateTimeInput = DateTimeInput(calendar = calendar)
-    )
-
     constructor(log: SymptomLog) : this(
         selectedSymptoms = log.items, dateTimeInput = DateTimeInput(date = log.date)
     )
@@ -170,12 +164,11 @@ data class SymptomEntryUiState(
         symptom = searchState.selectedSymptom!!, severity = selectedSeverity!!
     )
 
-    fun toSymptomLog(id: Long = 0): SymptomLog =
-        SymptomLog(
-            id = id,
-            date = dateTimeInput.toDate(),
-            items = selectedSymptoms,
-        )
+    fun toSymptomLog(id: Long = 0): SymptomLog = SymptomLog(
+        id = id,
+        date = dateTimeInput.toDate(),
+        items = selectedSymptoms,
+    )
 }
 
 data class SearchState(

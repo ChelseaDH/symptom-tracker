@@ -1,12 +1,12 @@
 package com.example.symptomtracker.feature.movement
 
-import com.example.symptomtracker.core.designsystem.component.DateInputFields
-import com.example.symptomtracker.core.designsystem.component.TimeInputFields
 import com.example.symptomtracker.core.domain.model.StoolType
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import java.time.LocalDate
+import java.time.LocalTime
 
 class AbstractMovementEntryViewModelTest {
     private lateinit var viewModel: TestMovementEntryViewModel
@@ -29,20 +29,20 @@ class AbstractMovementEntryViewModelTest {
 
     @Test
     fun dateInputFieldsUpdate_whenUpdateDateIsCalled() = runTest {
-        val dateInputFields = DateInputFields(year = 2024, month = 2, day = 1)
+        val date = LocalDate.of(2024, 2, 1)
 
-        viewModel.updateDate(dateInputFields)
+        viewModel.updateDate(date)
 
-        assertEquals(dateInputFields, viewModel.uiState.dateTimeInput.dateInputFields)
+        assertEquals(date, viewModel.uiState.dateTimeInput.date)
     }
 
     @Test
     fun timeInputFieldsUpdate_whenUpdateTimeIsCalled() = runTest {
-        val timeInputField = TimeInputFields(hour = 10, minute = 25)
+        val time = LocalTime.of(10, 25)
 
-        viewModel.updateTime(timeInputField)
+        viewModel.updateTime(time)
 
-        assertEquals(timeInputField, viewModel.uiState.dateTimeInput.timeInputFields)
+        assertEquals(time, viewModel.uiState.dateTimeInput.time)
     }
 }
 

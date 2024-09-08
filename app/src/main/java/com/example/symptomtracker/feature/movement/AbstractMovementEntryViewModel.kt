@@ -4,15 +4,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.example.symptomtracker.core.designsystem.component.DateInputFields
 import com.example.symptomtracker.core.designsystem.component.DateTimeInput
-import com.example.symptomtracker.core.designsystem.component.TimeInputFields
 import com.example.symptomtracker.core.domain.model.MovementLog
 import com.example.symptomtracker.core.domain.model.StoolType
-import java.util.Calendar
+import java.time.LocalDate
+import java.time.LocalTime
 
 abstract class AbstractMovementEntryViewModel : ViewModel() {
-    var uiState by mutableStateOf(MovementEntryUiState(Calendar.getInstance()))
+    var uiState by mutableStateOf(MovementEntryUiState())
         private set
 
     abstract fun submit()
@@ -23,18 +22,18 @@ abstract class AbstractMovementEntryViewModel : ViewModel() {
         )
     }
 
-    fun updateDate(dateInputFields: DateInputFields) {
+    fun updateDate(date: LocalDate) {
         uiState = uiState.copy(
             dateTimeInput = uiState.dateTimeInput.copy(
-                dateInputFields = dateInputFields
+                date = date
             )
         )
     }
 
-    fun updateTime(timeInputFields: TimeInputFields) {
+    fun updateTime(time: LocalTime) {
         uiState = uiState.copy(
             dateTimeInput = uiState.dateTimeInput.copy(
-                timeInputFields = timeInputFields
+                time = time
             )
         )
     }
@@ -46,12 +45,8 @@ abstract class AbstractMovementEntryViewModel : ViewModel() {
 
 data class MovementEntryUiState(
     val chosenStoolType: StoolType? = null,
-    val dateTimeInput: DateTimeInput,
+    val dateTimeInput: DateTimeInput = DateTimeInput(),
 ) {
-    constructor(calendar: Calendar) : this(
-        dateTimeInput = DateTimeInput(calendar = calendar)
-    )
-
     constructor(movementLog: MovementLog) : this(
         chosenStoolType = movementLog.stoolType,
         dateTimeInput = DateTimeInput(date = movementLog.date)

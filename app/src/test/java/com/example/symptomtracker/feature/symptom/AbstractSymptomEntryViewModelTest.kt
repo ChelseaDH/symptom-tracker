@@ -1,11 +1,9 @@
 package com.example.symptomtracker.feature.symptom
 
-import com.example.symptomtracker.core.designsystem.component.DateInputFields
-import com.example.symptomtracker.core.designsystem.component.TimeInputFields
-import com.example.symptomtracker.core.domain.repository.SymptomRepository
 import com.example.symptomtracker.core.domain.model.Severity
 import com.example.symptomtracker.core.domain.model.Symptom
 import com.example.symptomtracker.core.domain.model.SymptomWithSeverity
+import com.example.symptomtracker.core.domain.repository.SymptomRepository
 import com.example.symptomtracker.core.testing.repository.TestSymptomRepository
 import com.example.symptomtracker.utils.MainDispatcherRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -18,6 +16,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestWatcher
+import java.time.LocalDate
+import java.time.LocalTime
 
 class AbstractSymptomEntryViewModelTest {
     @get:Rule
@@ -201,20 +201,20 @@ class AbstractSymptomEntryViewModelTest {
 
     @Test
     fun dateInputFieldsUpdate_whenUpdateDateIsCalled() = runTest {
-        val dateInputFields = DateInputFields(year = 2024, month = 2, day = 1)
+        val date = LocalDate.of(2024, 2, 1)
 
-        viewModel.updateDate(dateInputFields)
+        viewModel.updateDate(date)
 
-        assertEquals(dateInputFields, viewModel.uiState.dateTimeInput.dateInputFields)
+        assertEquals(date, viewModel.uiState.dateTimeInput.date)
     }
 
     @Test
     fun timeInputFieldsUpdate_whenUpdateTimeIsCalled() = runTest {
-        val timeInputField = TimeInputFields(hour = 10, minute = 25)
+        val time = LocalTime.of(10, 25)
 
-        viewModel.updateTime(timeInputField)
+        viewModel.updateTime(time)
 
-        assertEquals(timeInputField, viewModel.uiState.dateTimeInput.timeInputFields)
+        assertEquals(time, viewModel.uiState.dateTimeInput.time)
     }
 }
 

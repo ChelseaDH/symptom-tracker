@@ -1,9 +1,7 @@
 package com.example.symptomtracker.feature.movement
 
 import androidx.lifecycle.SavedStateHandle
-import com.example.symptomtracker.core.designsystem.component.DateInputFields
 import com.example.symptomtracker.core.designsystem.component.DateTimeInput
-import com.example.symptomtracker.core.designsystem.component.TimeInputFields
 import com.example.symptomtracker.core.domain.model.MovementLog
 import com.example.symptomtracker.core.domain.model.StoolType
 import com.example.symptomtracker.core.testing.repository.TestMovementRepository
@@ -18,6 +16,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestWatcher
+import java.time.LocalDate
+import java.time.LocalTime
 import java.time.OffsetDateTime
 
 class EditMovementViewModelTest {
@@ -67,8 +67,8 @@ class EditMovementViewModelTest {
             MovementEntryUiState(
                 chosenStoolType = StoolType.NORMAL_3,
                 dateTimeInput = DateTimeInput(
-                    dateInputFields = DateInputFields(year = 2023, month = 2, day = 2),
-                    timeInputFields = TimeInputFields(hour = 9, minute = 10)
+                    date = LocalDate.of(2023, 3, 2),
+                    time = LocalTime.of(9, 10)
                 )
             ),
             viewModel.uiState

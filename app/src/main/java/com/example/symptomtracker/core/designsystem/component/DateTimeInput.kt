@@ -44,96 +44,39 @@ import androidx.compose.ui.window.DialogProperties
 import com.example.symptomtracker.R
 import com.example.symptomtracker.core.designsystem.SymptomTrackerTheme
 import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
-import java.util.Calendar
-
-data class DateInputFields(
-    val year: Int,
-    val month: Int,
-    val day: Int,
-)
-
-fun DateInputFields.toDisplayString(): String {
-    return "%02d/%02d/%d".format(day, month + 1, year)
-}
-
-data class TimeInputFields(
-    val hour: Int,
-    val minute: Int,
-)
-
-fun TimeInputFields.toDisplayString(): String {
-    return "%02d:%02d".format(hour, minute)
-}
+import java.time.ZoneOffset
 
 data class DateTimeInput(
-    val dateInputFields: DateInputFields,
-    val timeInputFields: TimeInputFields,
+    val date: LocalDate = LocalDate.now(),
+    val time: LocalTime = LocalTime.now(),
 ) {
-    constructor(calendar: Calendar) : this(
-        dateInputFields = DateInputFields(
-            year = calendar.get(Calendar.YEAR),
-            month = calendar.get(Calendar.MONTH),
-            day = calendar.get(Calendar.DAY_OF_MONTH),
-        ),
-        timeInputFields = TimeInputFields(
-            hour = calendar.get(Calendar.HOUR_OF_DAY),
-            minute = calendar.get(Calendar.MINUTE),
-        ),
-    )
-
     constructor(date: OffsetDateTime) : this(
-        dateInputFields = DateInputFields(
-            year = date.year,
-            month = date.monthValue - 1,
-            day = date.dayOfMonth,
-        ),
-        timeInputFields = TimeInputFields(
-            hour = date.hour,
-            minute = date.minute,
-        )
-    )
-}
-
-fun DateTimeInput.toDate(): OffsetDateTime {
-    val calendar = Calendar.getInstance()
-    calendar.set(
-        dateInputFields.year,
-        dateInputFields.month,
-        dateInputFields.day,
-        timeInputFields.hour,
-        timeInputFields.minute
+        date = date.toLocalDate(),
+        time = date.toLocalTime(),
     )
 
-    return calendar.time.toInstant().atOffset(ZoneId.systemDefault().rules.getOffset(Instant.now()))
+    fun toDate(): OffsetDateTime =
+        OffsetDateTime.of(date, time, ZoneId.systemDefault().rules.getOffset(Instant.now()))
 }
 
 @Composable
 fun DateInput(
-    dateInputFields: DateInputFields,
-    onDateChanged: (DateInputFields) -> Unit,
+    date: LocalDate,
+    onDateChanged: (LocalDate) -> Unit,
     labelOnTextField: Boolean,
     modifier: Modifier = Modifier,
     labelSpacing: Dp = 4.dp,
-    date: OffsetDateTime,
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
     if (showDatePicker) {
         DatePickerModal(
+            date = date,
             onDismissRequest = { showDatePicker = false },
-            onDateSelected = {
-                val selectedDate =
-                    OffsetDateTime.ofInstant(Instant.ofEpochMilli(it), ZoneId.systemDefault())
-                onDateChanged(
-                    DateInputFields(
-                        selectedDate.year,
-                        selectedDate.monthValue - 1,
-                        selectedDate.dayOfMonth
-                    )
-                )
-            },
-            initialDate = date,
+            onDateSelected = onDateChanged,
         )
     }
 
@@ -145,7 +88,7 @@ fun DateInput(
             Text(text = stringResource(R.string.date_label))
         }
         OutlinedTextField(
-            value = dateInputFields.toDisplayString(),
+            value = date.toDisplayString(),
             onValueChange = {},
             label = {
                 if (labelOnTextField) {
@@ -165,28 +108,25 @@ fun DateInput(
                         contentDescription = stringResource(R.string.edit_date_cd)
                     )
                 }
-            }
+            },
         )
     }
 }
 
 @Composable
 fun TimeInput(
-    timeInput: TimeInputFields,
-    onTimeChanged: (TimeInputFields) -> Unit,
+    time: LocalTime,
+    onTimeChanged: (LocalTime) -> Unit,
     labelOnTextField: Boolean,
     modifier: Modifier = Modifier,
     labelSpacing: Dp = 4.dp,
-    date: OffsetDateTime,
 ) {
     var showTimePicker by remember { mutableStateOf(false) }
     if (showTimePicker) {
         TimePickerModal(
+            time = time,
             onDismissRequest = { showTimePicker = false },
-            onTimeSelected = { hour, min ->
-                onTimeChanged(TimeInputFields(hour, min))
-            },
-            initialTime = date,
+            onTimeSelected = onTimeChanged,
         )
     }
 
@@ -198,7 +138,7 @@ fun TimeInput(
             Text(text = stringResource(R.string.time_label))
         }
         OutlinedTextField(
-            value = timeInput.toDisplayString(),
+            value = time.toDisplayString(),
             onValueChange = {},
             label = {
                 if (labelOnTextField) {
@@ -218,7 +158,7 @@ fun TimeInput(
                         contentDescription = stringResource(R.string.edit_time_cd)
                     )
                 }
-            }
+            },
         )
     }
 }
@@ -226,8 +166,8 @@ fun TimeInput(
 @Composable
 fun DateTimeInputRow(
     dateTimeInput: DateTimeInput,
-    onDateChanged: (DateInputFields) -> Unit,
-    onTimeChanged: (TimeInputFields) -> Unit,
+    onDateChanged: (LocalDate) -> Unit,
+    onTimeChanged: (LocalTime) -> Unit,
     labelOnTextField: Boolean,
     modifier: Modifier = Modifier,
     labelSpacing: Dp = 4.dp,
@@ -239,20 +179,18 @@ fun DateTimeInputRow(
     ) {
         Box(modifier = Modifier.weight(2f)) {
             DateInput(
-                dateInputFields = dateTimeInput.dateInputFields,
+                date = dateTimeInput.date,
                 onDateChanged = onDateChanged,
                 labelOnTextField = labelOnTextField,
                 labelSpacing = labelSpacing,
-                date = dateTimeInput.toDate(),
             )
         }
         Box(modifier = Modifier.weight(1f)) {
             TimeInput(
-                timeInput = dateTimeInput.timeInputFields,
+                time = dateTimeInput.time,
                 onTimeChanged = onTimeChanged,
                 labelOnTextField = labelOnTextField,
                 labelSpacing = labelSpacing,
-                date = dateTimeInput.toDate(),
             )
         }
     }
@@ -281,7 +219,7 @@ fun TimePickerDialog(
                 .height(IntrinsicSize.Min)
                 .background(
                     shape = MaterialTheme.shapes.extraLarge,
-                    color = containerColor
+                    color = containerColor,
                 ),
             color = containerColor
         ) {
@@ -314,57 +252,64 @@ fun TimePickerDialog(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerModal(
+    date: LocalDate,
     onDismissRequest: () -> Unit,
-    onDateSelected: (Long) -> Unit,
-    initialDate: OffsetDateTime,
+    onDateSelected: (LocalDate) -> Unit,
 ) {
-    val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = initialDate.toInstant().toEpochMilli(),
-        selectableDates = object : SelectableDates {
-            override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-                return utcTimeMillis <= System.currentTimeMillis()
-            }
-        }
-    )
+    val datePickerState =
+        rememberDatePickerState(
+            initialSelectedDateMillis = date.atStartOfDay(ZoneOffset.UTC).toInstant()
+                .toEpochMilli(),
+            selectableDates = object : SelectableDates {
+                override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                    return utcTimeMillis <= System.currentTimeMillis()
+                }
+            },
+        )
 
-    DatePickerDialog(
-        onDismissRequest = onDismissRequest,
-        confirmButton = {
-            Button(onClick = {
-                datePickerState.selectedDateMillis?.let(onDateSelected)
-                onDismissRequest()
-            }) {
-                Text(text = "OK")
+    DatePickerDialog(onDismissRequest = onDismissRequest, confirmButton = {
+        Button(onClick = {
+            datePickerState.selectedDateMillis?.let {
+                onDateSelected(Instant.ofEpochMilli(it).atZone(ZoneOffset.UTC).toLocalDate())
             }
+            onDismissRequest()
+        }) {
+            Text(text = "OK")
         }
-    ) {
+    }) {
         DatePicker(state = datePickerState)
     }
+}
+
+fun LocalDate.toDisplayString(): String {
+    return "%02d/%02d/%d".format(dayOfMonth, monthValue, year)
+}
+
+fun LocalTime.toDisplayString(): String {
+    return "%02d:%02d".format(hour, minute)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimePickerModal(
+    time: LocalTime,
     onDismissRequest: () -> Unit,
-    onTimeSelected: (hour: Int, min: Int) -> Unit,
-    initialTime: OffsetDateTime,
+    onTimeSelected: (LocalTime) -> Unit,
 ) {
     val timePickerState = rememberTimePickerState(
-        initialHour = initialTime.hour,
-        initialMinute = initialTime.minute,
+        initialHour = time.hour,
+        initialMinute = time.minute,
+        is24Hour = true,
     )
 
-    TimePickerDialog(
-        onDismissRequest = onDismissRequest,
-        confirmButton = {
-            Button(onClick = {
-                onTimeSelected(timePickerState.hour, timePickerState.minute)
-                onDismissRequest()
-            }) {
-                Text(text = "OK")
-            }
+    TimePickerDialog(onDismissRequest = onDismissRequest, confirmButton = {
+        Button(onClick = {
+            onTimeSelected(LocalTime.of(timePickerState.hour, timePickerState.minute))
+            onDismissRequest()
+        }) {
+            Text(text = "OK")
         }
-    ) {
+    }) {
         TimePicker(state = timePickerState)
     }
 }
@@ -373,39 +318,29 @@ fun TimePickerModal(
 @Composable
 fun Preview() {
     SymptomTrackerTheme {
-        val dateInputFields = DateInputFields(
-            year = 2023,
-            month = 5,
-            day = 22,
-        )
-        val timeInputFields = TimeInputFields(
-            hour = 14,
-            minute = 2,
-        )
-
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
             DateInput(
-                dateInputFields = dateInputFields,
+                date = LocalDate.now(),
                 onDateChanged = {},
                 labelOnTextField = true,
-                date = OffsetDateTime.parse("2023-03-02T00:00:00+00:00"),
             )
             DateInput(
-                dateInputFields = dateInputFields,
+                date = LocalDate.now(),
                 onDateChanged = {},
                 labelOnTextField = false,
-                date = OffsetDateTime.parse("2023-03-02T00:00:00+00:00"),
             )
             TimeInput(
-                timeInput = timeInputFields, onTimeChanged = {}, labelOnTextField = true,
-                date = OffsetDateTime.parse("2023-03-02T00:00:00+00:00")
+                time = LocalTime.now(),
+                onTimeChanged = {},
+                labelOnTextField = true,
             )
             TimeInput(
-                timeInput = timeInputFields, onTimeChanged = {}, labelOnTextField = false,
-                date = OffsetDateTime.parse("2023-03-02T00:00:00+00:00")
+                time = LocalTime.now(),
+                onTimeChanged = {},
+                labelOnTextField = false,
             )
             DateTimeInputRow(
-                dateTimeInput = DateTimeInput(dateInputFields, timeInputFields),
+                dateTimeInput = DateTimeInput(LocalDate.now(), LocalTime.now()),
                 onDateChanged = {},
                 onTimeChanged = {},
                 labelOnTextField = false

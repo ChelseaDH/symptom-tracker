@@ -29,11 +29,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.symptomtracker.R
 import com.example.symptomtracker.core.designsystem.SymptomTrackerTheme
-import com.example.symptomtracker.core.designsystem.component.DateInputFields
 import com.example.symptomtracker.core.designsystem.component.DateTimeInput
 import com.example.symptomtracker.core.designsystem.component.DateTimeInputRow
 import com.example.symptomtracker.core.designsystem.component.OutlinedInputTextFieldWithDropdown
-import com.example.symptomtracker.core.designsystem.component.TimeInputFields
 import com.example.symptomtracker.core.domain.model.Severity
 import com.example.symptomtracker.core.domain.model.Symptom
 import com.example.symptomtracker.core.domain.model.SymptomWithSeverity
@@ -42,7 +40,8 @@ import com.example.symptomtracker.feature.symptom.SearchState
 import com.example.symptomtracker.feature.symptom.SymptomEntryUiState
 import com.example.symptomtracker.ui.SymptomTrackerTopAppBar
 import kotlinx.coroutines.launch
-import java.util.Calendar
+import java.time.LocalDate
+import java.time.LocalTime
 
 @Composable
 internal fun SymptomEntryScreen(
@@ -67,9 +66,9 @@ internal fun SymptomEntryScreen(
                     }) {
                         Text(text = stringResource(R.string.action_save))
                     }
-                }
+                },
             )
-        }
+        },
     ) { innerPadding ->
         SymptomEntryBody(
             uiState = viewModel.uiState,
@@ -101,8 +100,8 @@ fun SymptomEntryBody(
     onSelectedSeverityUpdated: (Severity) -> Unit,
     onRemoveSymptomFromLog: (SymptomWithSeverity) -> Unit,
     onAddSymptomToLog: () -> Unit,
-    onDateChanged: (DateInputFields) -> Unit,
-    onTimeChanged: (TimeInputFields) -> Unit,
+    onDateChanged: (LocalDate) -> Unit,
+    onTimeChanged: (LocalTime) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -126,8 +125,7 @@ fun SymptomEntryBody(
         )
         HorizontalDivider()
         SymptomLogList(
-            symptomList = uiState.selectedSymptoms,
-            onDeleteItem = onRemoveSymptomFromLog
+            symptomList = uiState.selectedSymptoms, onDeleteItem = onRemoveSymptomFromLog
         )
     }
 }
@@ -146,8 +144,7 @@ fun SymptomLogList(
                 trailingContent = {
                     IconButton(onClick = { onDeleteItem(item) }) {
                         Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = stringResource(
+                            imageVector = Icons.Default.Delete, contentDescription = stringResource(
                                 R.string.delete_item_cd
                             )
                         )
@@ -169,8 +166,8 @@ fun LogSymptomForm(
     onClearInput: () -> Unit,
     onSelectedSymptomUpdated: (Symptom) -> Unit,
     onSelectedSeverityUpdated: (Severity) -> Unit,
-    onDateChanged: (DateInputFields) -> Unit,
-    onTimeChanged: (TimeInputFields) -> Unit,
+    onDateChanged: (LocalDate) -> Unit,
+    onTimeChanged: (LocalTime) -> Unit,
     onAddSymptomToLog: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -192,8 +189,7 @@ fun LogSymptomForm(
             onSelectedSymptomUpdated = onSelectedSymptomUpdated
         )
         FormSeverityInput(
-            severity = selectedSeverity,
-            onSelectionUpdated = onSelectedSeverityUpdated
+            severity = selectedSeverity, onSelectionUpdated = onSelectedSeverityUpdated
         )
         FilledTonalButton(
             onClick = { onAddSymptomToLog() },
@@ -255,8 +251,7 @@ fun FormSeverityInput(
             text = stringResource(R.string.severity_input_label)
         )
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
+            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             Severity.values().forEach {
                 AssistChip(
@@ -287,13 +282,10 @@ fun AddSymptomScreenPreview() {
                 ),
                 searchState = SearchState(
                     results = listOf(
-                        Symptom(1, "Bloating"),
-                        Symptom(2, "Fatigue"),
-                        Symptom(3, "Nausea")
-                    )
+                        Symptom(1, "Bloating"), Symptom(2, "Fatigue"), Symptom(3, "Nausea")
+                    ),
                 ),
-                selectedSeverity = Severity.MILD,
-                dateTimeInput = DateTimeInput(Calendar.getInstance())
+                selectedSeverity = Severity.MILD, dateTimeInput = DateTimeInput(),
             ),
             onSymptomNameUpdated = {},
             onCreateSymptom = {},

@@ -1,9 +1,7 @@
 package com.example.symptomtracker.feature.food
 
 import androidx.lifecycle.SavedStateHandle
-import com.example.symptomtracker.core.designsystem.component.DateInputFields
 import com.example.symptomtracker.core.designsystem.component.DateTimeInput
-import com.example.symptomtracker.core.designsystem.component.TimeInputFields
 import com.example.symptomtracker.core.domain.model.FoodItem
 import com.example.symptomtracker.core.domain.model.FoodLog
 import com.example.symptomtracker.core.testing.repository.TestFoodRepository
@@ -18,6 +16,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestWatcher
+import java.time.LocalDate
+import java.time.LocalTime
 import java.time.OffsetDateTime
 
 class EditFoodViewModelTest {
@@ -73,8 +73,8 @@ class EditFoodViewModelTest {
             FoodEntryUiState(
                 selectedFoodItems = listOf(foodItem),
                 dateTimeInput = DateTimeInput(
-                    dateInputFields = DateInputFields(year = 2023, month = 2, day = 2),
-                    timeInputFields = TimeInputFields(hour = 9, minute = 10)
+                    date = LocalDate.of(2023, 3, 2),
+                    time = LocalTime.of(9, 10)
                 ),
                 searchState = SearchState(
                     input = "",
