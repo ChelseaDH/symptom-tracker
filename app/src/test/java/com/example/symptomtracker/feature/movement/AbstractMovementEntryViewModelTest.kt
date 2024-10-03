@@ -22,7 +22,7 @@ class AbstractMovementEntryViewModelTest {
 
     @Test
     fun chosenStoolTypeUpdates_whenUpdateChosenStoolTypeIsCalled() = runTest {
-        viewModel.updateChosenStoolType(StoolType.NORMAL_3)
+        viewModel.handleEvent(MovementEntryEvent.UpdateChosenStoolType(StoolType.NORMAL_3))
 
         assertEquals(StoolType.NORMAL_3, viewModel.uiState.chosenStoolType)
     }
@@ -31,7 +31,7 @@ class AbstractMovementEntryViewModelTest {
     fun dateInputFieldsUpdate_whenUpdateDateIsCalled() = runTest {
         val date = LocalDate.of(2024, 2, 1)
 
-        viewModel.updateDate(date)
+        viewModel.handleEvent(MovementEntryEvent.UpdateDate(date))
 
         assertEquals(date, viewModel.uiState.dateTimeInput.date)
     }
@@ -40,7 +40,7 @@ class AbstractMovementEntryViewModelTest {
     fun timeInputFieldsUpdate_whenUpdateTimeIsCalled() = runTest {
         val time = LocalTime.of(10, 25)
 
-        viewModel.updateTime(time)
+        viewModel.handleEvent(MovementEntryEvent.UpdateTime(time))
 
         assertEquals(time, viewModel.uiState.dateTimeInput.time)
     }

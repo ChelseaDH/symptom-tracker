@@ -25,7 +25,7 @@ fun ViewMovementRoute(
 
     ViewMovementScreen(
         navigateBack = navigateBack,
-        deleteLog = viewModel::deleteLog,
+        eventSink = viewModel::handleEvent,
         onEdit = navigateToEdit,
         state = uiState,
     )
@@ -34,7 +34,7 @@ fun ViewMovementRoute(
 @Composable
 fun ViewMovementScreen(
     navigateBack: () -> Unit,
-    deleteLog: (MovementLog) -> Unit,
+    eventSink: (ViewMovementEvent) -> Unit,
     onEdit: () -> Unit,
     state: ViewMovementUiState = ViewLogUiState.Loading,
 ) {
@@ -42,7 +42,7 @@ fun ViewMovementScreen(
         navigateBack = navigateBack,
         uiState = state,
         title = R.string.add_movement_text,
-        deleteLog = deleteLog,
+        deleteLog = { eventSink(ViewMovementEvent.DeleteLog(it)) },
         onEdit = onEdit,
         bodyContent = {
             ListItem(
@@ -62,7 +62,7 @@ fun ViewMovementContentPreview(
 ) {
     ViewMovementScreen(
         navigateBack = {},
-        deleteLog = {},
+        eventSink = {},
         onEdit = {},
         state = ViewLogUiState.Data(log),
     )

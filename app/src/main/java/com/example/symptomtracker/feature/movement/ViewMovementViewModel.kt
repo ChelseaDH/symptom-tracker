@@ -3,8 +3,8 @@ package com.example.symptomtracker.feature.movement
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.symptomtracker.core.domain.repository.MovementRepository
 import com.example.symptomtracker.core.domain.model.MovementLog
+import com.example.symptomtracker.core.domain.repository.MovementRepository
 import com.example.symptomtracker.core.ui.ViewLogUiState
 import com.example.symptomtracker.feature.movement.navigation.MOVEMENT_LOG_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -35,7 +35,13 @@ class ViewMovementViewModel @Inject constructor(
             initialValue = ViewLogUiState.Loading
         )
 
-    fun deleteLog(movementLog: MovementLog) {
+    fun handleEvent(event: ViewMovementEvent) {
+        when (event) {
+            is ViewMovementEvent.DeleteLog -> deleteLog(movementLog = event.movementLog)
+        }
+    }
+
+    private fun deleteLog(movementLog: MovementLog) {
         viewModelScope.launch {
             movementRepository.deleteLog(movementLog)
         }
@@ -43,3 +49,7 @@ class ViewMovementViewModel @Inject constructor(
 }
 
 typealias ViewMovementUiState = ViewLogUiState<MovementLog>
+
+sealed interface ViewMovementEvent {
+    data class DeleteLog(val movementLog: MovementLog) : ViewMovementEvent
+}

@@ -7,7 +7,6 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -98,56 +97,6 @@ fun <T> OutlinedInputTextFieldWithDropdown(
                         )
                     }
                 )
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun <T> OutlinedReadonlyTextFieldWithDropdown(
-    availableOptions: List<T>,
-    getOptionDisplayName: (T) -> String,
-    chosenOption: T?,
-    onChosenOptionUpdated: (T) -> Unit,
-    @StringRes textLabelId: Int?,
-    modifier: Modifier = Modifier,
-) {
-    var selectorExpanded by remember { mutableStateOf(false) }
-
-    ExposedDropdownMenuBox(
-        expanded = selectorExpanded,
-        onExpandedChange = { selectorExpanded = !selectorExpanded },
-        modifier = modifier
-    ) {
-        OutlinedTextField(
-            value = chosenOption?.let { getOptionDisplayName(it) } ?: "",
-            onValueChange = {},
-            label = {
-                if (textLabelId != null)
-                    Text(
-                        text = stringResource(id = textLabelId),
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-            },
-            modifier = modifier.menuAnchor(),
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = selectorExpanded) },
-            singleLine = true,
-            readOnly = true,
-        )
-        ExposedDropdownMenu(
-            expanded = selectorExpanded,
-            onDismissRequest = { selectorExpanded = false },
-            modifier = Modifier.exposedDropdownSize(true)
-        ) {
-            if (availableOptions.isNotEmpty()) {
-                for (availableItem in availableOptions) {
-                    DropdownMenuItem(text = { Text(text = getOptionDisplayName(availableItem)) },
-                        onClick = {
-                            onChosenOptionUpdated(availableItem)
-                            selectorExpanded = false
-                        })
-                }
             }
         }
     }

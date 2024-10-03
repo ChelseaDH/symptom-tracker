@@ -16,13 +16,22 @@ abstract class AbstractMovementEntryViewModel : ViewModel() {
 
     abstract fun submit()
 
-    fun updateChosenStoolType(stoolType: StoolType) {
+    fun handleEvent(event: MovementEntryEvent) {
+        when (event) {
+            is MovementEntryEvent.UpdateChosenStoolType -> updateChosenStoolType(stoolType = event.stoolType)
+            is MovementEntryEvent.UpdateDate -> updateDate(date = event.date)
+            is MovementEntryEvent.UpdateTime -> updateTime(time = event.time)
+            is MovementEntryEvent.Submit -> submit()
+        }
+    }
+
+    private fun updateChosenStoolType(stoolType: StoolType) {
         uiState = uiState.copy(
             chosenStoolType = stoolType
         )
     }
 
-    fun updateDate(date: LocalDate) {
+    private fun updateDate(date: LocalDate) {
         uiState = uiState.copy(
             dateTimeInput = uiState.dateTimeInput.copy(
                 date = date
@@ -30,7 +39,7 @@ abstract class AbstractMovementEntryViewModel : ViewModel() {
         )
     }
 
-    fun updateTime(time: LocalTime) {
+    private fun updateTime(time: LocalTime) {
         uiState = uiState.copy(
             dateTimeInput = uiState.dateTimeInput.copy(
                 time = time
@@ -55,4 +64,11 @@ data class MovementEntryUiState(
     fun isValid(): Boolean {
         return this.chosenStoolType !== null
     }
+}
+
+sealed interface MovementEntryEvent {
+    data class UpdateChosenStoolType(val stoolType: StoolType) : MovementEntryEvent
+    data class UpdateDate(val date: LocalDate) : MovementEntryEvent
+    data class UpdateTime(val time: LocalTime) : MovementEntryEvent
+    data object Submit : MovementEntryEvent
 }
