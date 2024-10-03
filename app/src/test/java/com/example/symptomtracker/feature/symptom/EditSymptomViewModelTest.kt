@@ -2,6 +2,7 @@ package com.example.symptomtracker.feature.symptom
 
 import androidx.lifecycle.SavedStateHandle
 import com.example.symptomtracker.core.designsystem.component.DateTimeInput
+import com.example.symptomtracker.core.designsystem.component.TextInput
 import com.example.symptomtracker.core.domain.model.Severity
 import com.example.symptomtracker.core.domain.model.Symptom
 import com.example.symptomtracker.core.domain.model.SymptomLog
@@ -78,7 +79,7 @@ class EditSymptomViewModelTest {
                     time = LocalTime.of(9, 10)
                 ),
                 searchState = SearchState(
-                    input = "",
+                    input = TextInput(value = "", validationError = null),
                     selectedSymptom = null,
                     results = listOf(symptom),
                     canCreateNewSymptom = false,

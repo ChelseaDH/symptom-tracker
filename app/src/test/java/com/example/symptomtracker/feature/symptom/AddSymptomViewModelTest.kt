@@ -1,5 +1,6 @@
 package com.example.symptomtracker.feature.symptom
 
+import com.example.symptomtracker.core.designsystem.component.TextInput
 import com.example.symptomtracker.core.domain.model.Symptom
 import com.example.symptomtracker.core.domain.model.SymptomWithSeverity
 import com.example.symptomtracker.core.testing.repository.TestSymptomRepository
@@ -41,7 +42,7 @@ class AddSymptomViewModelTest {
         assertEquals(listOf<SymptomWithSeverity>(), viewModel.uiState.selectedSymptoms)
         assertEquals(
             SearchState(
-                input = "",
+                input = TextInput(value = "", validationError = null),
                 selectedSymptom = null,
                 results = symptoms,
                 canCreateNewSymptom = false,

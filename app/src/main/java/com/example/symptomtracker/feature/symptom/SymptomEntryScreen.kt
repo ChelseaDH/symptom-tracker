@@ -11,8 +11,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -22,7 +20,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,17 +28,16 @@ import com.example.symptomtracker.R
 import com.example.symptomtracker.core.designsystem.SymptomTrackerTheme
 import com.example.symptomtracker.core.designsystem.component.DateTimeInput
 import com.example.symptomtracker.core.designsystem.component.DateTimeInputRow
-import com.example.symptomtracker.core.designsystem.component.OutlinedInputTextFieldWithDropdown
+import com.example.symptomtracker.core.designsystem.component.FilledTonalButtonWithIcon
+import com.example.symptomtracker.core.designsystem.component.LabelledOutlinedTextInputFieldWithDropdown
 import com.example.symptomtracker.core.domain.model.Severity
 import com.example.symptomtracker.core.domain.model.Symptom
 import com.example.symptomtracker.core.domain.model.SymptomWithSeverity
 import com.example.symptomtracker.feature.symptom.AbstractSymptomEntryViewModel
 import com.example.symptomtracker.feature.symptom.SearchState
+import com.example.symptomtracker.feature.symptom.SymptomEntryEvent
 import com.example.symptomtracker.feature.symptom.SymptomEntryUiState
 import com.example.symptomtracker.ui.SymptomTrackerTopAppBar
-import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.LocalTime
 
 @Composable
 internal fun SymptomEntryScreen(
@@ -50,7 +46,6 @@ internal fun SymptomEntryScreen(
     modifier: Modifier = Modifier,
     viewModel: AbstractSymptomEntryViewModel,
 ) {
-    val coroutineScope = rememberCoroutineScope()
     Scaffold(
         topBar = {
             SymptomTrackerTopAppBar(
@@ -59,10 +54,8 @@ internal fun SymptomEntryScreen(
                 navigateUp = navigateBack,
                 actions = {
                     TextButton(onClick = {
-                        coroutineScope.launch {
-                            viewModel.submit()
-                            navigateBack()
-                        }
+                        viewModel.handleEvent(SymptomEntryEvent.Submit)
+                        navigateBack()
                     }) {
                         Text(text = stringResource(R.string.action_save))
                     }
@@ -72,20 +65,8 @@ internal fun SymptomEntryScreen(
     ) { innerPadding ->
         SymptomEntryBody(
             uiState = viewModel.uiState,
-            onSymptomNameUpdated = viewModel::updateSearchInput,
-            onCreateSymptom = {
-                coroutineScope.launch {
-                    viewModel.createNewSymptomFromInput()
-                }
-            },
-            onClearInput = viewModel::clearSearchAndSeverity,
-            onSelectedSymptomUpdated = viewModel::updateSelectedSearchSymptom,
-            onSelectedSeverityUpdated = viewModel::updateSelectedSeverity,
-            onRemoveSymptomFromLog = viewModel::removeSymptom,
-            onAddSymptomToLog = viewModel::addSymptomWithSeverity,
-            onDateChanged = viewModel::updateDate,
-            onTimeChanged = viewModel::updateTime,
-            modifier = modifier.padding(innerPadding)
+            eventSink = viewModel::handleEvent,
+            modifier = modifier.padding(innerPadding),
         )
     }
 }
@@ -93,39 +74,25 @@ internal fun SymptomEntryScreen(
 @Composable
 fun SymptomEntryBody(
     uiState: SymptomEntryUiState,
-    onSymptomNameUpdated: (String) -> Unit,
-    onCreateSymptom: () -> Unit,
-    onClearInput: () -> Unit,
-    onSelectedSymptomUpdated: (Symptom) -> Unit,
-    onSelectedSeverityUpdated: (Severity) -> Unit,
-    onRemoveSymptomFromLog: (SymptomWithSeverity) -> Unit,
-    onAddSymptomToLog: () -> Unit,
-    onDateChanged: (LocalDate) -> Unit,
-    onTimeChanged: (LocalTime) -> Unit,
+    eventSink: (SymptomEntryEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
             .padding(all = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         LogSymptomForm(
             searchState = uiState.searchState,
             selectedSeverity = uiState.selectedSeverity,
             dateTimeInput = uiState.dateTimeInput,
-            onSymptomNameUpdated = onSymptomNameUpdated,
-            onCreateSymptom = onCreateSymptom,
-            onClearInput = onClearInput,
-            onSelectedSymptomUpdated = onSelectedSymptomUpdated,
-            onSelectedSeverityUpdated = onSelectedSeverityUpdated,
-            onAddSymptomToLog = onAddSymptomToLog,
-            onDateChanged = onDateChanged,
-            onTimeChanged = onTimeChanged,
+            eventSink = eventSink,
         )
         HorizontalDivider()
         SymptomLogList(
-            symptomList = uiState.selectedSymptoms, onDeleteItem = onRemoveSymptomFromLog
+            symptomList = uiState.selectedSymptoms,
+            onDeleteItem = { eventSink(SymptomEntryEvent.RemoveSymptom(it)) },
         )
     }
 }
@@ -150,7 +117,7 @@ fun SymptomLogList(
                         )
                     }
                 },
-                modifier = modifier
+                modifier = modifier,
             )
         }
     }
@@ -161,14 +128,7 @@ fun LogSymptomForm(
     searchState: SearchState,
     selectedSeverity: Severity?,
     dateTimeInput: DateTimeInput,
-    onSymptomNameUpdated: (String) -> Unit,
-    onCreateSymptom: () -> Unit,
-    onClearInput: () -> Unit,
-    onSelectedSymptomUpdated: (Symptom) -> Unit,
-    onSelectedSeverityUpdated: (Severity) -> Unit,
-    onDateChanged: (LocalDate) -> Unit,
-    onTimeChanged: (LocalTime) -> Unit,
-    onAddSymptomToLog: () -> Unit,
+    eventSink: (SymptomEntryEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -177,61 +137,36 @@ fun LogSymptomForm(
     ) {
         DateTimeInputRow(
             dateTimeInput = dateTimeInput,
-            onDateChanged = onDateChanged,
-            onTimeChanged = onTimeChanged,
+            onDateChanged = { eventSink(SymptomEntryEvent.UpdateDate(it)) },
+            onTimeChanged = { eventSink(SymptomEntryEvent.UpdateTime(it)) },
         )
-        FormNameInput(
-            searchState = searchState,
-            onSymptomNameUpdated = onSymptomNameUpdated,
-            onCreateSymptom = onCreateSymptom,
-            onClearInput = onClearInput,
-            onSelectedSymptomUpdated = onSelectedSymptomUpdated
+        LabelledOutlinedTextInputFieldWithDropdown(
+            label = stringResource(R.string.name_input_label),
+            value = searchState.input,
+            availableOptions = searchState.results,
+            canCreateOption = searchState.canCreateNewSymptom,
+            onValueChange = { eventSink(SymptomEntryEvent.UpdateSearchInput(it)) },
+            getOptionDisplayName = { it.name },
+            onCreateOption = { eventSink(SymptomEntryEvent.CreateNewSymptomFromInput) },
+            onClearInput = { eventSink(SymptomEntryEvent.ClearSearchAndSeverity) },
+            onChosenOptionUpdated = { eventSink(SymptomEntryEvent.UpdateSelectedSearchSymptom(it)) },
+            modifier = Modifier.fillMaxWidth(),
         )
         FormSeverityInput(
-            severity = selectedSeverity, onSelectionUpdated = onSelectedSeverityUpdated
+            severity = selectedSeverity,
+            onSelectionUpdated = { eventSink(SymptomEntryEvent.UpdateSelectedSeverity(it)) },
         )
-        FilledTonalButton(
-            onClick = { onAddSymptomToLog() },
-            contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = stringResource(id = R.string.add_symptom_cd),
-                modifier = Modifier.padding(end = 8.dp)
-            )
-            Text(text = "Add to log")
-        }
-    }
-}
-
-@Composable
-fun FormNameInput(
-    searchState: SearchState,
-    onSymptomNameUpdated: (String) -> Unit,
-    onCreateSymptom: () -> Unit,
-    onClearInput: () -> Unit,
-    onSelectedSymptomUpdated: (Symptom) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-    ) {
-        Text(
-            text = stringResource(R.string.name_input_label)
-        )
-        OutlinedInputTextFieldWithDropdown(
-            availableOptions = searchState.results,
-            textValue = searchState.input,
-            onTextValueUpdated = onSymptomNameUpdated,
-            canCreateOption = searchState.canCreateNewSymptom,
-            onCreateOption = onCreateSymptom,
-            onClearInput = onClearInput,
-            onChosenOptionUpdated = onSelectedSymptomUpdated,
-            textLabelId = null,
-            getOptionDisplayName = { it.name },
-            modifier = Modifier.fillMaxWidth()
+        FilledTonalButtonWithIcon(
+            textId = R.string.action_add_to_log,
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = stringResource(id = R.string.add_symptom_cd),
+                    modifier = Modifier.padding(end = 8.dp),
+                )
+            },
+            onClick = { eventSink(SymptomEntryEvent.AddSymptomWithSeverity) },
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }
@@ -247,12 +182,14 @@ fun FormSeverityInput(
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Text(
-            text = stringResource(R.string.severity_input_label)
+            text = stringResource(R.string.severity_input_label),
+            modifier = Modifier.padding(horizontal = 8.dp),
+            style = MaterialTheme.typography.labelLarge,
         )
         Row(
-            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly
+            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
-            Severity.values().forEach {
+            Severity.entries.forEach {
                 AssistChip(
                     onClick = { onSelectionUpdated(it) },
                     label = { Text(text = it.displayName) },
@@ -286,15 +223,7 @@ fun AddSymptomScreenPreview() {
                 ),
                 selectedSeverity = Severity.MILD, dateTimeInput = DateTimeInput(),
             ),
-            onSymptomNameUpdated = {},
-            onCreateSymptom = {},
-            onClearInput = {},
-            onSelectedSymptomUpdated = {},
-            onSelectedSeverityUpdated = {},
-            onRemoveSymptomFromLog = {},
-            onAddSymptomToLog = {},
-            onDateChanged = {},
-            onTimeChanged = {},
+            eventSink = {},
         )
     }
 }

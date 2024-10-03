@@ -1,5 +1,6 @@
 package com.example.symptomtracker.feature.symptom
 
+import com.example.symptomtracker.core.designsystem.component.TextInput
 import com.example.symptomtracker.core.domain.model.Severity
 import com.example.symptomtracker.core.domain.model.Symptom
 import com.example.symptomtracker.core.domain.model.SymptomWithSeverity
@@ -36,7 +37,7 @@ class AbstractSymptomEntryViewModelTest {
         assertEquals(listOf<SymptomWithSeverity>(), viewModel.uiState.selectedSymptoms)
         assertEquals(
             SearchState(
-                input = "",
+                input = TextInput(value = "", validationError = null),
                 selectedSymptom = null,
                 results = listOf(),
                 canCreateNewSymptom = false,
@@ -50,7 +51,7 @@ class AbstractSymptomEntryViewModelTest {
     fun selectedSeverityUpdates_whenUpdateSelectedSeverityIsCalled() = run {
         assertNull(viewModel.uiState.selectedSeverity)
 
-        viewModel.updateSelectedSeverity(Severity.MILD)
+        viewModel.handleEvent(SymptomEntryEvent.UpdateSelectedSeverity(Severity.MILD))
 
         assertEquals(Severity.MILD, viewModel.uiState.selectedSeverity)
     }
@@ -66,7 +67,7 @@ class AbstractSymptomEntryViewModelTest {
 
             assertEquals(
                 SearchState(
-                    input = "",
+                    input = TextInput(value = "", validationError = null),
                     selectedSymptom = null,
                     results = listOf(symptom),
                     canCreateNewSymptom = false,
@@ -74,11 +75,11 @@ class AbstractSymptomEntryViewModelTest {
                 viewModel.uiState.searchState
             )
 
-            viewModel.updateSearchInput("hi")
+            viewModel.handleEvent(SymptomEntryEvent.UpdateSearchInput("hi"))
 
             assertEquals(
                 SearchState(
-                    input = "hi",
+                    input = TextInput(value = "hi", validationError = null),
                     selectedSymptom = null,
                     results = listOf(),
                     canCreateNewSymptom = true,
@@ -100,7 +101,7 @@ class AbstractSymptomEntryViewModelTest {
 
             assertEquals(
                 SearchState(
-                    input = "",
+                    input = TextInput(value = "", validationError = null),
                     selectedSymptom = null,
                     results = listOf(symptom),
                     canCreateNewSymptom = false,
@@ -108,11 +109,11 @@ class AbstractSymptomEntryViewModelTest {
                 viewModel.uiState.searchState
             )
 
-            viewModel.updateSearchInput("bloating")
+            viewModel.handleEvent(SymptomEntryEvent.UpdateSearchInput("bloating"))
 
             assertEquals(
                 SearchState(
-                    input = "bloating",
+                    input = TextInput(value = "bloating", validationError = null),
                     selectedSymptom = null,
                     results = listOf(symptom),
                     canCreateNewSymptom = false,
@@ -134,7 +135,7 @@ class AbstractSymptomEntryViewModelTest {
 
             assertEquals(
                 SearchState(
-                    input = "",
+                    input = TextInput(value = "", validationError = null),
                     selectedSymptom = null,
                     results = listOf(symptom),
                     canCreateNewSymptom = false,
@@ -142,11 +143,11 @@ class AbstractSymptomEntryViewModelTest {
                 viewModel.uiState.searchState
             )
 
-            viewModel.updateSelectedSearchSymptom(symptom)
+            viewModel.handleEvent(SymptomEntryEvent.UpdateSelectedSearchSymptom(symptom))
 
             assertEquals(
                 SearchState(
-                    input = "bloating",
+                    input = TextInput(value = "bloating", validationError = null),
                     selectedSymptom = symptom,
                     results = listOf(symptom),
                     canCreateNewSymptom = false,
@@ -166,13 +167,13 @@ class AbstractSymptomEntryViewModelTest {
         val symptom = Symptom(id = 1, name = "bloating")
         symptomRepository.sendSymptoms(listOf(symptom))
 
-        viewModel.updateSelectedSeverity(Severity.MILD)
-        viewModel.updateSelectedSearchSymptom(symptom)
+        viewModel.handleEvent(SymptomEntryEvent.UpdateSelectedSeverity(Severity.MILD))
+        viewModel.handleEvent(SymptomEntryEvent.UpdateSelectedSearchSymptom(symptom))
 
         assertEquals(listOf<SymptomWithSeverity>(), viewModel.uiState.selectedSymptoms)
 
         // Adding a symptom
-        viewModel.addSymptomWithSeverity()
+        viewModel.handleEvent(SymptomEntryEvent.AddSymptomWithSeverity)
 
         // Asserting that the symptom is added and the search state and selected severity are reset
         assertEquals(
@@ -181,7 +182,7 @@ class AbstractSymptomEntryViewModelTest {
         )
         assertEquals(
             SearchState(
-                input = "",
+                input = TextInput(value = "", validationError = null),
                 selectedSymptom = null,
                 results = listOf(symptom),
                 canCreateNewSymptom = false,
@@ -191,7 +192,14 @@ class AbstractSymptomEntryViewModelTest {
         assertNull(viewModel.uiState.selectedSeverity)
 
         // Removing the symptom
-        viewModel.removeSymptom(SymptomWithSeverity(symptom = symptom, severity = Severity.MILD))
+        viewModel.handleEvent(
+            SymptomEntryEvent.RemoveSymptom(
+                SymptomWithSeverity(
+                    symptom = symptom,
+                    severity = Severity.MILD
+                )
+            )
+        )
 
         // Asserting that the selected symptoms is empty again
         assertEquals(listOf<SymptomWithSeverity>(), viewModel.uiState.selectedSymptoms)
@@ -203,7 +211,7 @@ class AbstractSymptomEntryViewModelTest {
     fun dateInputFieldsUpdate_whenUpdateDateIsCalled() = runTest {
         val date = LocalDate.of(2024, 2, 1)
 
-        viewModel.updateDate(date)
+        viewModel.handleEvent(SymptomEntryEvent.UpdateDate(date))
 
         assertEquals(date, viewModel.uiState.dateTimeInput.date)
     }
@@ -212,7 +220,7 @@ class AbstractSymptomEntryViewModelTest {
     fun timeInputFieldsUpdate_whenUpdateTimeIsCalled() = runTest {
         val time = LocalTime.of(10, 25)
 
-        viewModel.updateTime(time)
+        viewModel.handleEvent(SymptomEntryEvent.UpdateTime(time))
 
         assertEquals(time, viewModel.uiState.dateTimeInput.time)
     }
@@ -220,5 +228,5 @@ class AbstractSymptomEntryViewModelTest {
 
 class TestSymptomEntryViewModel(symptomRepository: SymptomRepository) :
     AbstractSymptomEntryViewModel(symptomRepository = symptomRepository) {
-    override suspend fun submit() {}
+    override fun submit() {}
 }

@@ -25,9 +25,11 @@ class EditSymptomViewModel @Inject constructor(
         }
     }
 
-    override suspend fun submit() {
+    override fun submit() {
         if (uiState.isValid()) {
-            symptomRepository.updateSymptomLog(uiState.toSymptomLog(logId))
+            viewModelScope.launch {
+                symptomRepository.updateSymptomLog(uiState.toSymptomLog(logId))
+            }
         }
     }
 }

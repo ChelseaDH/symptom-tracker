@@ -7,6 +7,8 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.symptomtracker.core.designsystem.component.DateTimeInput
+import com.example.symptomtracker.core.designsystem.component.TextInput
+import com.example.symptomtracker.core.designsystem.component.TextValidationError
 import com.example.symptomtracker.core.domain.model.Severity
 import com.example.symptomtracker.core.domain.model.Symptom
 import com.example.symptomtracker.core.domain.model.SymptomLog
@@ -36,9 +38,24 @@ abstract class AbstractSymptomEntryViewModel(private val symptomRepository: Symp
         }
     }
 
-    abstract suspend fun submit()
+    abstract fun submit()
 
-    fun addSymptomWithSeverity() {
+    fun handleEvent(event: SymptomEntryEvent) {
+        when (event) {
+            is SymptomEntryEvent.AddSymptomWithSeverity -> addSymptomWithSeverity()
+            is SymptomEntryEvent.RemoveSymptom -> removeSymptom(symptomsWithSeverity = event.symptomWithSeverity)
+            is SymptomEntryEvent.UpdateSelectedSearchSymptom -> updateSelectedSearchSymptom(symptom = event.symptom)
+            is SymptomEntryEvent.UpdateSearchInput -> updateSearchInput(input = event.input)
+            is SymptomEntryEvent.ClearSearchAndSeverity -> clearSearchAndSeverity()
+            is SymptomEntryEvent.UpdateSelectedSeverity -> updateSelectedSeverity(severity = event.severity)
+            is SymptomEntryEvent.CreateNewSymptomFromInput -> createNewSymptomFromInput()
+            is SymptomEntryEvent.UpdateDate -> updateDate(date = event.date)
+            is SymptomEntryEvent.UpdateTime -> updateTime(time = event.time)
+            is SymptomEntryEvent.Submit -> submit()
+        }
+    }
+
+    private fun addSymptomWithSeverity() {
         if (canAddSelectedSymptomToLog()) {
             _selectedSymptoms.add(uiState.toSymptomWithSeverity())
 
@@ -49,7 +66,7 @@ abstract class AbstractSymptomEntryViewModel(private val symptomRepository: Symp
         }
     }
 
-    fun removeSymptom(symptomsWithSeverity: SymptomWithSeverity) {
+    private fun removeSymptom(symptomsWithSeverity: SymptomWithSeverity) {
         _selectedSymptoms.remove(symptomsWithSeverity)
 
         uiState = uiState.copy(
@@ -57,10 +74,10 @@ abstract class AbstractSymptomEntryViewModel(private val symptomRepository: Symp
         )
     }
 
-    fun updateSelectedSearchSymptom(symptom: Symptom) {
+    private fun updateSelectedSearchSymptom(symptom: Symptom) {
         uiState = uiState.copy(
             searchState = SearchState(
-                input = symptom.name,
+                input = TextInput(value = symptom.name),
                 selectedSymptom = symptom,
                 results = getSearchResults(symptom.name),
                 canCreateNewSymptom = false,
@@ -68,10 +85,10 @@ abstract class AbstractSymptomEntryViewModel(private val symptomRepository: Symp
         )
     }
 
-    fun updateSearchInput(input: String) {
+    private fun updateSearchInput(input: String) {
         uiState = uiState.copy(
             searchState = SearchState(
-                input = input,
+                input = TextInput(value = input),
                 selectedSymptom = null,
                 results = getSearchResults(input),
                 canCreateNewSymptom = canCreateNewSymptomFromInput(input),
@@ -79,10 +96,10 @@ abstract class AbstractSymptomEntryViewModel(private val symptomRepository: Symp
         )
     }
 
-    fun clearSearchAndSeverity() {
+    private fun clearSearchAndSeverity() {
         uiState = uiState.copy(
             searchState = SearchState(
-                input = "",
+                input = TextInput(),
                 selectedSymptom = null,
                 results = getSearchResults(""),
                 canCreateNewSymptom = false,
@@ -91,22 +108,33 @@ abstract class AbstractSymptomEntryViewModel(private val symptomRepository: Symp
         )
     }
 
-    fun updateSelectedSeverity(severity: Severity) {
+    private fun updateSelectedSeverity(severity: Severity) {
         uiState = uiState.copy(
             selectedSeverity = severity
         )
     }
 
-    suspend fun createNewSymptomFromInput() {
-        if (uiState.searchState.isInputValid()) {
-            val symptom = uiState.searchState.toSymptom()
-            val id = symptomRepository.insertSymptom(symptom)
+    private fun createNewSymptomFromInput() {
+        val validationError =
+            uiState.searchState.input.findValidationError(errors = listOf(TextValidationError.BLANK))
 
-            updateSelectedSearchSymptom(symptom.copy(id = id))
+        if (validationError == null) {
+            val symptom = uiState.searchState.toSymptom()
+
+            viewModelScope.launch {
+                val id = symptomRepository.insertSymptom(symptom)
+                updateSelectedSearchSymptom(symptom.copy(id = id))
+            }
+        } else {
+            uiState = uiState.copy(
+                searchState = uiState.searchState.copy(
+                    input = uiState.searchState.input.copy(validationError = validationError)
+                )
+            )
         }
     }
 
-    fun updateDate(date: LocalDate) {
+    private fun updateDate(date: LocalDate) {
         uiState = uiState.copy(
             dateTimeInput = uiState.dateTimeInput.copy(
                 date = date
@@ -114,7 +142,7 @@ abstract class AbstractSymptomEntryViewModel(private val symptomRepository: Symp
         )
     }
 
-    fun updateTime(time: LocalTime) {
+    private fun updateTime(time: LocalTime) {
         uiState = uiState.copy(
             dateTimeInput = uiState.dateTimeInput.copy(
                 time = time
@@ -126,13 +154,13 @@ abstract class AbstractSymptomEntryViewModel(private val symptomRepository: Symp
         return uiState.searchState.selectedSymptom != null && uiState.selectedSeverity != null && _selectedSymptoms.none { it.symptom == uiState.searchState.selectedSymptom }
     }
 
-    private fun canCreateNewSymptomFromInput(symptomName: String = this.uiState.searchState.input): Boolean {
+    private fun canCreateNewSymptomFromInput(symptomName: String = this.uiState.searchState.input.value): Boolean {
         return symptomName.isNotBlank() && _allSymptoms.none {
             it.name.equals(symptomName, ignoreCase = true)
         }
     }
 
-    private fun getSearchResults(selectedSymptomName: String = uiState.searchState.input): List<Symptom> {
+    private fun getSearchResults(selectedSymptomName: String = uiState.searchState.input.value): List<Symptom> {
         return _allSymptoms.filter { symptom ->
             symptom.name.contains(selectedSymptomName, ignoreCase = true)
         }
@@ -172,12 +200,23 @@ data class SymptomEntryUiState(
 }
 
 data class SearchState(
-    val input: String = "",
+    val input: TextInput = TextInput(),
     val selectedSymptom: Symptom? = null,
     val results: List<Symptom> = listOf(),
     val canCreateNewSymptom: Boolean = false,
 ) {
-    fun isInputValid(): Boolean = input.isNotEmpty()
+    fun toSymptom(): Symptom = Symptom(name = input.value.toFoodItemName())
+}
 
-    fun toSymptom(): Symptom = Symptom(name = input.toFoodItemName())
+sealed interface SymptomEntryEvent {
+    data object AddSymptomWithSeverity : SymptomEntryEvent
+    data class RemoveSymptom(val symptomWithSeverity: SymptomWithSeverity) : SymptomEntryEvent
+    data class UpdateSelectedSearchSymptom(val symptom: Symptom) : SymptomEntryEvent
+    data class UpdateSearchInput(val input: String) : SymptomEntryEvent
+    data object ClearSearchAndSeverity : SymptomEntryEvent
+    data class UpdateSelectedSeverity(val severity: Severity) : SymptomEntryEvent
+    data object CreateNewSymptomFromInput : SymptomEntryEvent
+    data class UpdateDate(val date: LocalDate) : SymptomEntryEvent
+    data class UpdateTime(val time: LocalTime) : SymptomEntryEvent
+    data object Submit : SymptomEntryEvent
 }
