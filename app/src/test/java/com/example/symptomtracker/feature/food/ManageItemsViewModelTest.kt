@@ -58,13 +58,18 @@ class ManageItemsViewModelTest {
     fun cancelAction_setsUserActionStateToNull() = runTest {
         val foodItem = FoodItem(id = 1, name = "oats")
 
-        viewModel.startAction(foodItem, FoodItemAction.EDIT)
+        viewModel.handleEvent(
+            ManageFoodEvent.StartAction(
+                foodItem = foodItem,
+                action = FoodItemAction.EDIT
+            )
+        )
         assertEquals(
             ActionState.Edit(foodItem = foodItem, name = foodItem.name),
             viewModel.userActionState.value
         )
 
-        viewModel.cancelAction()
+        viewModel.handleEvent(ManageFoodEvent.CancelAction)
         assertNull(viewModel.userActionState.value)
     }
 
@@ -72,19 +77,24 @@ class ManageItemsViewModelTest {
     fun onEditNameChange_updatesNameInEditActionState() = runTest {
         val foodItem = FoodItem(id = 1, name = "oats")
 
-        viewModel.startAction(foodItem, FoodItemAction.EDIT)
+        viewModel.handleEvent(
+            ManageFoodEvent.StartAction(
+                foodItem = foodItem,
+                action = FoodItemAction.EDIT
+            )
+        )
         assertEquals(
             ActionState.Edit(foodItem = foodItem, name = foodItem.name),
             viewModel.userActionState.value
         )
 
-        viewModel.onEditNameChange("blueberries")
+        viewModel.handleEvent(ManageFoodEvent.UpdateName(name = "blueberries"))
         assertEquals(
             ActionState.Edit(foodItem = foodItem, name = "blueberries", canSubmit = true),
             viewModel.userActionState.value
         )
 
-        viewModel.onEditNameChange("")
+        viewModel.handleEvent(ManageFoodEvent.UpdateName(name = ""))
         assertEquals(
             ActionState.Edit(foodItem = foodItem, name = "", canSubmit = false),
             viewModel.userActionState.value
@@ -99,14 +109,19 @@ class ManageItemsViewModelTest {
         val foodItem = FoodItem(id = 1, name = "oats")
         foodLogRepository.sendFoodItems(listOf(foodItem))
 
-        viewModel.startAction(foodItem, FoodItemAction.EDIT)
-        viewModel.onEditNameChange("blueberries")
+        viewModel.handleEvent(
+            ManageFoodEvent.StartAction(
+                foodItem = foodItem,
+                action = FoodItemAction.EDIT
+            )
+        )
+        viewModel.handleEvent(ManageFoodEvent.UpdateName("blueberries"))
         assertEquals(
             ActionState.Edit(foodItem = foodItem, name = "blueberries", canSubmit = true),
             viewModel.userActionState.value
         )
 
-        viewModel.submitAction()
+        viewModel.handleEvent(ManageFoodEvent.SubmitAction)
         assertEquals(
             FoodItemsUiState.Data(listOf(FoodItem(id = 1, name = "blueberries"))),
             viewModel.foodItemsState.value
@@ -128,13 +143,18 @@ class ManageItemsViewModelTest {
         foodLogRepository.sendFoodItems(foodItems)
         foodLogRepository.sendFoodLogs(emptyList())
 
-        viewModel.startAction(foodItems[0], FoodItemAction.DELETE)
+        viewModel.handleEvent(
+            ManageFoodEvent.StartAction(
+                foodItem = foodItems[0],
+                action = FoodItemAction.DELETE
+            )
+        )
         assertEquals(
             ActionState.Delete.Direct(foodItem = foodItems[0]),
             viewModel.userActionState.value
         )
 
-        viewModel.submitAction()
+        viewModel.handleEvent(ManageFoodEvent.SubmitAction)
         assertEquals(
             FoodItemsUiState.Data(listOf(foodItems[1])),
             viewModel.foodItemsState.value
@@ -164,7 +184,12 @@ class ManageItemsViewModelTest {
             )
         )
 
-        viewModel.startAction(foodItems[0], FoodItemAction.DELETE)
+        viewModel.handleEvent(
+            ManageFoodEvent.StartAction(
+                foodItem = foodItems[0],
+                action = FoodItemAction.DELETE
+            )
+        )
         assertEquals(
             ActionState.Delete.Merge(
                 foodItem = foodItems[0],
@@ -175,7 +200,7 @@ class ManageItemsViewModelTest {
             viewModel.userActionState.value
         )
 
-        viewModel.onMergeCandidateChosen(foodItems[1])
+        viewModel.handleEvent(ManageFoodEvent.ChooseMergeCandidate(chosenItem = foodItems[1]))
         assertEquals(
             ActionState.Delete.Merge(
                 foodItem = foodItems[0],
@@ -186,7 +211,7 @@ class ManageItemsViewModelTest {
             viewModel.userActionState.value
         )
 
-        viewModel.submitAction()
+        viewModel.handleEvent(ManageFoodEvent.SubmitAction)
         assertEquals(
             FoodItemsUiState.Data(listOf(foodItems[1])),
             viewModel.foodItemsState.value

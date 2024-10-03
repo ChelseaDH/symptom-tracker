@@ -1,6 +1,7 @@
 package com.example.symptomtracker.feature.food
 
 import com.example.symptomtracker.core.designsystem.component.DateTimeInput
+import com.example.symptomtracker.core.designsystem.component.TextInput
 import com.example.symptomtracker.core.domain.model.FoodItem
 import com.example.symptomtracker.core.domain.repository.FoodLogRepository
 import com.example.symptomtracker.core.testing.repository.TestFoodRepository
@@ -39,7 +40,7 @@ class AbstractFoodEntryViewModelTest {
         assertEquals(listOf<FoodItem>(), viewModel.uiState.selectedFoodItems)
         assertEquals(
             SearchState(
-                input = "",
+                input = TextInput(value = "", validationError = null),
                 selectedItem = null,
                 results = foodItems,
                 canCreateNewItem = false,
@@ -57,18 +58,18 @@ class AbstractFoodEntryViewModelTest {
         foodLogRepository.sendFoodItems(foodItems)
         assertEquals(
             SearchState(
-                input = "",
+                input = TextInput(value = "", validationError = null),
                 selectedItem = null,
                 results = foodItems,
                 canCreateNewItem = false,
             ), viewModel.uiState.searchState
         )
 
-        viewModel.updateSearchInput("hi")
+        viewModel.handleEvent(FoodEntryEvent.UpdateSearchInput(input = "hi"))
 
         assertEquals(
             SearchState(
-                input = "hi",
+                input = TextInput(value = "hi", validationError = null),
                 selectedItem = null,
                 results = listOf(),
                 canCreateNewItem = true,
@@ -86,29 +87,29 @@ class AbstractFoodEntryViewModelTest {
         foodLogRepository.sendFoodItems(foodItems)
         assertEquals(
             SearchState(
-                input = "",
+                input = TextInput(value = "", validationError = null),
                 selectedItem = null,
                 results = foodItems,
                 canCreateNewItem = false,
             ), viewModel.uiState.searchState
         )
 
-        viewModel.updateSearchInput("oats")
+        viewModel.handleEvent(FoodEntryEvent.UpdateSearchInput(input = "oats"))
 
         assertEquals(
             SearchState(
-                input = "oats",
+                input = TextInput(value = "oats", validationError = null),
                 selectedItem = null,
                 results = listOf(FoodItem(id = 1, name = "oats")),
                 canCreateNewItem = false,
             ), viewModel.uiState.searchState
         )
 
-        viewModel.updateSearchInput("oats ")
+        viewModel.handleEvent(FoodEntryEvent.UpdateSearchInput(input = "oats "))
 
         assertEquals(
             SearchState(
-                input = "oats ",
+                input = TextInput(value = "oats ", validationError = null),
                 selectedItem = null,
                 results = listOf(FoodItem(id = 1, name = "oats")),
                 canCreateNewItem = false,
@@ -126,18 +127,18 @@ class AbstractFoodEntryViewModelTest {
         foodLogRepository.sendFoodItems(foodItems)
         assertEquals(
             SearchState(
-                input = "",
+                input = TextInput(value = "", validationError = null),
                 selectedItem = null,
                 results = foodItems,
                 canCreateNewItem = false,
             ), viewModel.uiState.searchState
         )
 
-        viewModel.updateSelectedSearchItem(foodItems[0])
+        viewModel.handleEvent(FoodEntryEvent.UpdateSelectedSearchItem(foodItem = foodItems[0]))
 
         assertEquals(
             SearchState(
-                input = "oats",
+                input = TextInput(value = "oats", validationError = null),
                 selectedItem = foodItems[0],
                 results = listOf(foodItems[0]),
                 canCreateNewItem = false,
@@ -155,12 +156,12 @@ class AbstractFoodEntryViewModelTest {
         // Setting up uiState to be valid for adding a food item
         foodLogRepository.sendFoodItems(foodItems)
 
-        viewModel.updateSelectedSearchItem(foodItems[0])
+        viewModel.handleEvent(FoodEntryEvent.UpdateSelectedSearchItem(foodItem = foodItems[0]))
 
         assertEquals(listOf<FoodItem>(), viewModel.uiState.selectedFoodItems)
 
         // Adding a food item
-        viewModel.addItem()
+        viewModel.handleEvent(FoodEntryEvent.AddItem)
 
         // Asserting that the food item is added and the search state is reset
         assertEquals(
@@ -169,7 +170,7 @@ class AbstractFoodEntryViewModelTest {
         )
         assertEquals(
             SearchState(
-                input = "",
+                input = TextInput(value = "", validationError = null),
                 selectedItem = null,
                 results = foodItems,
                 canCreateNewItem = false,
@@ -178,7 +179,7 @@ class AbstractFoodEntryViewModelTest {
         )
 
         // Removing the food item
-        viewModel.removeItem(foodItems[0])
+        viewModel.handleEvent(FoodEntryEvent.RemoveItem(foodItem = foodItems[0]))
 
         // Asserting that the selected symptoms is empty again
         assertEquals(listOf<FoodItem>(), viewModel.uiState.selectedFoodItems)
@@ -193,7 +194,7 @@ class AbstractFoodEntryViewModelTest {
         )
         val date = LocalDate.of(2020, 5, 22)
 
-        viewModel.updateDate(date)
+        viewModel.handleEvent(FoodEntryEvent.UpdateDate(date))
 
         assertEquals(date, viewModel.uiState.dateTimeInput.date)
     }
@@ -205,7 +206,7 @@ class AbstractFoodEntryViewModelTest {
         )
         val time = LocalTime.of(12, 2, 22)
 
-        viewModel.updateTime(time)
+        viewModel.handleEvent(FoodEntryEvent.UpdateTime(time))
 
         assertEquals(time, viewModel.uiState.dateTimeInput.time)
     }
@@ -213,7 +214,7 @@ class AbstractFoodEntryViewModelTest {
 
 class TestFoodEntryViewModel(foodLogRepository: FoodLogRepository) :
     AbstractFoodEntryViewModel(foodLogRepository = foodLogRepository) {
-    override suspend fun submit() {}
+    override fun submit() {}
 }
 
 val foodItems = listOf(

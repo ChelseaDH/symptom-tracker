@@ -35,6 +35,7 @@
     <string name="timeline_title">Timeline</string>
     <string name="datetime_format_ddd_dd_mmm">E, d MMM</string>
     <string name="datetime_format_hh_mm">HH:mm</string>
+    <string name="datetime_format_dd_MM_YYYY">dd/MM/YYYY</string>
     <string name="previous_day_cd">Go to previous day</string>
     <string name="next_day_cd">Go to next day</string>
     <string name="feature_logs_title">Logs</string>
@@ -45,13 +46,13 @@
     <string name="manage_food_items_title">Food items</string>
     <string name="manage_food_items_options_menu_cd">Open options menu for item %s</string>
     <string name="manage_food_items_save_cd">Save item %s</string>
-    <string name="manage_food_items_edit_cd">Edit item %s</string>
-    <string name="manage_food_items_delete_cd">Delete item %s</string>
-    <string name="manage_food_items_merge_cd">Merge item %s with another</string>
+    <string name="manage_food_items_edit">Edit %s</string>
+    <string name="manage_food_items_delete">Delete %s</string>
+    <string name="manage_food_items_merge">Merge %s</string>
     <string name="manage_food_items_cancel_edit_cd">Cancel edit for item %s</string>
     <string name="manage_food_items_direct_delete_dialog">This item will be permanently deleted.</string>
     <string name="manage_food_items_merge_delete_dialog">This item belongs to at least one food log and must be merged with another before it can be permanently deleted.</string>
-    <string name="manage_food_items_merge_delete_selection_label">Item to merge with:</string>
+    <string name="manage_food_items_merge_delete_selection_label">Item to merge with</string>
     <string name="no_items_found">No items found</string>
 
     <string name="action_add">Add</string>
@@ -64,6 +65,9 @@
     <string name="action_search">Search</string>
     <string name="action_clear_search">Clear search</string>
     <string name="action_add_manually">Add manually</string>
+    <string name="action_add_to_log">Add to log</string>
+
+    <string name="ok_label">OK</string>
 
     <string name="validation_required">Required</string>
     <string name="validation_invalid">Invalid</string>
@@ -83,4 +87,7 @@
     <string name="mealie_settings_check_credentials_success">Successfully authenticated as %1$s.</string>
     <string name="mealie_settings_check_credentials_failure">Credentials are invalid.</string>
     <string name="mealie_import_action_import_food_from_recipe">Import from Mealie recipe</string>
+
+    <string name="datetime_select_time">Select time</string>
+    <string name="datetime_time_picker_type_toggle">Time picker type toggle</string>
 </resources>

@@ -36,7 +36,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.symptomtracker.R
 import com.example.symptomtracker.core.designsystem.SymptomTrackerTheme
 import com.example.symptomtracker.core.designsystem.component.ErrorCard
-import com.example.symptomtracker.core.designsystem.component.LabelledOutlinedTextField
+import com.example.symptomtracker.core.designsystem.component.LabelledOutlinedTextInputField
 import com.example.symptomtracker.core.designsystem.component.TextInput
 import com.example.symptomtracker.core.domain.model.Ingredient
 import com.example.symptomtracker.ui.SymptomTrackerTopAppBar
@@ -133,7 +133,7 @@ internal fun Search(
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        LabelledOutlinedTextField(
+        LabelledOutlinedTextInputField(
             label = stringResource(R.string.mealie_import_url_label),
             input = url,
             onValueChange = onUrlUpdated,

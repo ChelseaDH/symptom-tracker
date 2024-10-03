@@ -25,9 +25,11 @@ class EditFoodViewModel @Inject constructor(
         }
     }
 
-    override suspend fun submit() {
+    override fun submit() {
         if (uiState.isValid()) {
-            foodLogRepository.updateFoodLog(uiState.toFoodLog(logId))
+            viewModelScope.launch {
+                foodLogRepository.updateFoodLog(uiState.toFoodLog(logId))
+            }
         }
     }
 }

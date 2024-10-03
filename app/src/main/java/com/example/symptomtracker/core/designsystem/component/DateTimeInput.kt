@@ -2,7 +2,6 @@ package com.example.symptomtracker.core.designsystem.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -13,17 +12,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TimeInput
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
@@ -34,12 +33,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.symptomtracker.R
 import com.example.symptomtracker.core.designsystem.SymptomTrackerTheme
@@ -49,6 +46,7 @@ import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 data class DateTimeInput(
     val date: LocalDate = LocalDate.now(),
@@ -64,14 +62,30 @@ data class DateTimeInput(
 }
 
 @Composable
-fun DateInput(
+fun DateInputField(
     date: LocalDate,
     onDateChanged: (LocalDate) -> Unit,
-    labelOnTextField: Boolean,
     modifier: Modifier = Modifier,
-    labelSpacing: Dp = 4.dp,
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
+
+    LabelledOutlinedTextField(
+        label = stringResource(R.string.date_label),
+        value = date.toDisplayString(),
+        onValueChange = {},
+        modifier = modifier,
+        readOnly = true,
+        trailingIcon = {
+            IconButton(onClick = { showDatePicker = true }) {
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = stringResource(R.string.edit_date_cd)
+                )
+            }
+        },
+        singleLine = true,
+    )
+
     if (showDatePicker) {
         DatePickerModal(
             date = date,
@@ -79,86 +93,38 @@ fun DateInput(
             onDateSelected = onDateChanged,
         )
     }
-
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(labelSpacing),
-    ) {
-        if (!labelOnTextField) {
-            Text(text = stringResource(R.string.date_label))
-        }
-        OutlinedTextField(
-            value = date.toDisplayString(),
-            onValueChange = {},
-            label = {
-                if (labelOnTextField) {
-                    Text(
-                        text = stringResource(R.string.date_label),
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                }
-            },
-            modifier = modifier,
-            singleLine = true,
-            readOnly = true,
-            trailingIcon = {
-                IconButton(onClick = { showDatePicker = true }) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = stringResource(R.string.edit_date_cd)
-                    )
-                }
-            },
-        )
-    }
 }
 
 @Composable
-fun TimeInput(
+fun TimeInputField(
     time: LocalTime,
     onTimeChanged: (LocalTime) -> Unit,
-    labelOnTextField: Boolean,
     modifier: Modifier = Modifier,
-    labelSpacing: Dp = 4.dp,
 ) {
     var showTimePicker by remember { mutableStateOf(false) }
+
+    LabelledOutlinedTextField(
+        label = stringResource(R.string.time_label),
+        value = time.toDisplayString(),
+        onValueChange = {},
+        modifier = modifier,
+        readOnly = true,
+        trailingIcon = {
+            IconButton(onClick = { showTimePicker = true }) {
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = stringResource(R.string.edit_time_cd)
+                )
+            }
+        },
+        singleLine = true,
+    )
+
     if (showTimePicker) {
         TimePickerModal(
             time = time,
             onDismissRequest = { showTimePicker = false },
             onTimeSelected = onTimeChanged,
-        )
-    }
-
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(labelSpacing),
-    ) {
-        if (!labelOnTextField) {
-            Text(text = stringResource(R.string.time_label))
-        }
-        OutlinedTextField(
-            value = time.toDisplayString(),
-            onValueChange = {},
-            label = {
-                if (labelOnTextField) {
-                    Text(
-                        text = stringResource(R.string.time_label),
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                }
-            },
-            modifier = modifier,
-            singleLine = true,
-            readOnly = true,
-            trailingIcon = {
-                IconButton(onClick = { showTimePicker = true }) {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = stringResource(R.string.edit_time_cd)
-                    )
-                }
-            },
         )
     }
 }
@@ -168,48 +134,50 @@ fun DateTimeInputRow(
     dateTimeInput: DateTimeInput,
     onDateChanged: (LocalDate) -> Unit,
     onTimeChanged: (LocalTime) -> Unit,
-    labelOnTextField: Boolean,
     modifier: Modifier = Modifier,
-    labelSpacing: Dp = 4.dp,
 ) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Box(modifier = Modifier.weight(2f)) {
-            DateInput(
-                date = dateTimeInput.date,
-                onDateChanged = onDateChanged,
-                labelOnTextField = labelOnTextField,
-                labelSpacing = labelSpacing,
-            )
-        }
-        Box(modifier = Modifier.weight(1f)) {
-            TimeInput(
-                time = dateTimeInput.time,
-                onTimeChanged = onTimeChanged,
-                labelOnTextField = labelOnTextField,
-                labelSpacing = labelSpacing,
-            )
-        }
+        DateInputField(
+            date = dateTimeInput.date,
+            onDateChanged = onDateChanged,
+            modifier = Modifier.weight(2f),
+        )
+        TimeInputField(
+            time = dateTimeInput.time,
+            onTimeChanged = onTimeChanged,
+            modifier = Modifier.weight(1f),
+        )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TimePickerDialog(
-    title: String = "Select Time",
+fun TimePickerModal(
+    time: LocalTime,
     onDismissRequest: () -> Unit,
-    confirmButton: @Composable (() -> Unit),
-    dismissButton: @Composable (() -> Unit)? = null,
-    containerColor: Color = MaterialTheme.colorScheme.surface,
-    content: @Composable () -> Unit,
+    onTimeSelected: (LocalTime) -> Unit,
 ) {
-    Dialog(
+    val timePickerState = rememberTimePickerState(
+        initialHour = time.hour,
+        initialMinute = time.minute,
+        is24Hour = true,
+    )
+
+    /** Determines whether the time picker is dial or input */
+    var showDial by remember { mutableStateOf(true) }
+    val toggleIconId = if (showDial) {
+        R.drawable.outline_keyboard_24
+    } else {
+        R.drawable.outline_access_time_24
+    }
+
+    androidx.compose.ui.window.Dialog(
         onDismissRequest = onDismissRequest,
-        properties = DialogProperties(
-            usePlatformDefaultWidth = false
-        ),
+        properties = DialogProperties(usePlatformDefaultWidth = false),
     ) {
         Surface(
             shape = MaterialTheme.shapes.extraLarge,
@@ -219,9 +187,8 @@ fun TimePickerDialog(
                 .height(IntrinsicSize.Min)
                 .background(
                     shape = MaterialTheme.shapes.extraLarge,
-                    color = containerColor,
+                    color = MaterialTheme.colorScheme.surface
                 ),
-            color = containerColor
         ) {
             Column(
                 modifier = Modifier.padding(24.dp),
@@ -231,18 +198,37 @@ fun TimePickerDialog(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 20.dp),
-                    text = title,
-                    style = MaterialTheme.typography.labelMedium
+                    text = stringResource(R.string.datetime_select_time),
+                    style = MaterialTheme.typography.labelLarge
                 )
-                content()
+
+                if (showDial) {
+                    TimePicker(state = timePickerState)
+                } else {
+                    TimeInput(state = timePickerState)
+                }
+
                 Row(
                     modifier = Modifier
                         .height(40.dp)
                         .fillMaxWidth()
                 ) {
+                    IconButton(onClick = { showDial = !showDial }) {
+                        Icon(
+                            painter = painterResource(id = toggleIconId),
+                            contentDescription = stringResource(R.string.datetime_time_picker_type_toggle),
+                        )
+                    }
                     Spacer(modifier = Modifier.weight(1f))
-                    dismissButton?.invoke()
-                    confirmButton()
+                    TextButton(onClick = onDismissRequest) {
+                        Text(text = stringResource(id = R.string.action_cancel))
+                    }
+                    TextButton(onClick = {
+                        onTimeSelected(LocalTime.of(timePickerState.hour, timePickerState.minute))
+                        onDismissRequest()
+                    }) {
+                        Text(text = stringResource(id = R.string.ok_label))
+                    }
                 }
             }
         }
@@ -267,84 +253,93 @@ fun DatePickerModal(
             },
         )
 
-    DatePickerDialog(onDismissRequest = onDismissRequest, confirmButton = {
-        Button(onClick = {
-            datePickerState.selectedDateMillis?.let {
-                onDateSelected(Instant.ofEpochMilli(it).atZone(ZoneOffset.UTC).toLocalDate())
+    DatePickerDialog(
+        onDismissRequest = onDismissRequest,
+        confirmButton = {
+            TextButton(onClick = {
+                datePickerState.selectedDateMillis?.let {
+                    onDateSelected(Instant.ofEpochMilli(it).atZone(ZoneOffset.UTC).toLocalDate())
+                }
+                onDismissRequest()
+            }) {
+                Text(text = stringResource(id = R.string.ok_label))
             }
-            onDismissRequest()
-        }) {
-            Text(text = "OK")
+        },
+        dismissButton = {
+            TextButton(onClick = onDismissRequest) {
+                Text(text = stringResource(id = R.string.action_cancel))
+            }
         }
-    }) {
+    ) {
         DatePicker(state = datePickerState)
     }
 }
 
-fun LocalDate.toDisplayString(): String {
-    return "%02d/%02d/%d".format(dayOfMonth, monthValue, year)
-}
-
-fun LocalTime.toDisplayString(): String {
-    return "%02d:%02d".format(hour, minute)
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TimePickerModal(
-    time: LocalTime,
-    onDismissRequest: () -> Unit,
-    onTimeSelected: (LocalTime) -> Unit,
-) {
-    val timePickerState = rememberTimePickerState(
-        initialHour = time.hour,
-        initialMinute = time.minute,
-        is24Hour = true,
-    )
+fun LocalDate.toDisplayString(): String {
+    return this.format(DateTimeFormatter.ofPattern(stringResource(id = R.string.datetime_format_dd_MM_YYYY)))
+}
 
-    TimePickerDialog(onDismissRequest = onDismissRequest, confirmButton = {
-        Button(onClick = {
-            onTimeSelected(LocalTime.of(timePickerState.hour, timePickerState.minute))
-            onDismissRequest()
-        }) {
-            Text(text = "OK")
-        }
-    }) {
-        TimePicker(state = timePickerState)
+@Composable
+fun LocalTime.toDisplayString(): String {
+    return this.format(DateTimeFormatter.ofPattern(stringResource(id = R.string.datetime_format_hh_mm)))
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DateInputPreview() {
+    SymptomTrackerTheme {
+        DateInputField(
+            date = LocalDate.now(),
+            onDateChanged = {},
+        )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun Preview() {
+fun TimeInputPreview() {
     SymptomTrackerTheme {
-        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            DateInput(
-                date = LocalDate.now(),
-                onDateChanged = {},
-                labelOnTextField = true,
-            )
-            DateInput(
-                date = LocalDate.now(),
-                onDateChanged = {},
-                labelOnTextField = false,
-            )
-            TimeInput(
-                time = LocalTime.now(),
-                onTimeChanged = {},
-                labelOnTextField = true,
-            )
-            TimeInput(
-                time = LocalTime.now(),
-                onTimeChanged = {},
-                labelOnTextField = false,
-            )
-            DateTimeInputRow(
-                dateTimeInput = DateTimeInput(LocalDate.now(), LocalTime.now()),
-                onDateChanged = {},
-                onTimeChanged = {},
-                labelOnTextField = false
-            )
-        }
+        TimeInputField(
+            time = LocalTime.now(),
+            onTimeChanged = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DateTimeInputRowPreview() {
+    SymptomTrackerTheme {
+        DateTimeInputRow(
+            dateTimeInput = DateTimeInput(),
+            onDateChanged = {},
+            onTimeChanged = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TimePickerDialogPreview() {
+    SymptomTrackerTheme {
+        TimePickerModal(
+            time = LocalTime.now(),
+            onDismissRequest = {},
+            onTimeSelected = { },
+        )
+    }
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun DatePickerModalPreview() {
+    SymptomTrackerTheme {
+        DatePickerModal(
+            date = LocalDate.now(),
+            onDismissRequest = {},
+            onDateSelected = { },
+        )
     }
 }

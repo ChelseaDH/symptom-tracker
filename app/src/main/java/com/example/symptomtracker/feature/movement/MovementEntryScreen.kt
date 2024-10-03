@@ -110,10 +110,9 @@ fun LogMovementForm(
             dateTimeInput = dateTimeInput,
             onDateChanged = onDateChanged,
             onTimeChanged = onTimeChanged,
-            labelOnTextField = true,
         )
         OutlinedReadonlyTextFieldWithDropdown(
-            availableOptions = StoolType.values().asList(),
+            availableOptions = StoolType.entries,
             getOptionDisplayName = { "(%d) %s".format(it.type, it.getDisplayName()) },
             chosenOption = stoolType,
             onChosenOptionUpdated = onChosenStoolTypeUpdated,
@@ -133,7 +132,7 @@ fun MovementKey(modifier: Modifier = Modifier) {
             style = MaterialTheme.typography.titleMedium
         )
         LazyColumn(modifier = modifier) {
-            items(items = StoolType.values()) { stoolType ->
+            items(items = StoolType.entries.toTypedArray()) { stoolType ->
                 ListItem(
                     headlineContent = { Text(text = stoolType.getDisplayName()) },
                     supportingContent = { Text(text = stoolType.getDescription()) },

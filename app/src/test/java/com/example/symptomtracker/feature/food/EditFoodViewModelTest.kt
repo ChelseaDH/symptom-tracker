@@ -2,6 +2,7 @@ package com.example.symptomtracker.feature.food
 
 import androidx.lifecycle.SavedStateHandle
 import com.example.symptomtracker.core.designsystem.component.DateTimeInput
+import com.example.symptomtracker.core.designsystem.component.TextInput
 import com.example.symptomtracker.core.domain.model.FoodItem
 import com.example.symptomtracker.core.domain.model.FoodLog
 import com.example.symptomtracker.core.testing.repository.TestFoodRepository
@@ -77,7 +78,7 @@ class EditFoodViewModelTest {
                     time = LocalTime.of(9, 10)
                 ),
                 searchState = SearchState(
-                    input = "",
+                    input = TextInput(value = "", validationError = null),
                     selectedItem = null,
                     results = foodItems,
                     canCreateNewItem = false,

@@ -25,8 +25,8 @@ fun ViewFoodRoute(
     ViewFoodScreen(
         navigateBack = navigateBack,
         state = uiState,
-        onDelete = viewModel::deleteLog,
         onEdit = navigateToEdit,
+        eventSink = viewModel::handleEvent,
     )
 }
 
@@ -34,13 +34,13 @@ fun ViewFoodRoute(
 fun ViewFoodScreen(
     navigateBack: () -> Unit,
     state: ViewFoodUiState = ViewLogUiState.Loading,
-    onDelete: (FoodLog) -> Unit,
     onEdit: () -> Unit,
+    eventSink: (ViewFoodEvent) -> Unit,
 ) {
     ViewLogScreen(navigateBack = navigateBack,
         uiState = state,
         title = R.string.add_food_text,
-        deleteLog = onDelete,
+        deleteLog = { eventSink(ViewFoodEvent.DeleteLog(it)) },
         onEdit = onEdit,
         bodyContent = {
             it.items.forEach { item ->
@@ -59,7 +59,7 @@ fun ViewFoodContentPreview(
     ViewFoodScreen(
         navigateBack = {},
         state = ViewLogUiState.Data(foodLog),
-        onDelete = {},
         onEdit = {},
+        eventSink = {},
     )
 }

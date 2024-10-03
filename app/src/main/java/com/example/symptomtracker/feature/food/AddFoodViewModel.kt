@@ -23,9 +23,11 @@ class AddFoodViewModel @Inject constructor(
         }
     }
 
-    override suspend fun submit() {
+    override fun submit() {
         if (uiState.isValid()) {
-            foodLogRepository.insertFoodLog(uiState.toFoodLog())
+            viewModelScope.launch {
+                foodLogRepository.insertFoodLog(uiState.toFoodLog())
+            }
         }
     }
 }

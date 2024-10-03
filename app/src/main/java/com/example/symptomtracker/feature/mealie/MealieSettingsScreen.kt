@@ -29,7 +29,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.symptomtracker.R
 import com.example.symptomtracker.core.designsystem.SymptomTrackerTheme
 import com.example.symptomtracker.core.designsystem.component.ErrorCard
-import com.example.symptomtracker.core.designsystem.component.LabelledOutlinedTextField
+import com.example.symptomtracker.core.designsystem.component.LabelledOutlinedTextInputField
 import com.example.symptomtracker.core.designsystem.component.SuccessCard
 import com.example.symptomtracker.core.designsystem.component.TextInput
 import com.example.symptomtracker.core.domain.usecase.MealieCredentialsValidation
@@ -130,7 +130,7 @@ internal fun SuccessContent(
 
         if (isEnabled) {
             HorizontalDivider()
-            LabelledOutlinedTextField(
+            LabelledOutlinedTextInputField(
                 label = stringResource(id = R.string.mealie_settings_base_url_label),
                 input = baseUrl,
                 onValueChange = onBaseUrlUpdated,
@@ -139,7 +139,7 @@ internal fun SuccessContent(
                     keyboardType = KeyboardType.Uri,
                 )
             )
-            LabelledOutlinedTextField(
+            LabelledOutlinedTextInputField(
                 label = stringResource(id = R.string.mealie_settings_api_token_label),
                 input = apiToken,
                 onValueChange = onApiTokenUpdated,

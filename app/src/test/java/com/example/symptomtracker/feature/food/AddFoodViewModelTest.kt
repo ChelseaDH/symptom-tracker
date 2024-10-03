@@ -1,6 +1,7 @@
 package com.example.symptomtracker.feature.food
 
 import androidx.lifecycle.SavedStateHandle
+import com.example.symptomtracker.core.designsystem.component.TextInput
 import com.example.symptomtracker.core.domain.model.FoodItem
 import com.example.symptomtracker.core.testing.repository.TestFoodRepository
 import com.example.symptomtracker.feature.food.navigation.PREFILL_ITEMS
@@ -38,7 +39,7 @@ class AddFoodViewModelTest {
         assertEquals(listOf<FoodItem>(), viewModel.uiState.selectedFoodItems)
         assertEquals(
             SearchState(
-                input = "",
+                input = TextInput(value = "", validationError = null),
                 selectedItem = null,
                 results = foodItems,
                 canCreateNewItem = false,
@@ -70,7 +71,7 @@ class AddFoodViewModelTest {
             )
             assertEquals(
                 SearchState(
-                    input = "",
+                    input = TextInput(value = "", validationError = null),
                     selectedItem = null,
                     results = foodItems,
                     canCreateNewItem = false,

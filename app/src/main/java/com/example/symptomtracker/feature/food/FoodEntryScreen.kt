@@ -1,3 +1,5 @@
+package com.example.symptomtracker.feature.food
+
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,8 +10,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -18,7 +18,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,16 +27,11 @@ import com.example.symptomtracker.R
 import com.example.symptomtracker.core.designsystem.SymptomTrackerTheme
 import com.example.symptomtracker.core.designsystem.component.DateTimeInput
 import com.example.symptomtracker.core.designsystem.component.DateTimeInputRow
-import com.example.symptomtracker.core.designsystem.component.OutlinedInputTextFieldWithDropdown
+import com.example.symptomtracker.core.designsystem.component.FilledTonalButtonWithIcon
+import com.example.symptomtracker.core.designsystem.component.LabelledOutlinedTextInputFieldWithDropdown
 import com.example.symptomtracker.core.domain.model.FoodItem
 import com.example.symptomtracker.core.ui.ItemPreviewParameterProvider
-import com.example.symptomtracker.feature.food.AbstractFoodEntryViewModel
-import com.example.symptomtracker.feature.food.FoodEntryUiState
-import com.example.symptomtracker.feature.food.SearchState
 import com.example.symptomtracker.ui.SymptomTrackerTopAppBar
-import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.LocalTime
 
 @Composable
 internal fun FoodEntryScreen(
@@ -46,7 +40,6 @@ internal fun FoodEntryScreen(
     modifier: Modifier = Modifier,
     viewModel: AbstractFoodEntryViewModel,
 ) {
-    val coroutineScope = rememberCoroutineScope()
     Scaffold(
         topBar = {
             SymptomTrackerTopAppBar(title = stringResource(titleId),
@@ -54,10 +47,8 @@ internal fun FoodEntryScreen(
                 navigateUp = navigateBack,
                 actions = {
                     TextButton(onClick = {
-                        coroutineScope.launch {
-                            viewModel.submit()
-                            navigateBack()
-                        }
+                        viewModel.submit()
+                        navigateBack()
                     }) {
                         Text(text = stringResource(R.string.action_save))
                     }
@@ -66,18 +57,7 @@ internal fun FoodEntryScreen(
     ) { innerPadding ->
         FoodEntryBody(
             uiState = viewModel.uiState,
-            onChosenItemUpdated = viewModel::updateSelectedSearchItem,
-            onNameUpdated = viewModel::updateSearchInput,
-            onDateChanged = viewModel::updateDate,
-            onTimeChanged = viewModel::updateTime,
-            onAddItem = viewModel::addItem,
-            onCreateItem = {
-                coroutineScope.launch {
-                    viewModel.createNewItemFromInput()
-                }
-            },
-            onDeleteItem = viewModel::removeItem,
-            onClearChosenItem = viewModel::clearSearch,
+            eventSink = viewModel::handleEvent,
             modifier = Modifier.padding(innerPadding)
         )
     }
@@ -86,14 +66,7 @@ internal fun FoodEntryScreen(
 @Composable
 fun FoodEntryBody(
     uiState: FoodEntryUiState,
-    onChosenItemUpdated: (FoodItem) -> Unit,
-    onNameUpdated: (String) -> Unit,
-    onDateChanged: (LocalDate) -> Unit,
-    onTimeChanged: (LocalTime) -> Unit,
-    onAddItem: () -> Unit,
-    onCreateItem: () -> Unit,
-    onDeleteItem: (FoodItem) -> Unit,
-    onClearChosenItem: () -> Unit,
+    eventSink: (FoodEntryEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -105,23 +78,18 @@ fun FoodEntryBody(
         FoodLogItemInput(
             searchState = uiState.searchState,
             dateTimeInput = uiState.dateTimeInput,
-            onChosenItemUpdated = onChosenItemUpdated,
-            onNameUpdated = onNameUpdated,
-            onDateChanged = onDateChanged,
-            onTimeChanged = onTimeChanged,
-            onAddItem = onAddItem,
-            onCreateItem = onCreateItem,
-            onClearChosenItem = onClearChosenItem,
+            eventSink = eventSink,
         )
         HorizontalDivider()
         FoodLogItemList(
-            foodItemEntityList = uiState.selectedFoodItems, onDeleteItem = onDeleteItem
+            foodItemEntityList = uiState.selectedFoodItems,
+            onDeleteItem = { eventSink(FoodEntryEvent.RemoveItem(it)) }
         )
     }
 }
 
 @Composable
-fun FoodLogItemList(
+internal fun FoodLogItemList(
     foodItemEntityList: List<FoodItem>,
     onDeleteItem: (FoodItem) -> Unit,
     modifier: Modifier = Modifier,
@@ -143,16 +111,10 @@ fun FoodLogItemList(
 }
 
 @Composable
-fun FoodLogItemInput(
+internal fun FoodLogItemInput(
     searchState: SearchState,
     dateTimeInput: DateTimeInput,
-    onChosenItemUpdated: (FoodItem) -> Unit,
-    onDateChanged: (LocalDate) -> Unit,
-    onTimeChanged: (LocalTime) -> Unit,
-    onNameUpdated: (String) -> Unit,
-    onClearChosenItem: () -> Unit,
-    onAddItem: () -> Unit,
-    onCreateItem: () -> Unit,
+    eventSink: (FoodEntryEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -161,34 +123,34 @@ fun FoodLogItemInput(
     ) {
         DateTimeInputRow(
             dateTimeInput = dateTimeInput,
-            onDateChanged = onDateChanged,
-            onTimeChanged = onTimeChanged,
-            labelOnTextField = true
+            onDateChanged = { eventSink(FoodEntryEvent.UpdateDate(it)) },
+            onTimeChanged = { eventSink(FoodEntryEvent.UpdateTime(it)) },
         )
-        OutlinedInputTextFieldWithDropdown(
+
+        LabelledOutlinedTextInputFieldWithDropdown(
+            label = stringResource(id = R.string.add_food_text),
+            value = searchState.input,
             availableOptions = searchState.results,
-            getOptionDisplayName = { it.name },
-            textValue = searchState.input,
-            onTextValueUpdated = onNameUpdated,
             canCreateOption = searchState.canCreateNewItem,
-            onCreateOption = onCreateItem,
-            onClearInput = onClearChosenItem,
-            onChosenOptionUpdated = onChosenItemUpdated,
-            textLabelId = R.string.add_food_text,
+            onValueChange = { eventSink(FoodEntryEvent.UpdateSearchInput(it)) },
+            getOptionDisplayName = { it.name },
+            onCreateOption = { eventSink(FoodEntryEvent.CreateNewItemFromInput) },
+            onClearInput = { eventSink(FoodEntryEvent.ClearSearch) },
+            onChosenOptionUpdated = { eventSink(FoodEntryEvent.UpdateSelectedSearchItem(it)) },
             modifier = Modifier.fillMaxWidth()
         )
-        FilledTonalButton(
-            onClick = { onAddItem() },
-            contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+
+        FilledTonalButtonWithIcon(
+            textId = R.string.action_add_to_log,
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = stringResource(id = R.string.add_food_cd),
+                )
+            },
+            onClick = { eventSink(FoodEntryEvent.AddItem) },
             modifier = Modifier.fillMaxWidth()
-        ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = stringResource(id = R.string.add_food_cd),
-                modifier = Modifier.padding(end = 8.dp)
-            )
-            Text(text = "Add to log")
-        }
+        )
     }
 }
 
@@ -200,14 +162,7 @@ fun AddFoodScreenPreview(@PreviewParameter(ItemPreviewParameterProvider::class) 
             uiState = FoodEntryUiState().copy(
                 searchState = SearchState(results = foodItems)
             ),
-            onChosenItemUpdated = {},
-            onNameUpdated = {},
-            onAddItem = {},
-            onDateChanged = {},
-            onTimeChanged = {},
-            onCreateItem = {},
-            onDeleteItem = {},
-            onClearChosenItem = {},
+            eventSink = {},
         )
     }
 }

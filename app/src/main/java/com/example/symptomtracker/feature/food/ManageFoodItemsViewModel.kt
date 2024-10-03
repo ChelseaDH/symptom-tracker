@@ -2,8 +2,8 @@ package com.example.symptomtracker.feature.food
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.symptomtracker.core.domain.repository.FoodLogRepository
 import com.example.symptomtracker.core.domain.model.FoodItem
+import com.example.symptomtracker.core.domain.repository.FoodLogRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -17,19 +17,30 @@ import javax.inject.Inject
 class ManageItemsViewModel @Inject constructor(private val foodLogRepository: FoodLogRepository) :
     ViewModel() {
     val foodItemsState: StateFlow<FoodItemsUiState> =
-        foodLogRepository.getAllItems().map { items -> FoodItemsUiState.Data(items) }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5_000),
-                initialValue = FoodItemsUiState.Loading
-            )
+        foodLogRepository.getAllItems().map { items -> FoodItemsUiState.Data(items) }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = FoodItemsUiState.Loading
+        )
 
     val userActionState = MutableStateFlow<ActionState?>(null)
 
-    fun startAction(foodItem: FoodItem, action: FoodItemAction) {
+    fun handleEvent(event: ManageFoodEvent) {
+        when (event) {
+            is ManageFoodEvent.StartAction -> startAction(
+                foodItem = event.foodItem, action = event.action
+            )
+
+            ManageFoodEvent.CancelAction -> cancelAction()
+            is ManageFoodEvent.ChooseMergeCandidate -> updateChosenMergeCandidate(chosenItem = event.chosenItem)
+            is ManageFoodEvent.UpdateName -> updateName(newName = event.name)
+            ManageFoodEvent.SubmitAction -> submitAction()
+        }
+    }
+
+    private fun startAction(foodItem: FoodItem, action: FoodItemAction) {
         when (action) {
-            FoodItemAction.EDIT -> userActionState.value =
-                ActionState.Edit(foodItem = foodItem)
+            FoodItemAction.EDIT -> userActionState.value = ActionState.Edit(foodItem = foodItem)
 
             FoodItemAction.DELETE -> {
                 viewModelScope.launch {
@@ -37,37 +48,31 @@ class ManageItemsViewModel @Inject constructor(private val foodLogRepository: Fo
                         if (foodLogRepository.getCountOfLogsItemBelongsTo(foodItem) == 0) {
                             ActionState.Delete.Direct(foodItem = foodItem)
                         } else {
-                            ActionState.Delete.Merge(
-                                foodItem = foodItem,
-                                mergeCandidates = (foodItemsState.value as FoodItemsUiState.Data).items.filter { it != foodItem }
-                            )
+                            ActionState.Delete.Merge(foodItem = foodItem,
+                                mergeCandidates = (foodItemsState.value as FoodItemsUiState.Data).items.filter { it != foodItem })
                         }
                 }
             }
         }
     }
 
-    fun cancelAction() {
+    private fun cancelAction() {
         userActionState.value = null
     }
 
-    fun onEditNameChange(newName: String) {
-        userActionState.value =
-            (userActionState.value as? ActionState.Edit)?.copy(
-                name = newName,
-                canSubmit = newName.isNotBlank()
-            )
+    private fun updateName(newName: String) {
+        userActionState.value = (userActionState.value as? ActionState.Edit)?.copy(
+            name = newName, canSubmit = newName.isNotBlank()
+        )
     }
 
-    fun onMergeCandidateChosen(chosenItem: FoodItem) {
-        userActionState.value =
-            (userActionState.value as? ActionState.Delete.Merge)?.copy(
-                chosenItem = chosenItem,
-                canSubmit = true
-            )
+    private fun updateChosenMergeCandidate(chosenItem: FoodItem) {
+        userActionState.value = (userActionState.value as? ActionState.Delete.Merge)?.copy(
+            chosenItem = chosenItem, canSubmit = true
+        )
     }
 
-    fun submitAction() {
+    private fun submitAction() {
         viewModelScope.launch {
             when (val actionState = userActionState.value) {
                 is ActionState.Edit -> {
@@ -82,8 +87,7 @@ class ManageItemsViewModel @Inject constructor(private val foodLogRepository: Fo
                     if (actionState.chosenItem == null) return@launch
 
                     foodLogRepository.mergeFoodItems(
-                        foodItem = actionState.chosenItem,
-                        foodItemToMerge = actionState.foodItem
+                        foodItem = actionState.chosenItem, foodItemToMerge = actionState.foodItem
                     )
                 }
 
@@ -118,6 +122,13 @@ sealed class ActionState {
 }
 
 enum class FoodItemAction {
-    EDIT,
-    DELETE,
+    EDIT, DELETE,
+}
+
+sealed interface ManageFoodEvent {
+    data class StartAction(val foodItem: FoodItem, val action: FoodItemAction) : ManageFoodEvent
+    data object CancelAction : ManageFoodEvent
+    data class UpdateName(val name: String) : ManageFoodEvent
+    data class ChooseMergeCandidate(val chosenItem: FoodItem) : ManageFoodEvent
+    data object SubmitAction : ManageFoodEvent
 }

@@ -179,7 +179,6 @@ fun LogSymptomForm(
             dateTimeInput = dateTimeInput,
             onDateChanged = onDateChanged,
             onTimeChanged = onTimeChanged,
-            labelOnTextField = true,
         )
         FormNameInput(
             searchState = searchState,

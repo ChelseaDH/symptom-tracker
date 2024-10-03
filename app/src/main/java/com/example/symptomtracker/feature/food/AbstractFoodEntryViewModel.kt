@@ -7,6 +7,8 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.symptomtracker.core.designsystem.component.DateTimeInput
+import com.example.symptomtracker.core.designsystem.component.TextInput
+import com.example.symptomtracker.core.designsystem.component.TextValidationError
 import com.example.symptomtracker.core.domain.model.FoodItem
 import com.example.symptomtracker.core.domain.model.FoodLog
 import com.example.symptomtracker.core.domain.repository.FoodLogRepository
@@ -22,7 +24,7 @@ abstract class AbstractFoodEntryViewModel(private val foodLogRepository: FoodLog
     private var _selectedFoodItems = listOf<FoodItem>().toMutableStateList()
     private var _allFoodItems = listOf<FoodItem>()
 
-    abstract suspend fun submit()
+    abstract fun submit()
 
     init {
         viewModelScope.launch {
@@ -37,7 +39,21 @@ abstract class AbstractFoodEntryViewModel(private val foodLogRepository: FoodLog
         }
     }
 
-    fun addItem() {
+    fun handleEvent(event: FoodEntryEvent) {
+        when (event) {
+            is FoodEntryEvent.AddItem -> addItem()
+            is FoodEntryEvent.RemoveItem -> removeItem(foodItem = event.foodItem)
+            is FoodEntryEvent.UpdateSelectedSearchItem -> updateSelectedSearchItem(foodItem = event.foodItem)
+            is FoodEntryEvent.UpdateSearchInput -> updateSearchInput(input = event.input)
+            is FoodEntryEvent.ClearSearch -> clearSearch()
+            is FoodEntryEvent.CreateNewItemFromInput -> createNewItemFromInput()
+            is FoodEntryEvent.UpdateDate -> updateDate(date = event.date)
+            is FoodEntryEvent.UpdateTime -> updateTime(time = event.time)
+            is FoodEntryEvent.Submit -> submit()
+        }
+    }
+
+    private fun addItem() {
         if (canAddSelectedItemToLog()) {
             _selectedFoodItems.add(uiState.searchState.selectedItem!!)
 
@@ -48,7 +64,7 @@ abstract class AbstractFoodEntryViewModel(private val foodLogRepository: FoodLog
         }
     }
 
-    fun removeItem(foodItem: FoodItem) {
+    private fun removeItem(foodItem: FoodItem) {
         _selectedFoodItems.remove(foodItem)
 
         uiState = uiState.copy(
@@ -56,10 +72,10 @@ abstract class AbstractFoodEntryViewModel(private val foodLogRepository: FoodLog
         )
     }
 
-    fun updateSelectedSearchItem(foodItem: FoodItem) {
+    private fun updateSelectedSearchItem(foodItem: FoodItem) {
         uiState = uiState.copy(
             searchState = SearchState(
-                input = foodItem.name,
+                input = TextInput(value = foodItem.name),
                 selectedItem = foodItem,
                 results = getSearchResults(foodItem.name),
                 canCreateNewItem = false,
@@ -67,10 +83,10 @@ abstract class AbstractFoodEntryViewModel(private val foodLogRepository: FoodLog
         )
     }
 
-    fun updateSearchInput(input: String) {
+    private fun updateSearchInput(input: String) {
         uiState = uiState.copy(
             searchState = SearchState(
-                input = input,
+                input = TextInput(value = input),
                 selectedItem = null,
                 results = getSearchResults(input),
                 canCreateNewItem = canCreateNewItemFromInput(input),
@@ -78,10 +94,10 @@ abstract class AbstractFoodEntryViewModel(private val foodLogRepository: FoodLog
         )
     }
 
-    fun clearSearch() {
+    private fun clearSearch() {
         uiState = uiState.copy(
             searchState = SearchState(
-                input = "",
+                input = TextInput(),
                 selectedItem = null,
                 results = getSearchResults(""),
                 canCreateNewItem = false,
@@ -89,16 +105,28 @@ abstract class AbstractFoodEntryViewModel(private val foodLogRepository: FoodLog
         )
     }
 
-    suspend fun createNewItemFromInput() {
-        if (uiState.searchState.isInputValid()) {
-            val item = uiState.searchState.toItem()
-            val id = foodLogRepository.insertItem(item)
+    private fun createNewItemFromInput() {
+        val validationError =
+            uiState.searchState.input.findValidationError(errors = listOf(TextValidationError.BLANK))
+        if (validationError == null) {
+            viewModelScope.launch {
+                val item = uiState.searchState.toItem()
+                val id = foodLogRepository.insertItem(item)
 
-            updateSelectedSearchItem(item.copy(id = id))
+                updateSelectedSearchItem(item.copy(id = id))
+            }
+        } else {
+            uiState = uiState.copy(
+                searchState = uiState.searchState.copy(
+                    input = uiState.searchState.input.copy(
+                        validationError = validationError
+                    )
+                )
+            )
         }
     }
 
-    fun updateDate(date: LocalDate) {
+    private fun updateDate(date: LocalDate) {
         uiState = uiState.copy(
             dateTimeInput = uiState.dateTimeInput.copy(
                 date = date
@@ -106,7 +134,7 @@ abstract class AbstractFoodEntryViewModel(private val foodLogRepository: FoodLog
         )
     }
 
-    fun updateTime(time: LocalTime) {
+    private fun updateTime(time: LocalTime) {
         uiState = uiState.copy(
             dateTimeInput = uiState.dateTimeInput.copy(
                 time = time
@@ -116,9 +144,7 @@ abstract class AbstractFoodEntryViewModel(private val foodLogRepository: FoodLog
 
     private fun canCreateNewItemFromInput(itemName: String): Boolean {
         return itemName.isNotBlank() && _allFoodItems.none {
-            it.name.equals(
-                itemName.trim(), ignoreCase = true
-            )
+            it.name.equals(itemName.trim(), ignoreCase = true)
         }
     }
 
@@ -128,7 +154,7 @@ abstract class AbstractFoodEntryViewModel(private val foodLogRepository: FoodLog
         )
     }
 
-    private fun getSearchResults(itemName: String = uiState.searchState.input): List<FoodItem> {
+    private fun getSearchResults(itemName: String = uiState.searchState.input.value): List<FoodItem> {
         return _allFoodItems.filter { item ->
             item.name.contains(itemName.trim(), ignoreCase = true)
         }
@@ -176,12 +202,22 @@ data class FoodEntryUiState(
 }
 
 data class SearchState(
-    val input: String = "",
+    val input: TextInput = TextInput(),
     val selectedItem: FoodItem? = null,
     val results: List<FoodItem> = listOf(),
     val canCreateNewItem: Boolean = false,
 ) {
-    fun isInputValid(): Boolean = input.isNotEmpty()
+    fun toItem(): FoodItem = FoodItem(name = input.value.toFoodItemName())
+}
 
-    fun toItem(): FoodItem = FoodItem(name = input.toFoodItemName())
+sealed interface FoodEntryEvent {
+    data object AddItem : FoodEntryEvent
+    data class RemoveItem(val foodItem: FoodItem) : FoodEntryEvent
+    data class UpdateSelectedSearchItem(val foodItem: FoodItem) : FoodEntryEvent
+    data class UpdateSearchInput(val input: String) : FoodEntryEvent
+    data object ClearSearch : FoodEntryEvent
+    data object CreateNewItemFromInput : FoodEntryEvent
+    data class UpdateDate(val date: LocalDate) : FoodEntryEvent
+    data class UpdateTime(val time: LocalTime) : FoodEntryEvent
+    data object Submit : FoodEntryEvent
 }

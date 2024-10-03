@@ -13,7 +13,7 @@ fun Dialog(
     title: String,
     @StringRes confirmButtonText: Int,
     confirmButtonEnabled: Boolean = true,
-    icon: @Composable (() -> Unit),
+    icon: @Composable (() -> Unit)? = null,
     onSubmit: () -> Unit,
     onClose: () -> Unit,
     content: @Composable (() -> Unit),
