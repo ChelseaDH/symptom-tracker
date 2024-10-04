@@ -14,6 +14,7 @@ import com.example.symptomtracker.core.domain.model.Symptom
 import com.example.symptomtracker.core.domain.model.SymptomLog
 import com.example.symptomtracker.core.domain.model.SymptomWithSeverity
 import com.example.symptomtracker.core.domain.repository.SymptomRepository
+import com.example.symptomtracker.core.util.getPrioritisedSearchResults
 import com.example.symptomtracker.core.util.toFoodItemName
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -160,11 +161,12 @@ abstract class AbstractSymptomEntryViewModel(private val symptomRepository: Symp
         }
     }
 
-    private fun getSearchResults(selectedSymptomName: String = uiState.searchState.input.value): List<Symptom> {
-        return _allSymptoms.filter { symptom ->
-            symptom.name.contains(selectedSymptomName, ignoreCase = true)
-        }
-    }
+    private fun getSearchResults(selectedSymptomName: String = uiState.searchState.input.value): List<Symptom> =
+        getPrioritisedSearchResults(
+            searchTerm = selectedSymptomName,
+            items = _allSymptoms,
+            getItemComparisonString = { it.name },
+        )
 
     protected fun setUiStateWithLog(symptomLog: SymptomLog) {
         uiState = SymptomEntryUiState(log = symptomLog).copy(

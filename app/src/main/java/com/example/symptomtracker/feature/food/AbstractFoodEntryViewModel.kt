@@ -12,6 +12,7 @@ import com.example.symptomtracker.core.designsystem.component.TextValidationErro
 import com.example.symptomtracker.core.domain.model.FoodItem
 import com.example.symptomtracker.core.domain.model.FoodLog
 import com.example.symptomtracker.core.domain.repository.FoodLogRepository
+import com.example.symptomtracker.core.util.getPrioritisedSearchResults
 import com.example.symptomtracker.core.util.toFoodItemName
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -154,11 +155,12 @@ abstract class AbstractFoodEntryViewModel(private val foodLogRepository: FoodLog
         )
     }
 
-    private fun getSearchResults(itemName: String = uiState.searchState.input.value): List<FoodItem> {
-        return _allFoodItems.filter { item ->
-            item.name.contains(itemName.trim(), ignoreCase = true)
-        }
-    }
+    private fun getSearchResults(itemName: String = uiState.searchState.input.value): List<FoodItem> =
+        getPrioritisedSearchResults(
+            searchTerm = itemName,
+            items = _allFoodItems,
+            getItemComparisonString = { it.name },
+        )
 
     protected fun setUiStateWithLog(foodLog: FoodLog) {
         uiState = FoodEntryUiState(foodLog = foodLog).copy(
