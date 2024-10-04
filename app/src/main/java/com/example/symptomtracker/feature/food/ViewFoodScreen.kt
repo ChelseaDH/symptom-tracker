@@ -3,6 +3,7 @@ package com.example.symptomtracker.feature.food
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,30 +19,47 @@ import com.example.symptomtracker.core.ui.ViewLogUiState
 fun ViewFoodRoute(
     navigateBack: () -> Unit,
     navigateToEdit: () -> Unit,
+    navigateToCopy: (FoodLog) -> Unit,
     viewModel: ViewFoodViewModel = hiltViewModel(),
 ) {
     val uiState: ViewFoodUiState by viewModel.uiState.collectAsState()
+    val navEvent by viewModel.navigationEvent.collectAsState()
 
     ViewFoodScreen(
         navigateBack = navigateBack,
         state = uiState,
-        onEdit = navigateToEdit,
         eventSink = viewModel::handleEvent,
     )
+
+    LaunchedEffect(navEvent) {
+        when (val event = navEvent) {
+            is NavigationEvent.NavigateToEdit -> {
+                navigateToEdit()
+                viewModel.handleEvent(ViewFoodEvent.NavigationHandled)
+            }
+
+            is NavigationEvent.NavigateToCopy -> {
+                navigateToCopy(event.foodLog)
+                viewModel.handleEvent(ViewFoodEvent.NavigationHandled)
+            }
+
+            null -> {}
+        }
+    }
 }
 
 @Composable
 fun ViewFoodScreen(
     navigateBack: () -> Unit,
     state: ViewFoodUiState = ViewLogUiState.Loading,
-    onEdit: () -> Unit,
     eventSink: (ViewFoodEvent) -> Unit,
 ) {
     ViewLogScreen(navigateBack = navigateBack,
         uiState = state,
         title = R.string.add_food_text,
         deleteLog = { eventSink(ViewFoodEvent.DeleteLog(it)) },
-        onEdit = onEdit,
+        onEdit = { eventSink(ViewFoodEvent.EditLog) },
+        onCopy = { eventSink(ViewFoodEvent.CopyLog) },
         bodyContent = {
             it.items.forEach { item ->
                 ListItem(headlineContent = { Text(text = item.name) })
@@ -59,7 +77,6 @@ fun ViewFoodContentPreview(
     ViewFoodScreen(
         navigateBack = {},
         state = ViewLogUiState.Data(foodLog),
-        onEdit = {},
         eventSink = {},
     )
 }

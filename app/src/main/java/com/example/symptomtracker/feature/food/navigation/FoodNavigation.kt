@@ -5,6 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.symptomtracker.core.domain.model.FoodLog
 import com.example.symptomtracker.feature.food.AddFoodScreen
 import com.example.symptomtracker.feature.food.EditFoodScreen
 import com.example.symptomtracker.feature.food.ManageFoodItemsRoute
@@ -27,6 +28,12 @@ fun NavController.navigateToAddFood(prefillItems: List<String>? = null) {
             inclusive = true
         }
     }
+}
+
+fun NavController.navigateToAddFood(foodLog: FoodLog) {
+    val prefillItemsArg =
+        foodLog.items.joinToString(separator = ",", prefix = "[", postfix = "]") { it.name }
+    navigate(route = "$ADD_FOOD_ROUTE?$PREFILL_ITEMS=$prefillItemsArg")
 }
 
 fun NavGraphBuilder.addFoodScreen(
@@ -60,14 +67,19 @@ fun NavGraphBuilder.editFoodScreen(
 fun NavController.navigateToViewFood(foodLogId: Long) = navigate("${VIEW_FOOD_ROUTE}/$foodLogId")
 
 fun NavGraphBuilder.viewFoodScreen(
-    navigateBack: () -> Unit, navigateToEdit: (logId: Long) -> Unit
+    navigateBack: () -> Unit,
+    navigateToEdit: (logId: Long) -> Unit,
+    navigateToCopy: (foodLog: FoodLog) -> Unit,
 ) {
     composable(
         route = "${VIEW_FOOD_ROUTE}/{${FOOD_LOG_ID}}",
         arguments = listOf(navArgument(FOOD_LOG_ID) { type = NavType.LongType })
     ) { backStackEntry ->
-        ViewFoodRoute(navigateBack = navigateBack,
-            navigateToEdit = { backStackEntry.arguments?.let { navigateToEdit(it.getLong(FOOD_LOG_ID)) } })
+        ViewFoodRoute(
+            navigateBack = navigateBack,
+            navigateToEdit = { backStackEntry.arguments?.let { navigateToEdit(it.getLong(FOOD_LOG_ID)) } },
+            navigateToCopy = navigateToCopy,
+        )
     }
 }
 

@@ -8,6 +8,7 @@ import com.example.symptomtracker.core.domain.repository.FoodLogRepository
 import com.example.symptomtracker.core.ui.ViewLogUiState
 import com.example.symptomtracker.feature.food.navigation.FOOD_LOG_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -34,9 +35,17 @@ class ViewFoodViewModel @Inject constructor(
             initialValue = ViewLogUiState.Loading
         )
 
+    private val _navigationEvent = MutableStateFlow<NavigationEvent?>(null)
+    val navigationEvent: StateFlow<NavigationEvent?> = _navigationEvent
+
     fun handleEvent(event: ViewFoodEvent) {
         when (event) {
             is ViewFoodEvent.DeleteLog -> deleteLog(foodLog = event.foodLog)
+            ViewFoodEvent.EditLog -> _navigationEvent.value = NavigationEvent.NavigateToEdit
+            ViewFoodEvent.CopyLog -> _navigationEvent.value =
+                NavigationEvent.NavigateToCopy((uiState.value as ViewLogUiState.Data).log)
+
+            ViewFoodEvent.NavigationHandled -> _navigationEvent.value = null
         }
     }
 
@@ -51,4 +60,12 @@ typealias ViewFoodUiState = ViewLogUiState<FoodLog>
 
 sealed interface ViewFoodEvent {
     data class DeleteLog(val foodLog: FoodLog) : ViewFoodEvent
+    data object EditLog : ViewFoodEvent
+    data object CopyLog : ViewFoodEvent
+    data object NavigationHandled : ViewFoodEvent
+}
+
+sealed class NavigationEvent {
+    data object NavigateToEdit : NavigationEvent()
+    data class NavigateToCopy(val foodLog: FoodLog) : NavigationEvent()
 }

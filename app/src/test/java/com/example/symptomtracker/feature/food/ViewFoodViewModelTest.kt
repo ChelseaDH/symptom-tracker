@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -68,5 +69,39 @@ class ViewFoodViewModelTest {
         assertEquals(ViewLogUiState.Data(foodLog), viewModel.uiState.value)
 
         collectJob.cancel()
+    }
+
+    @Test
+    fun navigationEvent_isUpdatedCorrectly_whenEditEventIsHandled() = runTest {
+        viewModel.handleEvent(ViewFoodEvent.EditLog)
+
+        assertEquals(NavigationEvent.NavigateToEdit, viewModel.navigationEvent.value)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun navigationEvent_isUpdatedCorrectly_whenCopyEventIsHandled() = runTest {
+        val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.uiState.collect() }
+        val foodLog = FoodLog(
+            id = 1,
+            date = OffsetDateTime.parse("2023-03-02T09:10:00+00:00"),
+            items = listOf(FoodItem(id = 1, name = "oats"))
+        )
+        foodLogRepository.sendFoodLogs(listOf(foodLog))
+
+        viewModel.handleEvent(ViewFoodEvent.CopyLog)
+
+        assertEquals(NavigationEvent.NavigateToCopy(foodLog), viewModel.navigationEvent.value)
+
+        collectJob.cancel()
+    }
+
+    @Test
+    fun navigationEvent_isUpdatedCorrectly_whenNavigationHandledEventIsHandled() = runTest {
+        viewModel.handleEvent(ViewFoodEvent.EditLog)
+        assertEquals(NavigationEvent.NavigateToEdit, viewModel.navigationEvent.value)
+
+        viewModel.handleEvent(ViewFoodEvent.NavigationHandled)
+        assertNull(viewModel.navigationEvent.value)
     }
 }

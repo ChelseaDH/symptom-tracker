@@ -63,6 +63,7 @@ fun SymptomTrackerNavHost(
         viewFoodScreen(
             navigateBack = navController::navigateUp,
             navigateToEdit = navController::navigateToEditFood,
+            navigateToCopy = navController::navigateToAddFood,
         )
         addFoodScreen(navigateBack = navController::navigateUp)
         editFoodScreen(navigateBack = navController::navigateUp)
