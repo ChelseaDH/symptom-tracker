@@ -48,17 +48,14 @@ fun MealieSettingsRoute(
             canNavigateBack = true,
             navigateUp = navigateBack,
             actions = {
-                TextButton(onClick = viewModel::onSave) {
+                TextButton(onClick = { viewModel.handleEvent(MealieSettingsEvent.Save) }) {
                     Text(text = stringResource(R.string.action_save))
                 }
             })
     }) { innerPadding ->
         MealieSettingsBody(
             uiState = uiState,
-            onIsEnabledToggled = viewModel::updateIsEnabled,
-            onBaseUrlUpdated = viewModel::updateBaseUrl,
-            onApiTokenUpdated = viewModel::updateApiToken,
-            checkCredentials = viewModel::onCheckCredentials,
+            eventSink = viewModel::handleEvent,
             modifier = Modifier.padding(innerPadding)
         )
     }
@@ -73,10 +70,7 @@ fun MealieSettingsRoute(
 @Composable
 internal fun MealieSettingsBody(
     uiState: MealieSettingsUiState,
-    onIsEnabledToggled: (Boolean) -> Unit,
-    onBaseUrlUpdated: (String) -> Unit,
-    onApiTokenUpdated: (String) -> Unit,
-    checkCredentials: () -> Unit,
+    eventSink: (MealieSettingsEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -96,10 +90,7 @@ internal fun MealieSettingsBody(
                 baseUrl = uiState.baseUrl,
                 apiToken = uiState.apiToken,
                 credentialsCheckResult = uiState.credentialsCheckResult,
-                onIsEnabledToggled = onIsEnabledToggled,
-                onBaseUrlUpdated = onBaseUrlUpdated,
-                onApiTokenUpdated = onApiTokenUpdated,
-                checkCredentials = checkCredentials,
+                eventSink = eventSink,
             )
         }
     }
@@ -111,10 +102,7 @@ internal fun SuccessContent(
     baseUrl: TextInput,
     apiToken: TextInput,
     credentialsCheckResult: MealieCredentialsValidation?,
-    onIsEnabledToggled: (Boolean) -> Unit,
-    onBaseUrlUpdated: (String) -> Unit,
-    onApiTokenUpdated: (String) -> Unit,
-    checkCredentials: () -> Unit,
+    eventSink: (MealieSettingsEvent) -> Unit,
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -125,7 +113,9 @@ internal fun SuccessContent(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(text = stringResource(R.string.mealie_settings_enable_integration_label))
-            Switch(checked = isEnabled, onCheckedChange = onIsEnabledToggled)
+            Switch(
+                checked = isEnabled,
+                onCheckedChange = { eventSink(MealieSettingsEvent.UpdateIsEnabled(it)) })
         }
 
         if (isEnabled) {
@@ -133,7 +123,7 @@ internal fun SuccessContent(
             LabelledOutlinedTextInputField(
                 label = stringResource(id = R.string.mealie_settings_base_url_label),
                 input = baseUrl,
-                onValueChange = onBaseUrlUpdated,
+                onValueChange = { eventSink(MealieSettingsEvent.UpdateBaseUrl(it)) },
                 keyboardOptions = KeyboardOptions.Default.copy(
                     capitalization = KeyboardCapitalization.None,
                     keyboardType = KeyboardType.Uri,
@@ -142,14 +132,14 @@ internal fun SuccessContent(
             LabelledOutlinedTextInputField(
                 label = stringResource(id = R.string.mealie_settings_api_token_label),
                 input = apiToken,
-                onValueChange = onApiTokenUpdated,
+                onValueChange = { eventSink(MealieSettingsEvent.UpdateApiToken(it)) },
                 keyboardOptions = KeyboardOptions.Default.copy(
                     capitalization = KeyboardCapitalization.None,
                 )
             )
 
             FilledTonalButton(
-                onClick = { checkCredentials() },
+                onClick = { eventSink(MealieSettingsEvent.CheckCredentials) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp)
@@ -179,10 +169,7 @@ internal fun MealieSettingsBodyPreview(@PreviewParameter(MealieSettingsStateProv
     SymptomTrackerTheme {
         MealieSettingsBody(
             uiState = uiState,
-            onIsEnabledToggled = {},
-            onBaseUrlUpdated = {},
-            onApiTokenUpdated = {},
-            checkCredentials = {},
+            eventSink = {},
         )
     }
 }

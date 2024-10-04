@@ -81,13 +81,21 @@ fun HomeScreen(
 
     fun onQuickAddNavigation() {
         scope.launch { sheetState.hide() }.invokeOnCompletion {
-            viewModel.updateBottomSheetVisibility(false)
+            viewModel.handleEvent(HomeScreenEvent.UpdateBottomSheetVisibility(false))
         }
     }
 
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = { viewModel.updateBottomSheetVisibility(true) }) {
+            FloatingActionButton(
+                onClick = {
+                    viewModel.handleEvent(
+                        HomeScreenEvent.UpdateBottomSheetVisibility(
+                            true
+                        )
+                    )
+                },
+            ) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = stringResource(R.string.action_add)
@@ -98,9 +106,9 @@ fun HomeScreen(
         HomeBody(
             date = viewModel.uiState.date,
             isToday = viewModel.uiState.isToday,
-            goToPreviousDate = viewModel::goToPreviousDay,
-            goToNextDate = viewModel::goToNextDay,
-            onDateChanged = viewModel::updateDate,
+            goToPreviousDate = { viewModel.handleEvent(HomeScreenEvent.GoToPreviousDay) },
+            goToNextDate = { viewModel.handleEvent(HomeScreenEvent.GoToNextDay) },
+            onDateChanged = { viewModel.handleEvent(HomeScreenEvent.UpdateDate(it)) },
             onFoodClick = onFoodClick,
             onSymptomClick = onSymptomClick,
             onMovementClick = onMovementClick,
@@ -109,7 +117,13 @@ fun HomeScreen(
         )
         if (viewModel.uiState.showBottomSheet) {
             ModalBottomSheet(
-                onDismissRequest = { viewModel.updateBottomSheetVisibility(false) },
+                onDismissRequest = {
+                    viewModel.handleEvent(
+                        HomeScreenEvent.UpdateBottomSheetVisibility(
+                            false
+                        )
+                    )
+                },
                 sheetState = sheetState,
             ) {
                 AddLogsBottomSheetContent(mealieIntegrationEnabled = mealieIntegrationEnabled,
@@ -383,7 +397,7 @@ internal fun AddLogsBottomSheetContent(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun HomeBodyWithNoLogsPreview() {
     HomeBody(

@@ -3,9 +3,9 @@ package com.example.symptomtracker.feature.mealie
 import android.webkit.URLUtil
 import com.example.symptomtracker.core.designsystem.component.TextInput
 import com.example.symptomtracker.core.designsystem.component.TextValidationError
+import com.example.symptomtracker.core.domain.model.Ingredient
 import com.example.symptomtracker.core.domain.usecase.GetMealieRecipeIngredientsUseCase
 import com.example.symptomtracker.core.domain.usecase.MealieRecipeIngredientsResult
-import com.example.symptomtracker.core.domain.model.Ingredient
 import com.example.symptomtracker.utils.MainDispatcherRule
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -42,7 +42,7 @@ class MealieImportFoodViewModelTest {
     fun whenUpdateUrlIsCalled_stateUpdatesAccordingly() = runTest {
         viewModel.uiState.value = MealieImportFoodState(url = TextInput(value = "url"))
 
-        viewModel.updateUrl("newUrl")
+        viewModel.handleEvent(MealieImportFoodEvent.UpdateUrl("newUrl"))
 
         assertEquals(
             MealieImportFoodState(
@@ -56,7 +56,7 @@ class MealieImportFoodViewModelTest {
     fun whenClearUrlIsCalled_stateUpdatesAccordingly() = runTest {
         viewModel.uiState.value = MealieImportFoodState(url = TextInput(value = "url"))
 
-        viewModel.clearUrl()
+        viewModel.handleEvent(MealieImportFoodEvent.ClearUrl)
 
         assertEquals(
             MealieImportFoodState(
@@ -98,7 +98,7 @@ class MealieImportFoodViewModelTest {
                 canImport = true,
             )
 
-            viewModel.removeIngredientFromImport(Ingredient("Banana"))
+            viewModel.handleEvent(MealieImportFoodEvent.RemoveIngredientFromImport(Ingredient("Banana")))
 
             assertEquals(stateAfter, viewModel.uiState.value)
         }
@@ -148,7 +148,7 @@ class MealieImportFoodViewModelTest {
             mockStatic(URLUtil::class.java).use { mock ->
                 mock.`when`<Boolean> { URLUtil.isValidUrl("notAUrl") }.thenReturn(false)
 
-                viewModel.search()
+                viewModel.handleEvent(MealieImportFoodEvent.Search)
 
                 assertEquals(stateAfter, viewModel.uiState.value)
             }
@@ -191,7 +191,7 @@ class MealieImportFoodViewModelTest {
                     getMealieRecipeIngredients.invoke("banana-bread")
                 ).thenReturn(searchResult)
 
-                viewModel.search()
+                viewModel.handleEvent(MealieImportFoodEvent.Search)
 
                 assertEquals(
                     expectedState,

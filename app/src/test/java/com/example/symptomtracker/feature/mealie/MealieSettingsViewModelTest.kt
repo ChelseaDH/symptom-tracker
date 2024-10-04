@@ -76,7 +76,7 @@ class MealieSettingsViewModelTest {
             apiToken = TextInput(value = "apiToken"),
         )
 
-        viewModel.updateIsEnabled(false)
+        viewModel.handleEvent(MealieSettingsEvent.UpdateIsEnabled(false))
 
         assertEquals(
             MealieSettingsUiState.Success(
@@ -97,7 +97,7 @@ class MealieSettingsViewModelTest {
             apiToken = TextInput(value = "apiToken"),
         )
 
-        viewModel.updateBaseUrl("newUrl")
+        viewModel.handleEvent(MealieSettingsEvent.UpdateBaseUrl("newUrl"))
 
         assertEquals(
             MealieSettingsUiState.Success(
@@ -118,7 +118,7 @@ class MealieSettingsViewModelTest {
             apiToken = TextInput(value = "apiToken"),
         )
 
-        viewModel.updateApiToken("newToken")
+        viewModel.handleEvent(MealieSettingsEvent.UpdateApiToken("newToken"))
 
         assertEquals(
             MealieSettingsUiState.Success(
@@ -160,7 +160,7 @@ class MealieSettingsViewModelTest {
                 mockStatic(URLUtil::class.java).use { mock ->
                     mock.`when`<Boolean> { URLUtil.isValidUrl("notAUrl") }.thenReturn(false)
 
-                    viewModel.onCheckCredentials()
+                    viewModel.handleEvent(MealieSettingsEvent.CheckCredentials)
 
                     assertEquals(stateAfter, viewModel.uiState.value)
                 }
@@ -186,7 +186,7 @@ class MealieSettingsViewModelTest {
                     )
                 ).thenReturn(validationResponse)
 
-                viewModel.onCheckCredentials()
+                viewModel.handleEvent(MealieSettingsEvent.CheckCredentials)
 
                 assertEquals(
                     MealieSettingsUiState.Success(
@@ -206,7 +206,7 @@ class MealieSettingsViewModelTest {
     fun givenStateIsLoading_whenOnSaveIsCalled_saveResultIsFalse() = runTest {
         viewModel.uiState.value = MealieSettingsUiState.Loading
 
-        viewModel.onSave()
+        viewModel.handleEvent(MealieSettingsEvent.Save)
 
         assertFalse(viewModel.saveResult.value!!)
     }
@@ -229,7 +229,7 @@ class MealieSettingsViewModelTest {
                 )
             ).thenReturn(validationResponse)
 
-            viewModel.onSave()
+            viewModel.handleEvent(MealieSettingsEvent.Save)
 
             assertFalse(viewModel.saveResult.value!!)
         }
@@ -243,7 +243,7 @@ class MealieSettingsViewModelTest {
             apiToken = TextInput(value = "apiToken"),
         )
 
-        viewModel.onSave()
+        viewModel.handleEvent(MealieSettingsEvent.Save)
 
         assertTrue(viewModel.saveResult.value!!)
     }
@@ -266,7 +266,7 @@ class MealieSettingsViewModelTest {
                 )
             ).thenReturn(validationResponse)
 
-            viewModel.onSave()
+            viewModel.handleEvent(MealieSettingsEvent.Save)
 
             assertTrue(viewModel.saveResult.value!!)
         }

@@ -47,23 +47,32 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
-    fun updateBottomSheetVisibility(visible: Boolean) {
+    fun handleEvent(event: HomeScreenEvent) {
+        when (event) {
+            is HomeScreenEvent.UpdateBottomSheetVisibility -> updateBottomSheetVisibility(visible = event.visible)
+            is HomeScreenEvent.GoToPreviousDay -> goToPreviousDay()
+            is HomeScreenEvent.GoToNextDay -> goToNextDay()
+            is HomeScreenEvent.UpdateDate -> updateDate(date = event.date)
+        }
+    }
+
+    private fun updateBottomSheetVisibility(visible: Boolean) {
         uiState = uiState.copy(
             showBottomSheet = visible
         )
     }
 
-    fun goToPreviousDay() {
+    private fun goToPreviousDay() {
         updateChosenDate(uiState.date.minusDays(1))
     }
 
-    fun goToNextDay() {
+    private fun goToNextDay() {
         if (!uiState.isToday) {
             updateChosenDate(uiState.date.plusDays(1))
         }
     }
 
-    fun updateDate(date: LocalDate) {
+    private fun updateDate(date: LocalDate) {
         updateChosenDate(date)
     }
 
@@ -103,3 +112,10 @@ data class UiState(
     val isToday: Boolean = true,
     val date: LocalDate,
 )
+
+sealed interface HomeScreenEvent {
+    data class UpdateBottomSheetVisibility(val visible: Boolean) : HomeScreenEvent
+    data object GoToPreviousDay : HomeScreenEvent
+    data object GoToNextDay : HomeScreenEvent
+    data class UpdateDate(val date: LocalDate) : HomeScreenEvent
+}

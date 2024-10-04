@@ -36,31 +36,41 @@ class MealieSettingsViewModel @Inject constructor(
         }
     }
 
-    fun updateIsEnabled(isEnabled: Boolean) {
+    fun handleEvent(event: MealieSettingsEvent) {
+        when (event) {
+            is MealieSettingsEvent.UpdateIsEnabled -> updateIsEnabled(isEnabled = event.isEnabled)
+            is MealieSettingsEvent.UpdateBaseUrl -> updateBaseUrl(baseUrl = event.baseUrl)
+            is MealieSettingsEvent.UpdateApiToken -> updateApiToken(apiToken = event.apiToken)
+            MealieSettingsEvent.CheckCredentials -> onCheckCredentials()
+            MealieSettingsEvent.Save -> onSave()
+        }
+    }
+
+    private fun updateIsEnabled(isEnabled: Boolean) {
         (uiState.value as MealieSettingsUiState.Success).let { state ->
             uiState.value = state.copy(isEnabled = isEnabled)
         }
     }
 
-    fun updateBaseUrl(baseUrl: String) {
+    private fun updateBaseUrl(baseUrl: String) {
         uiState.value = (uiState.value as MealieSettingsUiState.Success).copy(
             baseUrl = TextInput(value = baseUrl)
         )
     }
 
-    fun updateApiToken(apiToken: String) {
+    private fun updateApiToken(apiToken: String) {
         uiState.value = (uiState.value as MealieSettingsUiState.Success).copy(
             apiToken = TextInput(value = apiToken)
         )
     }
 
-    fun onCheckCredentials() {
+    private fun onCheckCredentials() {
         viewModelScope.launch {
             validateInput()
         }
     }
 
-    fun onSave() {
+    private fun onSave() {
         viewModelScope.launch {
             val isValid = isStateValidForSave()
             if (isValid) {
@@ -135,4 +145,12 @@ sealed interface MealieSettingsUiState {
         val apiToken: TextInput,
         val credentialsCheckResult: MealieCredentialsValidation? = null,
     ) : MealieSettingsUiState
+}
+
+sealed interface MealieSettingsEvent {
+    data class UpdateIsEnabled(val isEnabled: Boolean) : MealieSettingsEvent
+    data class UpdateBaseUrl(val baseUrl: String) : MealieSettingsEvent
+    data class UpdateApiToken(val apiToken: String) : MealieSettingsEvent
+    data object CheckCredentials : MealieSettingsEvent
+    data object Save : MealieSettingsEvent
 }

@@ -83,15 +83,15 @@ class LogsViewModelTest {
         Assert.assertEquals(0, viewModel.uiState.selectedTabIndex)
         Assert.assertEquals(TabUiState.FoodLogs(foodLogs), viewModel.uiState.tabState)
 
-        viewModel.goToNextTab()
+        viewModel.handleEvent(LogsViewEvent.GoToNextTab)
         Assert.assertEquals(1, viewModel.uiState.selectedTabIndex)
         Assert.assertEquals(TabUiState.SymptomLogs(symptomLogs), viewModel.uiState.tabState)
 
-        viewModel.goToPreviousTab()
+        viewModel.handleEvent(LogsViewEvent.GoToPreviousTab)
         Assert.assertEquals(0, viewModel.uiState.selectedTabIndex)
         Assert.assertEquals(TabUiState.FoodLogs(foodLogs), viewModel.uiState.tabState)
 
-        viewModel.updateSelectedTab(2)
+        viewModel.handleEvent(LogsViewEvent.UpdateSelectedTab(2))
         Assert.assertEquals(2, viewModel.uiState.selectedTabIndex)
         Assert.assertEquals(TabUiState.MovementLogs(movementLogs), viewModel.uiState.tabState)
 

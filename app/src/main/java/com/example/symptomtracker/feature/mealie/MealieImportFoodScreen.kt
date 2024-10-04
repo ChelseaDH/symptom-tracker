@@ -66,10 +66,7 @@ fun MealieImportRoute(
     }) { innerPadding ->
         MealieImportBody(
             uiState = uiState,
-            onUrlUpdated = viewModel::updateUrl,
-            onUrlCleared = viewModel::clearUrl,
-            onSearch = viewModel::search,
-            onRemoveIngredient = viewModel::removeIngredientFromImport,
+            eventSink = viewModel::handleEvent,
             modifier = Modifier.padding(innerPadding),
         )
     }
@@ -78,10 +75,7 @@ fun MealieImportRoute(
 @Composable
 internal fun MealieImportBody(
     uiState: MealieImportFoodState,
-    onUrlUpdated: (String) -> Unit,
-    onUrlCleared: () -> Unit,
-    onSearch: () -> Unit,
-    onRemoveIngredient: (Ingredient) -> Unit,
+    eventSink: (MealieImportFoodEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -92,9 +86,9 @@ internal fun MealieImportBody(
     ) {
         Search(
             url = uiState.url,
-            onUrlUpdated = onUrlUpdated,
-            onUrlCleared = onUrlCleared,
-            onSearch = onSearch,
+            onUrlUpdated = { eventSink(MealieImportFoodEvent.UpdateUrl(it)) },
+            onUrlCleared = { eventSink(MealieImportFoodEvent.ClearUrl) },
+            onSearch = { eventSink(MealieImportFoodEvent.Search) },
         )
 
         HorizontalDivider()
@@ -109,7 +103,7 @@ internal fun MealieImportBody(
 
             is MealieImportSearchState.Success -> SuccessContent(
                 ingredients = uiState.searchState.ingredientsToImport,
-                onRemoveIngredient = onRemoveIngredient
+                onRemoveIngredient = { eventSink(MealieImportFoodEvent.RemoveIngredientFromImport(it)) }
             )
 
             is MealieImportSearchState.Error -> ErrorContent(error = uiState.searchState)
@@ -212,10 +206,7 @@ internal fun MealieImportBodyPreview(@PreviewParameter(MealieImportFoodStateProv
     SymptomTrackerTheme {
         MealieImportBody(
             uiState = uiState,
-            onUrlUpdated = {},
-            onUrlCleared = {},
-            onSearch = {},
-            onRemoveIngredient = {},
+            eventSink = {},
         )
     }
 }

@@ -70,9 +70,7 @@ fun LogsRoute(
         selectedTabIndex = viewModel.uiState.selectedTabIndex,
         tabState = viewModel.uiState.tabState,
         mealieIntegrationEnabled = mealieIntegrationEnabled,
-        onSelectedTabChange = viewModel::updateSelectedTab,
-        onLeftSwipe = viewModel::goToNextTab,
-        onRightSwipe = viewModel::goToPreviousTab,
+        eventSink = viewModel::handleEvent,
         onFoodClick = onFoodClick,
         onAddFoodClick = onAddFoodClick,
         onSymptomClick = onSymptomClick,
@@ -91,9 +89,7 @@ internal fun LogsScreen(
     selectedTabIndex: Int,
     tabState: TabUiState,
     mealieIntegrationEnabled: Boolean,
-    onSelectedTabChange: (Int) -> Unit,
-    onLeftSwipe: () -> Unit,
-    onRightSwipe: () -> Unit,
+    eventSink: (LogsViewEvent) -> Unit,
     onFoodClick: (Long) -> Unit,
     onAddFoodClick: () -> Unit,
     onSymptomClick: (Long) -> Unit,
@@ -173,7 +169,7 @@ internal fun LogsScreen(
                 tabs.forEachIndexed { index, title ->
                     Tab(
                         selected = selectedTabIndex == index,
-                        onClick = { onSelectedTabChange(index) },
+                        onClick = { eventSink(LogsViewEvent.UpdateSelectedTab(index)) },
                         text = { Text(text = title) }
                     )
                 }
@@ -188,9 +184,9 @@ internal fun LogsScreen(
                             onDragStart = { swipeOffset = 0f },
                             onDragEnd = {
                                 if (swipeOffset < -200) {
-                                    onLeftSwipe()
+                                    eventSink(LogsViewEvent.GoToNextTab)
                                 } else if (swipeOffset > 200) {
-                                    onRightSwipe()
+                                    eventSink(LogsViewEvent.GoToPreviousTab)
                                 }
                             }) { _, dragAmount -> swipeOffset += dragAmount }
                     },
@@ -298,9 +294,7 @@ fun LogsScreenPreview(@PreviewParameter(FoodLogsPreviewParameterProvider::class)
         selectedTabIndex = 0,
         tabState = TabUiState.FoodLogs(logs = foodLogs),
         mealieIntegrationEnabled = true,
-        onSelectedTabChange = {},
-        onLeftSwipe = {},
-        onRightSwipe = {},
+        eventSink = {},
         onFoodClick = {},
         onAddFoodClick = {},
         onSymptomClick = {},

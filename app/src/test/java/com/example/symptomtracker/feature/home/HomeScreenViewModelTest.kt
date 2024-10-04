@@ -70,7 +70,7 @@ class HomeScreenViewModelTest {
 
         assertFalse(viewModel.uiState.showBottomSheet)
 
-        viewModel.updateBottomSheetVisibility(true)
+        viewModel.handleEvent(HomeScreenEvent.UpdateBottomSheetVisibility(visible = true))
 
         assertTrue(viewModel.uiState.showBottomSheet)
 
@@ -82,7 +82,7 @@ class HomeScreenViewModelTest {
         assertTrue(viewModel.uiState.isToday)
         val date = LocalDate.of(2020, 5, 22)
 
-        viewModel.updateDate(date)
+        viewModel.handleEvent(HomeScreenEvent.UpdateDate(date))
 
         assertFalse(viewModel.uiState.isToday)
         assertEquals(date, viewModel.uiState.date)
@@ -99,12 +99,12 @@ class HomeScreenViewModelTest {
         assertTrue(viewModel.uiState.isToday)
         assertEquals(listOf(foodLogs[1], symptomLogs[0]), viewModel.uiState.logs)
 
-        viewModel.goToPreviousDay()
+        viewModel.handleEvent(HomeScreenEvent.GoToPreviousDay)
 
         assertFalse(viewModel.uiState.isToday)
         assertEquals(listOf(foodLogs[0], movementLogs[0]), viewModel.uiState.logs)
 
-        viewModel.goToNextDay()
+        viewModel.handleEvent(HomeScreenEvent.GoToNextDay)
 
         assertTrue(viewModel.uiState.isToday)
         assertEquals(listOf(foodLogs[1], symptomLogs[0]), viewModel.uiState.logs)

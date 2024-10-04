@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.symptomtracker.core.designsystem.component.TextInput
 import com.example.symptomtracker.core.designsystem.component.TextValidationError
+import com.example.symptomtracker.core.domain.model.Ingredient
 import com.example.symptomtracker.core.domain.usecase.GetMealieRecipeIngredientsUseCase
 import com.example.symptomtracker.core.domain.usecase.MealieRecipeIngredientsResult
-import com.example.symptomtracker.core.domain.model.Ingredient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -18,15 +18,26 @@ class MealieImportFoodViewModel @Inject constructor(private val getMealieRecipeI
     ViewModel() {
     var uiState = MutableStateFlow(MealieImportFoodState())
 
-    fun updateUrl(url: String) {
+    fun handleEvent(event: MealieImportFoodEvent) {
+        when (event) {
+            is MealieImportFoodEvent.UpdateUrl -> updateUrl(url = event.url)
+            is MealieImportFoodEvent.ClearUrl -> clearUrl()
+            is MealieImportFoodEvent.Search -> search()
+            is MealieImportFoodEvent.RemoveIngredientFromImport -> removeIngredientFromImport(
+                ingredient = event.ingredient
+            )
+        }
+    }
+
+    private fun updateUrl(url: String) {
         uiState.value = uiState.value.copy(url = TextInput(value = url))
     }
 
-    fun clearUrl() {
+    private fun clearUrl() {
         uiState.value = uiState.value.copy(url = TextInput(value = ""))
     }
 
-    fun search() {
+    private fun search() {
         checkUrlInputValidity()
         if (uiState.value.url.validationError != null) return
 
@@ -61,7 +72,7 @@ class MealieImportFoodViewModel @Inject constructor(private val getMealieRecipeI
         }
     }
 
-    fun removeIngredientFromImport(ingredient: Ingredient) {
+    private fun removeIngredientFromImport(ingredient: Ingredient) {
         if (uiState.value.searchState is MealieImportSearchState.Success) {
             val ingredients =
                 (uiState.value.searchState as MealieImportSearchState.Success).ingredientsToImport.filter { it != ingredient }
@@ -105,4 +116,11 @@ sealed interface MealieImportSearchState {
         data object NoIngredients : Error
         data class ApiFailure(val message: String?) : Error
     }
+}
+
+sealed interface MealieImportFoodEvent {
+    data class UpdateUrl(val url: String) : MealieImportFoodEvent
+    data object ClearUrl : MealieImportFoodEvent
+    data object Search : MealieImportFoodEvent
+    data class RemoveIngredientFromImport(val ingredient: Ingredient) : MealieImportFoodEvent
 }

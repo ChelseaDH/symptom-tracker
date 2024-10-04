@@ -5,13 +5,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.symptomtracker.core.domain.model.FoodLog
+import com.example.symptomtracker.core.domain.model.MovementLog
+import com.example.symptomtracker.core.domain.model.SymptomLog
 import com.example.symptomtracker.core.domain.repository.FoodLogRepository
 import com.example.symptomtracker.core.domain.repository.MovementRepository
 import com.example.symptomtracker.core.domain.repository.SettingsRepository
 import com.example.symptomtracker.core.domain.repository.SymptomRepository
-import com.example.symptomtracker.core.domain.model.FoodLog
-import com.example.symptomtracker.core.domain.model.MovementLog
-import com.example.symptomtracker.core.domain.model.SymptomLog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -53,7 +53,15 @@ class LogsViewModel @Inject constructor(
         }
     }
 
-    fun updateSelectedTab(index: Int) {
+    fun handleEvent(event: LogsViewEvent) {
+        when (event) {
+            is LogsViewEvent.UpdateSelectedTab -> updateSelectedTab(index = event.index)
+            LogsViewEvent.GoToPreviousTab -> goToPreviousTab()
+            LogsViewEvent.GoToNextTab -> goToNextTab()
+        }
+    }
+
+    private fun updateSelectedTab(index: Int) {
         viewModelScope.launch {
             when (tabs[index]) {
                 FOOD_TAB -> foodLogRepository.getAllFoodLogs().collect {
@@ -81,14 +89,14 @@ class LogsViewModel @Inject constructor(
         }
     }
 
-    fun goToPreviousTab() {
+    private fun goToPreviousTab() {
         val newIndex = uiState.selectedTabIndex - 1
         if (newIndex >= 0) {
             updateSelectedTab(newIndex)
         }
     }
 
-    fun goToNextTab() {
+    private fun goToNextTab() {
         val newIndex = uiState.selectedTabIndex + 1
         if (newIndex < tabs.size) {
             updateSelectedTab(newIndex)
@@ -106,4 +114,10 @@ sealed interface TabUiState {
     data class FoodLogs(val logs: List<FoodLog>) : TabUiState
     data class SymptomLogs(val logs: List<SymptomLog>) : TabUiState
     data class MovementLogs(val logs: List<MovementLog>) : TabUiState
+}
+
+sealed interface LogsViewEvent {
+    data class UpdateSelectedTab(val index: Int) : LogsViewEvent
+    data object GoToPreviousTab : LogsViewEvent
+    data object GoToNextTab : LogsViewEvent
 }
