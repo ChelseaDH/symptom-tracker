@@ -3,6 +3,9 @@ package com.example.symptomtracker.ui
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -37,18 +40,19 @@ fun SymptomTrackerApp(appState: AppState) {
                     onNavigateToDestination = appState::navigateToTopLevelDestination
                 )
             }
-        }
+        },
+        topBar = {
+            if (topLevelDestination != null) {
+                SymptomTrackerTopLevelTopAppBar(titleId = topLevelDestination.titleTextId)
+            }
+        },
     ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
+                .consumeWindowInsets(WindowInsets.displayCutout)
         ) {
-            // Show the top bar on top level destinations
-            if (topLevelDestination != null) {
-                SymptomTrackerTopLevelTopAppBar(titleId = topLevelDestination.titleTextId)
-            }
-
             SymptomTrackerNavHost(navController = appState.navController)
         }
     }
@@ -102,19 +106,20 @@ fun SymptomTrackerTopAppBar(
     actions: @Composable (RowScope.() -> Unit) = {},
 ) {
     if (canNavigateBack) {
-        CenterAlignedTopAppBar(title = {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleLarge
-            )
-        }, navigationIcon = {
-            IconButton(onClick = { navigateUp() }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.back_button_cd)
+        CenterAlignedTopAppBar(
+            title = {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleLarge
                 )
-            }
-        },
+            }, navigationIcon = {
+                IconButton(onClick = { navigateUp() }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.back_button_cd)
+                    )
+                }
+            },
             actions = actions,
             modifier = modifier
         )
