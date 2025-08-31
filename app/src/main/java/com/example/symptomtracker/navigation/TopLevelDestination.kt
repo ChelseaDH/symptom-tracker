@@ -5,9 +5,9 @@ import androidx.annotation.StringRes
 import com.example.symptomtracker.R
 
 enum class TopLevelDestination(
-    @DrawableRes val iconId: Int,
-    @StringRes val iconTextId: Int,
-    @StringRes val titleTextId: Int,
+    @param:DrawableRes val iconId: Int,
+    @param:StringRes val iconTextId: Int,
+    @param:StringRes val titleTextId: Int,
 ) {
     HOME(
         iconId = R.drawable.outline_home_24,
