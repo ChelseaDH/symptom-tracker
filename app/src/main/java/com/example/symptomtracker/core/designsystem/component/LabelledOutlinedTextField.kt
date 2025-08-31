@@ -18,6 +18,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -136,7 +137,7 @@ fun <T> LabelledOutlinedTextInputFieldWithDropdown(
                 onValueChange(it)
                 expanded = true
             },
-            modifier = modifier.menuAnchor(),
+            modifier = modifier.menuAnchor(MenuAnchorType.PrimaryEditable),
             trailingIcon = {
                 IconButton(onClick = { onClearInput() }) {
                     Icon(
@@ -201,7 +202,7 @@ fun LabelledOutlinedReadOnlyDropdown(
             value = value,
             onValueChange = {},
             modifier = Modifier
-                .menuAnchor()
+                .menuAnchor(MenuAnchorType.PrimaryNotEditable)
                 .fillMaxWidth(),
             readOnly = true,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) }
