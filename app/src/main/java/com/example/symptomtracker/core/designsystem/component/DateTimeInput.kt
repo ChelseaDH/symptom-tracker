@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,9 +35,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.symptomtracker.R
 import com.example.symptomtracker.core.designsystem.SymptomTrackerTheme
+import com.example.symptomtracker.core.designsystem.icon.EditIcon
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
@@ -77,8 +77,7 @@ fun DateInputField(
         readOnly = true,
         trailingIcon = {
             IconButton(onClick = { showDatePicker = true }) {
-                Icon(
-                    imageVector = Icons.Default.Edit,
+                EditIcon(
                     contentDescription = stringResource(R.string.edit_date_cd)
                 )
             }
@@ -112,7 +111,7 @@ fun TimeInputField(
         trailingIcon = {
             IconButton(onClick = { showTimePicker = true }) {
                 Icon(
-                    imageVector = Icons.Default.Edit,
+                    painter = painterResource(id = R.drawable.outline_edit_24),
                     contentDescription = stringResource(R.string.edit_time_cd)
                 )
             }
@@ -175,7 +174,7 @@ fun TimePickerModal(
         R.drawable.outline_access_time_24
     }
 
-    androidx.compose.ui.window.Dialog(
+    Dialog(
         onDismissRequest = onDismissRequest,
         properties = DialogProperties(usePlatformDefaultWidth = false),
     ) {

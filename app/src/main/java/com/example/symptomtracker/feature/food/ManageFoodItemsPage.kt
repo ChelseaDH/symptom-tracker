@@ -6,10 +6,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -35,6 +31,8 @@ import com.example.symptomtracker.core.designsystem.SymptomTrackerTheme
 import com.example.symptomtracker.core.designsystem.component.Dialog
 import com.example.symptomtracker.core.designsystem.component.LabelledOutlinedReadOnlyDropdown
 import com.example.symptomtracker.core.designsystem.component.LabelledOutlinedTextField
+import com.example.symptomtracker.core.designsystem.icon.DeleteIcon
+import com.example.symptomtracker.core.designsystem.icon.EditIcon
 import com.example.symptomtracker.core.domain.model.FoodItem
 import com.example.symptomtracker.core.ui.ItemPreviewParameterProvider
 import com.example.symptomtracker.ui.SymptomTrackerTopAppBar
@@ -139,7 +137,7 @@ fun FoodItemRow(
         trailingContent = {
             IconButton(onClick = { actionMenuOpen = true }) {
                 Icon(
-                    imageVector = Icons.Default.MoreVert,
+                    painter = painterResource(R.drawable.outline_more_vert_24),
                     contentDescription = stringResource(
                         id = R.string.manage_food_items_options_menu_cd,
                         formatArgs = arrayOf(foodItem.name),
@@ -154,8 +152,7 @@ fun FoodItemRow(
                         actionMenuOpen = false
                     },
                     leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Edit,
+                        EditIcon(
                             contentDescription = stringResource(
                                 id = R.string.manage_food_items_edit,
                                 formatArgs = arrayOf(foodItem.name),
@@ -170,8 +167,7 @@ fun FoodItemRow(
                         actionMenuOpen = false
                     },
                     leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
+                        DeleteIcon(
                             contentDescription = stringResource(
                                 id = R.string.manage_food_items_delete,
                                 formatArgs = arrayOf(foodItem.name),
@@ -196,8 +192,7 @@ internal fun EditDialog(
         confirmButtonText = R.string.action_save,
         confirmButtonEnabled = state.canSubmit,
         icon = {
-            Icon(
-                imageVector = Icons.Default.Edit,
+            EditIcon(
                 contentDescription = stringResource(
                     id = R.string.manage_food_items_edit,
                     formatArgs = arrayOf(state.foodItem.name),
@@ -225,8 +220,7 @@ internal fun DirectDeleteDialog(
         title = stringResource(R.string.manage_food_items_delete).format(state.foodItem.name),
         confirmButtonText = R.string.action_delete,
         icon = {
-            Icon(
-                imageVector = Icons.Default.Delete,
+            DeleteIcon(
                 contentDescription = stringResource(
                     id = R.string.manage_food_items_delete,
                     formatArgs = arrayOf(state.foodItem.name),

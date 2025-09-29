@@ -8,13 +8,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Scaffold
@@ -38,6 +34,8 @@ import com.example.symptomtracker.core.designsystem.SymptomTrackerTheme
 import com.example.symptomtracker.core.designsystem.component.ErrorCard
 import com.example.symptomtracker.core.designsystem.component.LabelledOutlinedTextInputField
 import com.example.symptomtracker.core.designsystem.component.TextInput
+import com.example.symptomtracker.core.designsystem.icon.ClearIcon
+import com.example.symptomtracker.core.designsystem.icon.DeleteIcon
 import com.example.symptomtracker.core.domain.model.Ingredient
 import com.example.symptomtracker.ui.SymptomTrackerTopAppBar
 
@@ -50,7 +48,8 @@ fun MealieImportRoute(
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(topBar = {
-        SymptomTrackerTopAppBar(title = stringResource(R.string.mealie_import_title),
+        SymptomTrackerTopAppBar(
+            title = stringResource(R.string.mealie_import_title),
             canNavigateBack = true,
             navigateUp = navigateBack,
             actions = {
@@ -133,8 +132,7 @@ internal fun Search(
             onValueChange = onUrlUpdated,
             trailingIcon = {
                 IconButton(onClick = onUrlCleared) {
-                    Icon(
-                        imageVector = Icons.Default.Clear,
+                    ClearIcon(
                         contentDescription = stringResource(R.string.action_clear_search)
                     )
                 }
@@ -170,8 +168,7 @@ fun SuccessContent(
                     headlineContent = { Text(text = ingredient.name) },
                     trailingContent = {
                         IconButton(onClick = { onRemoveIngredient(ingredient) }) {
-                            Icon(
-                                imageVector = Icons.Default.Delete,
+                            DeleteIcon(
                                 contentDescription = stringResource(
                                     R.string.mealie_import_remove_ingreditent_cd,
                                     ingredient.name

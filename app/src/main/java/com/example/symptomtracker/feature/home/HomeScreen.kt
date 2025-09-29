@@ -15,10 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -48,6 +44,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.symptomtracker.R
 import com.example.symptomtracker.core.designsystem.component.DatePickerModal
 import com.example.symptomtracker.core.designsystem.component.FilledTonalButtonWithIcon
+import com.example.symptomtracker.core.designsystem.icon.AddIcon
 import com.example.symptomtracker.core.designsystem.icon.MealieIcon
 import com.example.symptomtracker.core.domain.model.FoodLog
 import com.example.symptomtracker.core.domain.model.Log
@@ -96,10 +93,7 @@ fun HomeScreen(
                     )
                 },
             ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(R.string.action_add)
-                )
+                AddIcon(contentDescription = stringResource(R.string.action_add))
             }
         }, modifier = modifier
     ) { innerPadding ->
@@ -126,7 +120,8 @@ fun HomeScreen(
                 },
                 sheetState = sheetState,
             ) {
-                AddLogsBottomSheetContent(mealieIntegrationEnabled = mealieIntegrationEnabled,
+                AddLogsBottomSheetContent(
+                    mealieIntegrationEnabled = mealieIntegrationEnabled,
                     onAddFoodClick = {
                         onQuickAddNavigation()
                         navigateToAddFood()
@@ -208,7 +203,7 @@ fun DateToggleRow(
     ) {
         IconButton(onClick = goToPreviousDate) {
             Icon(
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                painter = painterResource(R.drawable.outline_keyboard_arrow_left_24),
                 contentDescription = stringResource(R.string.previous_day_cd)
             )
         }
@@ -233,7 +228,7 @@ fun DateToggleRow(
             )
             IconButton(onClick = goToNextDate) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                    painter = painterResource(R.drawable.outline_keyboard_arrow_right_24),
                     contentDescription = stringResource(R.string.next_day_cd)
                 )
             }
@@ -259,17 +254,18 @@ fun Timeline(
             text = stringResource(R.string.timeline_title),
             style = MaterialTheme.typography.titleMedium
         )
-        Box(modifier = Modifier
-            .fillMaxHeight()
-            .pointerInput(Unit) {
-                detectHorizontalDragGestures(onDragStart = { swipeOffset = 0f }, onDragEnd = {
-                    if (swipeOffset < -200) {
-                        onLeftSwipe()
-                    } else if (swipeOffset > 200) {
-                        onRightSwipe()
-                    }
-                }) { _, dragAmount -> swipeOffset += dragAmount }
-            }) {
+        Box(
+            modifier = Modifier
+                .fillMaxHeight()
+                .pointerInput(Unit) {
+                    detectHorizontalDragGestures(onDragStart = { swipeOffset = 0f }, onDragEnd = {
+                        if (swipeOffset < -200) {
+                            onLeftSwipe()
+                        } else if (swipeOffset > 200) {
+                            onRightSwipe()
+                        }
+                    }) { _, dragAmount -> swipeOffset += dragAmount }
+                }) {
             if (logs.isEmpty()) {
                 NoLogsFoundCard()
             } else {
@@ -307,12 +303,13 @@ fun Timeline(
                                 onClick = { onSymptomClick(log.id) },
                             )
 
-                            is MovementLog -> LogItemCard(icon = {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.outline_gastroenterology_24),
-                                    contentDescription = stringResource(R.string.add_movement_text)
-                                )
-                            },
+                            is MovementLog -> LogItemCard(
+                                icon = {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.outline_gastroenterology_24),
+                                        contentDescription = stringResource(R.string.add_movement_text)
+                                    )
+                                },
                                 title = stringResource(R.string.add_movement_text),
                                 date = log.date,
                                 dateTimeFormatter = DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_hh_mm)),

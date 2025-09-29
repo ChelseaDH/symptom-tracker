@@ -1,13 +1,11 @@
 package com.example.symptomtracker.core.designsystem.component
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -16,9 +14,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.symptomtracker.R
 import com.example.symptomtracker.core.designsystem.SymptomTrackerTheme
 import com.example.symptomtracker.core.designsystem.success
 
@@ -30,7 +29,7 @@ fun ErrorCard(
     ResultCard(
         message = message,
         color = MaterialTheme.colorScheme.error,
-        iconVector = Icons.Default.Warning,
+        painterResId = R.drawable.outline_warning_24,
         modifier = modifier
     )
 }
@@ -43,7 +42,7 @@ fun SuccessCard(
     ResultCard(
         message = message,
         color = MaterialTheme.colorScheme.success,
-        iconVector = Icons.Default.CheckCircle,
+        painterResId = R.drawable.outline_check_circle_24,
         modifier = modifier
     )
 }
@@ -52,7 +51,7 @@ fun SuccessCard(
 private fun ResultCard(
     message: String,
     color: Color,
-    iconVector: ImageVector,
+    @DrawableRes painterResId: Int,
     modifier: Modifier = Modifier,
 ) {
     OutlinedCard(
@@ -64,7 +63,7 @@ private fun ResultCard(
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Icon(
-                imageVector = iconVector,
+                painter = painterResource(id = painterResId),
                 contentDescription = null,
                 modifier = Modifier.align(Alignment.CenterVertically),
                 tint = color,

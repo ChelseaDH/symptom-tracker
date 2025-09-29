@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -42,6 +40,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.symptomtracker.R
 import com.example.symptomtracker.core.designsystem.SymptomTrackerTheme
 import com.example.symptomtracker.core.designsystem.component.FilledTonalButtonWithIcon
+import com.example.symptomtracker.core.designsystem.icon.AddIcon
 import com.example.symptomtracker.core.designsystem.icon.MealieIcon
 import com.example.symptomtracker.core.domain.model.FoodLog
 import com.example.symptomtracker.core.domain.model.Log
@@ -153,10 +152,7 @@ internal fun LogsScreen(
 
     Scaffold(floatingActionButton = {
         FloatingActionButton(onClick = fabOnClick) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = stringResource(R.string.action_add)
-            )
+            AddIcon(contentDescription = stringResource(R.string.action_add))
         }
     }) { innerPadding ->
         Column(

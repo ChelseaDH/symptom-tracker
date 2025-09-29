@@ -7,18 +7,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,6 +29,8 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.example.symptomtracker.R
 import com.example.symptomtracker.core.designsystem.SymptomTrackerTheme
+import com.example.symptomtracker.core.designsystem.icon.AddIcon
+import com.example.symptomtracker.core.designsystem.icon.ClearIcon
 import com.example.symptomtracker.core.ui.TextInputProvider
 
 @Composable
@@ -137,11 +135,10 @@ fun <T> LabelledOutlinedTextInputFieldWithDropdown(
                 onValueChange(it)
                 expanded = true
             },
-            modifier = modifier.menuAnchor(MenuAnchorType.PrimaryEditable),
+            modifier = modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable),
             trailingIcon = {
                 IconButton(onClick = { onClearInput() }) {
-                    Icon(
-                        imageVector = Icons.Default.Clear,
+                    ClearIcon(
                         contentDescription = stringResource(id = R.string.clear_input_cd)
                     )
                 }
@@ -155,7 +152,8 @@ fun <T> LabelledOutlinedTextInputFieldWithDropdown(
         ) {
             if (availableOptions.isNotEmpty()) {
                 for (availableItem in availableOptions) {
-                    DropdownMenuItem(text = { Text(text = getOptionDisplayName(availableItem)) },
+                    DropdownMenuItem(
+                        text = { Text(text = getOptionDisplayName(availableItem)) },
                         onClick = {
                             expanded = false
                             onChosenOptionUpdated(availableItem)
@@ -165,16 +163,14 @@ fun <T> LabelledOutlinedTextInputFieldWithDropdown(
                 if (canCreateOption) HorizontalDivider()
             }
             if (canCreateOption) {
-                DropdownMenuItem(text = { Text(text = value.value) },
+                DropdownMenuItem(
+                    text = { Text(text = value.value) },
                     onClick = {
                         expanded = false
                         onCreateOption()
                     },
                     trailingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = stringResource(R.string.dropdown_create_cd)
-                        )
+                        AddIcon(contentDescription = stringResource(R.string.dropdown_create_cd))
                     }
                 )
             }
@@ -202,7 +198,7 @@ fun LabelledOutlinedReadOnlyDropdown(
             value = value,
             onValueChange = {},
             modifier = Modifier
-                .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
                 .fillMaxWidth(),
             readOnly = true,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) }

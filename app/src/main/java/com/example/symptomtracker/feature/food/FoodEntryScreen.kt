@@ -7,11 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Scaffold
@@ -29,6 +25,8 @@ import com.example.symptomtracker.core.designsystem.component.DateTimeInput
 import com.example.symptomtracker.core.designsystem.component.DateTimeInputRow
 import com.example.symptomtracker.core.designsystem.component.FilledTonalButtonWithIcon
 import com.example.symptomtracker.core.designsystem.component.LabelledOutlinedTextInputFieldWithDropdown
+import com.example.symptomtracker.core.designsystem.icon.AddIcon
+import com.example.symptomtracker.core.designsystem.icon.DeleteIcon
 import com.example.symptomtracker.core.domain.model.FoodItem
 import com.example.symptomtracker.core.ui.ItemPreviewParameterProvider
 import com.example.symptomtracker.ui.SymptomTrackerTopAppBar
@@ -42,7 +40,8 @@ internal fun FoodEntryScreen(
 ) {
     Scaffold(
         topBar = {
-            SymptomTrackerTopAppBar(title = stringResource(titleId),
+            SymptomTrackerTopAppBar(
+                title = stringResource(titleId),
                 canNavigateBack = true,
                 navigateUp = navigateBack,
                 actions = {
@@ -96,15 +95,12 @@ internal fun FoodLogItemList(
 ) {
     LazyColumn(modifier = modifier) {
         items(items = foodItemEntityList, key = { it.id }) { item ->
-            ListItem(headlineContent = { Text(text = item.name) }, trailingContent = {
-                IconButton(onClick = { onDeleteItem(item) }) {
-                    Icon(
-                        imageVector = Icons.Default.Delete, contentDescription = stringResource(
-                            R.string.delete_item_cd
-                        )
-                    )
-                }
-            }, modifier = modifier
+            ListItem(
+                headlineContent = { Text(text = item.name) }, trailingContent = {
+                    IconButton(onClick = { onDeleteItem(item) }) {
+                        DeleteIcon(contentDescription = stringResource(R.string.delete_item_cd))
+                    }
+                }, modifier = modifier
             )
         }
     }
@@ -143,10 +139,7 @@ internal fun FoodLogItemInput(
         FilledTonalButtonWithIcon(
             textId = R.string.action_add_to_log,
             icon = {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(id = R.string.add_food_cd),
-                )
+                AddIcon(contentDescription = stringResource(id = R.string.add_food_cd))
             },
             onClick = { eventSink(FoodEntryEvent.AddItem) },
             modifier = Modifier.fillMaxWidth()

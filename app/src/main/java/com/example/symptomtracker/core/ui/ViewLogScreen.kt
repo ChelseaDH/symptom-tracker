@@ -9,9 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -27,6 +24,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.symptomtracker.R
 import com.example.symptomtracker.core.designsystem.component.Dialog
+import com.example.symptomtracker.core.designsystem.icon.DeleteIcon
+import com.example.symptomtracker.core.designsystem.icon.EditIcon
 import com.example.symptomtracker.core.domain.model.Log
 import com.example.symptomtracker.ui.SymptomTrackerTopAppBar
 
@@ -51,7 +50,7 @@ fun <L : Log> ViewLogScreen(
                 topBarActions = {
                     if (onEdit !== null) {
                         IconButton(onClick = onEdit) {
-                            Icon(imageVector = Icons.Filled.Edit, contentDescription = null)
+                            EditIcon(contentDescription = null)
                         }
                     }
                     if (onCopy !== null) {
@@ -63,7 +62,7 @@ fun <L : Log> ViewLogScreen(
                         }
                     }
                     IconButton(onClick = { openDeleteDialog.value = true }) {
-                        Icon(imageVector = Icons.Filled.Delete, contentDescription = null)
+                        DeleteIcon(contentDescription = null)
                     }
                 }
             ) {
@@ -148,7 +147,7 @@ internal fun DeleteLogAlertDialog(
         title = stringResource(R.string.delete_log_confirmation_title),
         confirmButtonText = R.string.action_delete,
         icon = {
-            Icon(imageVector = Icons.Filled.Delete, contentDescription = null)
+            DeleteIcon(contentDescription = null)
         },
         onSubmit = onDelete,
         onClose = onDismissRequest,
