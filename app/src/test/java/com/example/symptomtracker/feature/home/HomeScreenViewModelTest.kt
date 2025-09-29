@@ -57,7 +57,7 @@ class HomeScreenViewModelTest {
         symptomRepository.sendSymptomLogs(symptomLogs)
         movementRepository.sendMovementLogs(movementLogs)
 
-        assertFalse(viewModel.uiState.showBottomSheet)
+        assertFalse(viewModel.uiState.showQuickAddMenu)
         assertEquals(listOf(foodLogs[1], symptomLogs[0]), viewModel.uiState.logs)
         assertTrue(viewModel.uiState.isToday)
 
@@ -65,14 +65,14 @@ class HomeScreenViewModelTest {
     }
 
     @Test
-    fun bottomSheetVisibilityUpdates_whenUpdateBottomSheetVisibilityIsCalled() = runTest {
+    fun quickAddMenuVisibilityUpdates_whenUpdateQuickAddMenuVisibilityIsCalled() = runTest {
         val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.uiState }
 
-        assertFalse(viewModel.uiState.showBottomSheet)
+        assertFalse(viewModel.uiState.showQuickAddMenu)
 
-        viewModel.handleEvent(HomeScreenEvent.UpdateBottomSheetVisibility(visible = true))
+        viewModel.handleEvent(HomeScreenEvent.UpdateQuickAddMenuVisibility(visible = true))
 
-        assertTrue(viewModel.uiState.showBottomSheet)
+        assertTrue(viewModel.uiState.showQuickAddMenu)
 
         collectJob.cancel()
     }

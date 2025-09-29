@@ -2,35 +2,37 @@ package com.example.symptomtracker.feature.home
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FloatingActionButtonMenu
+import androidx.compose.material3.FloatingActionButtonMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.ToggleFloatingActionButton
+import androidx.compose.material3.ToggleFloatingActionButtonDefaults.animateIcon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,8 +45,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.symptomtracker.R
 import com.example.symptomtracker.core.designsystem.component.DatePickerModal
-import com.example.symptomtracker.core.designsystem.component.FilledTonalButtonWithIcon
-import com.example.symptomtracker.core.designsystem.icon.AddIcon
 import com.example.symptomtracker.core.designsystem.icon.MealieIcon
 import com.example.symptomtracker.core.domain.model.FoodLog
 import com.example.symptomtracker.core.domain.model.Log
@@ -55,11 +55,10 @@ import com.example.symptomtracker.core.domain.model.getDisplayString
 import com.example.symptomtracker.core.ui.LogItemCard
 import com.example.symptomtracker.core.ui.LogsPreviewParameterProvider
 import com.example.symptomtracker.core.ui.NoLogsFoundCard
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun HomeScreen(
     navigateToAddFood: () -> Unit,
@@ -73,29 +72,42 @@ fun HomeScreen(
     viewModel: HomeScreenViewModel = hiltViewModel(),
 ) {
     val mealieIntegrationEnabled by viewModel.mealieIntegrationEnabled.collectAsState()
-    val sheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
 
-    fun onQuickAddNavigation() {
-        scope.launch { sheetState.hide() }.invokeOnCompletion {
-            viewModel.handleEvent(HomeScreenEvent.UpdateBottomSheetVisibility(false))
-        }
+    fun closeQuickAddMenu() {
+        viewModel.handleEvent(HomeScreenEvent.UpdateQuickAddMenuVisibility(false))
     }
 
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
+            QuickAddMenu(
+                expanded = viewModel.uiState.showQuickAddMenu,
+                onExpandedChange = {
                     viewModel.handleEvent(
-                        HomeScreenEvent.UpdateBottomSheetVisibility(
-                            true
+                        HomeScreenEvent.UpdateQuickAddMenuVisibility(
+                            it
                         )
                     )
                 },
-            ) {
-                AddIcon(contentDescription = stringResource(R.string.action_add))
-            }
-        }, modifier = modifier
+                onAddFoodClick = {
+                    closeQuickAddMenu()
+                    navigateToAddFood()
+                },
+                onAddSymptomClick = {
+                    closeQuickAddMenu()
+                    navigateToAddSymptom()
+                },
+                onAddMovementClick = {
+                    closeQuickAddMenu()
+                    navigateToAddMovement()
+                },
+                onImportFoodClick = {
+                    closeQuickAddMenu()
+                    onMealieImport()
+                },
+                mealieIntegrationEnabled = mealieIntegrationEnabled,
+            )
+        },
+        modifier = modifier,
     ) { innerPadding ->
         HomeBody(
             date = viewModel.uiState.date,
@@ -109,36 +121,17 @@ fun HomeScreen(
             logs = viewModel.uiState.logs,
             modifier = Modifier.padding(innerPadding),
         )
-        if (viewModel.uiState.showBottomSheet) {
-            ModalBottomSheet(
-                onDismissRequest = {
-                    viewModel.handleEvent(
-                        HomeScreenEvent.UpdateBottomSheetVisibility(
-                            false
-                        )
+
+        if (viewModel.uiState.showQuickAddMenu) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                        onClick = { closeQuickAddMenu() }
                     )
-                },
-                sheetState = sheetState,
-            ) {
-                AddLogsBottomSheetContent(
-                    mealieIntegrationEnabled = mealieIntegrationEnabled,
-                    onAddFoodClick = {
-                        onQuickAddNavigation()
-                        navigateToAddFood()
-                    },
-                    onAddSymptomClick = {
-                        onQuickAddNavigation()
-                        navigateToAddSymptom()
-                    },
-                    onAddMovementClick = {
-                        onQuickAddNavigation()
-                        navigateToAddMovement()
-                    },
-                    onImportFoodClick = {
-                        onQuickAddNavigation()
-                        onMealieImport()
-                    })
-            }
+            )
         }
     }
 }
@@ -323,9 +316,11 @@ fun Timeline(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
+@ExperimentalMaterial3ExpressiveApi
 @Composable
-internal fun AddLogsBottomSheetContent(
+fun QuickAddMenu(
+    expanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit,
     mealieIntegrationEnabled: Boolean,
     onAddFoodClick: () -> Unit,
     onAddSymptomClick: () -> Unit,
@@ -333,62 +328,62 @@ internal fun AddLogsBottomSheetContent(
     onImportFoodClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp, bottom = 32.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+    FloatingActionButtonMenu(
+        expanded = expanded,
+        button = {
+            ToggleFloatingActionButton(
+                checked = expanded,
+                onCheckedChange = onExpandedChange,
+            ) {
+                val iconResource by remember {
+                    derivedStateOf {
+                        if (checkedProgress > 0.5f) R.drawable.outline_close_24 else R.drawable.outline_add_24
+                    }
+                }
+                Icon(
+                    painter = painterResource(id = iconResource),
+                    contentDescription = null,
+                    modifier = Modifier.animateIcon({ checkedProgress })
+                )
+            }
+        },
+        modifier = modifier.offset(x = 16.dp, y = 16.dp),
     ) {
-        Text(
-            text = stringResource(R.string.home_manual_add_title),
-            style = MaterialTheme.typography.titleMedium
+        FloatingActionButtonMenuItem(
+            onClick = onAddFoodClick,
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.outline_nutrition_24),
+                    contentDescription = stringResource(R.string.add_food_cd)
+                )
+            },
+            text = { Text(text = stringResource(R.string.add_food_text)) },
         )
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            maxItemsInEachRow = 3,
-        ) {
-            FilledTonalButtonWithIcon(
-                textId = R.string.add_food_text,
-                icon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.outline_nutrition_24),
-                        contentDescription = stringResource(R.string.add_food_cd)
-                    )
-                },
-                onClick = onAddFoodClick,
-            )
-            FilledTonalButtonWithIcon(
-                textId = R.string.add_symptom_text,
-                icon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.outline_symptoms_24),
-                        contentDescription = stringResource(R.string.add_symptom_cd)
-                    )
-                },
-                onClick = onAddSymptomClick,
-            )
-            FilledTonalButtonWithIcon(
-                textId = R.string.add_movement_text,
-                icon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.outline_gastroenterology_24),
-                        contentDescription = stringResource(R.string.add_movement_cd)
-                    )
-                },
-                onClick = onAddMovementClick,
-            )
-        }
-
+        FloatingActionButtonMenuItem(
+            onClick = onAddSymptomClick,
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.outline_symptoms_24),
+                    contentDescription = stringResource(R.string.add_symptom_cd)
+                )
+            },
+            text = { Text(text = stringResource(R.string.add_symptom_text)) },
+        )
+        FloatingActionButtonMenuItem(
+            onClick = onAddMovementClick,
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.outline_gastroenterology_24),
+                    contentDescription = stringResource(R.string.add_movement_cd)
+                )
+            },
+            text = { Text(text = stringResource(R.string.add_movement_text)) },
+        )
         if (mealieIntegrationEnabled) {
-            Text(
-                text = "Import", style = MaterialTheme.typography.titleMedium
-            )
-            FilledTonalButtonWithIcon(
-                textId = R.string.mealie_import_title,
-                icon = { MealieIcon() },
+            FloatingActionButtonMenuItem(
                 onClick = onImportFoodClick,
+                icon = { MealieIcon() },
+                text = { Text(text = stringResource(R.string.mealie_import_action)) },
             )
         }
     }
@@ -426,10 +421,13 @@ fun HomeBodyWithLogsPreview(@PreviewParameter(LogsPreviewParameterProvider::clas
     )
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Preview(showBackground = true)
 @Composable
-fun AddLogsBottomSheetContentPreviewWithIntegration() {
-    AddLogsBottomSheetContent(
+fun QuickAddMenuClosed() {
+    QuickAddMenu(
+        expanded = false,
+        onExpandedChange = {},
         mealieIntegrationEnabled = true,
         onAddFoodClick = {},
         onImportFoodClick = {},
@@ -438,10 +436,28 @@ fun AddLogsBottomSheetContentPreviewWithIntegration() {
     )
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Preview(showBackground = true)
 @Composable
-fun AddLogsBottomSheetContentPreviewWithoutIntegration() {
-    AddLogsBottomSheetContent(
+fun QuickAddMenuWithIntegration() {
+    QuickAddMenu(
+        expanded = true,
+        onExpandedChange = {},
+        mealieIntegrationEnabled = true,
+        onAddFoodClick = {},
+        onImportFoodClick = {},
+        onAddSymptomClick = {},
+        onAddMovementClick = {},
+    )
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Preview(showBackground = true)
+@Composable
+fun QuickAddMenuWithoutIntegration() {
+    QuickAddMenu(
+        expanded = true,
+        onExpandedChange = {},
         mealieIntegrationEnabled = false,
         onAddFoodClick = {},
         onImportFoodClick = {},

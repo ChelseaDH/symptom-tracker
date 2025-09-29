@@ -73,6 +73,7 @@
     <string name="validation_invalid">Invalid</string>
 
     <string name="mealie_import_title">Log food from Mealie recipe</string>
+    <string name="mealie_import_action">Mealie import</string>
     <string name="mealie_import_results_header">Ingredients to import</string>
     <string name="mealie_import_url_label">Recipe URL:</string>
     <string name="mealie_import_error_no_ingredients">No ingredients found.</string>
