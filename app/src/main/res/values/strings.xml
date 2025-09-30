@@ -3,7 +3,7 @@
     <string name="home">Home</string>
     <string name="add_food_text">Food</string>
     <string name="add_food_cd">Add food</string>
-    <string name="add_food_manually">Add food manually</string>
+    <string name="add_food_manually">Manual</string>
     <string name="add_symptom_text">Symptom</string>
     <string name="add_symptom_cd">Add symptom</string>
     <string name="add_movement_text">Movement</string>

@@ -7,28 +7,24 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FloatingActionButtonMenu
 import androidx.compose.material3.FloatingActionButtonMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.ToggleFloatingActionButton
-import androidx.compose.material3.ToggleFloatingActionButtonDefaults.animateIcon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -45,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.symptomtracker.R
 import com.example.symptomtracker.core.designsystem.component.DatePickerModal
+import com.example.symptomtracker.core.designsystem.component.FloatingButtonMenu
 import com.example.symptomtracker.core.designsystem.icon.MealieIcon
 import com.example.symptomtracker.core.domain.model.FoodLog
 import com.example.symptomtracker.core.domain.model.Log
@@ -78,6 +75,7 @@ fun HomeScreen(
     }
 
     Scaffold(
+        contentWindowInsets = WindowInsets(0.dp),
         floatingActionButton = {
             QuickAddMenu(
                 expanded = viewModel.uiState.showQuickAddMenu,
@@ -328,26 +326,10 @@ fun QuickAddMenu(
     onImportFoodClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    FloatingActionButtonMenu(
+    FloatingButtonMenu(
         expanded = expanded,
-        button = {
-            ToggleFloatingActionButton(
-                checked = expanded,
-                onCheckedChange = onExpandedChange,
-            ) {
-                val iconResource by remember {
-                    derivedStateOf {
-                        if (checkedProgress > 0.5f) R.drawable.outline_close_24 else R.drawable.outline_add_24
-                    }
-                }
-                Icon(
-                    painter = painterResource(id = iconResource),
-                    contentDescription = null,
-                    modifier = Modifier.animateIcon({ checkedProgress })
-                )
-            }
-        },
-        modifier = modifier.offset(x = 16.dp, y = 16.dp),
+        onExpandedChange = onExpandedChange,
+        modifier = modifier,
     ) {
         FloatingActionButtonMenuItem(
             onClick = onAddFoodClick,

@@ -3,8 +3,7 @@ package com.example.symptomtracker.feature.logs
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,15 +11,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonMenuItem
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -28,7 +26,6 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
@@ -38,8 +35,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.symptomtracker.R
-import com.example.symptomtracker.core.designsystem.SymptomTrackerTheme
-import com.example.symptomtracker.core.designsystem.component.FilledTonalButtonWithIcon
+import com.example.symptomtracker.core.designsystem.component.FloatingButtonMenu
 import com.example.symptomtracker.core.designsystem.icon.AddIcon
 import com.example.symptomtracker.core.designsystem.icon.MealieIcon
 import com.example.symptomtracker.core.domain.model.FoodLog
@@ -100,15 +96,17 @@ internal fun LogsScreen(
 ) {
     var swipeOffset by remember { mutableFloatStateOf(0f) }
 
-    var fabOnClick: () -> Unit by remember { mutableStateOf({}) }
+    var fab: @Composable (() -> Unit) by remember { mutableStateOf({}) }
     var tabContent: LazyListScope.() -> Unit by remember { mutableStateOf({}) }
-
-    var addFoodBottomSheetOpen by remember { mutableStateOf(false) }
 
     when (tabState) {
         is TabUiState.FoodLogs -> {
-            fabOnClick = {
-                if (mealieIntegrationEnabled) addFoodBottomSheetOpen = true else onAddFoodClick()
+            fab = {
+                AddFoodButton(
+                    mealieIntegrationEnabled = mealieIntegrationEnabled,
+                    onAddFoodClick = { onAddFoodClick() },
+                    onImportFoodClick = { onMealieImport() },
+                )
             }
             tabContent = {
                 items(items = tabState.logs) { foodLog ->
@@ -122,7 +120,9 @@ internal fun LogsScreen(
         }
 
         is TabUiState.SymptomLogs -> {
-            fabOnClick = onAddSymptomClick
+            fab = {
+                AddButton(onClick = onAddSymptomClick)
+            }
             tabContent = {
                 items(items = tabState.logs) { symptomLog ->
                     LogCard(
@@ -135,7 +135,9 @@ internal fun LogsScreen(
         }
 
         is TabUiState.MovementLogs -> {
-            fabOnClick = onAddMovementClick
+            fab = {
+                AddButton(onClick = onAddMovementClick)
+            }
             tabContent = {
                 items(items = tabState.logs) { movementLog ->
                     LogCard(
@@ -150,23 +152,21 @@ internal fun LogsScreen(
         else -> Unit
     }
 
-    Scaffold(floatingActionButton = {
-        FloatingActionButton(onClick = fabOnClick) {
-            AddIcon(contentDescription = stringResource(R.string.action_add))
-        }
-    }) { innerPadding ->
+    Scaffold(
+        contentWindowInsets = WindowInsets(0.dp),
+        floatingActionButton = { fab() },
+    ) { innerPadding ->
         Column(
             modifier = modifier
                 .fillMaxWidth()
                 .padding(innerPadding),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             SecondaryTabRow(selectedTabIndex = selectedTabIndex) {
                 tabs.forEachIndexed { index, title ->
                     Tab(
                         selected = selectedTabIndex == index,
                         onClick = { eventSink(LogsViewEvent.UpdateSelectedTab(index)) },
-                        text = { Text(text = title) }
+                        text = { Text(text = title) },
                     )
                 }
             }
@@ -186,19 +186,11 @@ internal fun LogsScreen(
                                 }
                             }) { _, dragAmount -> swipeOffset += dragAmount }
                     },
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 tabContent()
             }
         }
-    }
-
-    if (addFoodBottomSheetOpen) {
-        AddFoodBottomSheet(
-            onAddFood = onAddFoodClick,
-            onImportFoodFromMealie = onMealieImport,
-            onDismissRequest = { addFoodBottomSheetOpen = false }
-        )
     }
 }
 
@@ -209,76 +201,73 @@ internal fun LogCard(log: Log, supportingText: String, onClick: () -> Unit = {})
         date = log.date,
         dateTimeFormatter = DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_hh_mm)),
         supportingText = supportingText,
-        onClick = onClick
+        onClick = onClick,
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun AddFoodBottomSheet(
-    onAddFood: () -> Unit,
-    onImportFoodFromMealie: () -> Unit,
-    onDismissRequest: () -> Unit,
+internal fun AddButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    val sheetState = rememberModalBottomSheetState()
-    val onButtonPress: (() -> Unit) -> Unit = { onClick ->
-        onDismissRequest()
-        onClick()
-    }
-
-    ModalBottomSheet(
-        onDismissRequest = onDismissRequest,
-        sheetState = sheetState,
+    FloatingActionButton(
+        onClick = onClick,
+        modifier = modifier,
     ) {
-        AddFoodBottomSheetContent(
-            onAddFood = { onButtonPress(onAddFood) },
-            onImportFoodFromMealie = { onButtonPress(onImportFoodFromMealie) }
+        AddIcon(contentDescription = stringResource(R.string.action_add))
+    }
+}
+
+@Composable
+internal fun AddFoodButton(
+    mealieIntegrationEnabled: Boolean,
+    onAddFoodClick: () -> Unit,
+    onImportFoodClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    if (mealieIntegrationEnabled) {
+        AddFoodMenu(
+            onAddFood = onAddFoodClick,
+            onImportFoodFromMealie = onImportFoodClick,
+            modifier = modifier,
+        )
+    } else {
+        AddButton(
+            onClick = onAddFoodClick,
+            modifier = modifier,
         )
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-internal fun AddFoodBottomSheetContent(
+internal fun AddFoodMenu(
     onAddFood: () -> Unit,
     onImportFoodFromMealie: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp, bottom = 32.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+    var expanded by remember { mutableStateOf(false) }
+
+    FloatingButtonMenu(
+        expanded = expanded,
+        onExpandedChange = { expanded = it },
+        modifier = modifier,
     ) {
-        Text(
-            text = stringResource(R.string.add_food_cd),
-            style = MaterialTheme.typography.titleMedium
+        FloatingActionButtonMenuItem(
+            onClick = onAddFood,
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.outline_nutrition_24),
+                    contentDescription = stringResource(R.string.add_food_cd)
+                )
+            },
+            text = { Text(text = stringResource(R.string.add_food_manually)) },
         )
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(
-                16.dp,
-                alignment = Alignment.CenterHorizontally
-            ),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            maxItemsInEachRow = 2,
-        ) {
-            FilledTonalButtonWithIcon(
-                textId = R.string.action_add_manually,
-                icon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.outline_nutrition_24),
-                        contentDescription = stringResource(R.string.add_food_manually)
-                    )
-                },
-                onClick = onAddFood,
-            )
-            FilledTonalButtonWithIcon(
-                textId = R.string.mealie_import_action_import_food_from_recipe,
-                icon = { MealieIcon() },
-                onClick = onImportFoodFromMealie,
-            )
-        }
+        FloatingActionButtonMenuItem(
+            onClick = onImportFoodFromMealie,
+            icon = { MealieIcon() },
+            text = { Text(text = stringResource(R.string.mealie_import_action)) },
+        )
     }
 }
 
@@ -299,15 +288,4 @@ fun LogsScreenPreview(@PreviewParameter(FoodLogsPreviewParameterProvider::class)
         onAddMovementClick = {},
         onMealieImport = {},
     )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun AddFoodBottomSheetContentPreview() {
-    SymptomTrackerTheme {
-        AddFoodBottomSheetContent(
-            onAddFood = {},
-            onImportFoodFromMealie = {},
-        )
-    }
 }
