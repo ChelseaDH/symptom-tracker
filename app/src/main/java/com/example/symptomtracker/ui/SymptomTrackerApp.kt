@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import com.example.symptomtracker.R
 import com.example.symptomtracker.navigation.SymptomTrackerNavHost
 import com.example.symptomtracker.navigation.TopLevelDestination
@@ -76,13 +77,15 @@ fun SymptomTrackerBottomBar(
 ) {
     NavigationBar {
         destinations.forEach { destination ->
+            val isSelected = currentDestination?.equals(destination) ?: false
+
             NavigationBarItem(
-                selected = currentDestination?.equals(destination) ?: false,
+                selected = isSelected,
                 onClick = { onNavigateToDestination(destination) },
                 icon = {
                     Icon(
-                        painter = painterResource(id = destination.iconId),
-                        contentDescription = null
+                        painter = painterResource(id = if (isSelected) destination.activeIconId else destination.iconId),
+                        contentDescription = null,
                     )
                 },
                 label = { Text(text = stringResource(id = destination.iconTextId)) }
@@ -134,3 +137,34 @@ fun SymptomTrackerTopAppBar(
         )
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+fun BottomBarOnHomePreview() {
+    SymptomTrackerBottomBar(
+        destinations = TopLevelDestination.entries,
+        currentDestination = TopLevelDestination.HOME,
+        onNavigateToDestination = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun BottomBarOnLogsPreview() {
+    SymptomTrackerBottomBar(
+        destinations = TopLevelDestination.entries,
+        currentDestination = TopLevelDestination.LOGS,
+        onNavigateToDestination = {}
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun BottomBarOnSettingsPreview() {
+    SymptomTrackerBottomBar(
+        destinations = TopLevelDestination.entries,
+        currentDestination = TopLevelDestination.SETTINGS,
+        onNavigateToDestination = {}
+    )
+}
+
