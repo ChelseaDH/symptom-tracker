@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -40,6 +41,7 @@ import com.example.symptomtracker.ui.SymptomTrackerTopAppBar
 import java.time.LocalDate
 import java.time.LocalTime
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun MovementEntryScreen(
     navigateBack: () -> Unit,
@@ -49,8 +51,8 @@ internal fun MovementEntryScreen(
 ) {
     Scaffold(
         topBar = {
-            SymptomTrackerTopAppBar(title = stringResource(titleId),
-                canNavigateBack = true,
+            SymptomTrackerTopAppBar(
+                title = stringResource(titleId),
                 navigateUp = navigateBack,
                 actions = {
                     TextButton(onClick = {

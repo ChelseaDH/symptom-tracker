@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -17,6 +18,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -57,7 +59,7 @@ fun SymptomTrackerApp(appState: AppState) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SymptomTrackerTopLevelTopAppBar(
     @StringRes titleId: Int,
@@ -101,41 +103,28 @@ fun SymptomTrackerBottomBar(
 @Composable
 fun SymptomTrackerTopAppBar(
     title: String,
-    canNavigateBack: Boolean,
     modifier: Modifier = Modifier,
     navigateUp: () -> Unit = {},
     actions: @Composable (RowScope.() -> Unit) = {},
 ) {
-    if (canNavigateBack) {
-        CenterAlignedTopAppBar(
-            title = {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleLarge
+    TopAppBar(
+        title = {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleLarge
+            )
+        },
+        navigationIcon = {
+            IconButton(onClick = { navigateUp() }) {
+                Icon(
+                    painter = painterResource(R.drawable.outline_arrow_back_24),
+                    contentDescription = stringResource(R.string.back_button_cd)
                 )
-            }, navigationIcon = {
-                IconButton(onClick = { navigateUp() }) {
-                    Icon(
-                        painter = painterResource(R.drawable.outline_arrow_back_24),
-                        contentDescription = stringResource(R.string.back_button_cd)
-                    )
-                }
-            },
-            actions = actions,
-            modifier = modifier
-        )
-    } else {
-        CenterAlignedTopAppBar(
-            title = {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleLarge
-                )
-            },
-            actions = actions,
-            modifier = modifier
-        )
-    }
+            }
+        },
+        actions = actions,
+        modifier = modifier,
+    )
 }
 
 @Preview(showBackground = true)
@@ -168,3 +157,19 @@ fun BottomBarOnSettingsPreview() {
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true)
+@Composable
+fun TopAppBarPreview() {
+    SymptomTrackerTopAppBar(
+        title = "Title",
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TopLevelTopAppBarPreview() {
+    SymptomTrackerTopLevelTopAppBar(
+        titleId = R.string.app_name,
+    )
+}

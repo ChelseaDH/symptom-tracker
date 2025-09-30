@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
@@ -35,6 +36,7 @@ import com.example.symptomtracker.core.designsystem.component.TextInput
 import com.example.symptomtracker.core.domain.usecase.MealieCredentialsValidation
 import com.example.symptomtracker.ui.SymptomTrackerTopAppBar
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MealieSettingsRoute(
     navigateBack: () -> Unit,
@@ -44,8 +46,8 @@ fun MealieSettingsRoute(
     val saveResult by viewModel.saveResult.collectAsState()
 
     Scaffold(topBar = {
-        SymptomTrackerTopAppBar(title = stringResource(id = R.string.mealie_settings_title),
-            canNavigateBack = true,
+        SymptomTrackerTopAppBar(
+            title = stringResource(id = R.string.mealie_settings_title),
             navigateUp = navigateBack,
             actions = {
                 TextButton(onClick = { viewModel.handleEvent(MealieSettingsEvent.Save) }) {

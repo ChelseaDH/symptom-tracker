@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -31,6 +32,7 @@ import com.example.symptomtracker.core.domain.model.FoodItem
 import com.example.symptomtracker.core.ui.ItemPreviewParameterProvider
 import com.example.symptomtracker.ui.SymptomTrackerTopAppBar
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun FoodEntryScreen(
     navigateBack: () -> Unit,
@@ -42,7 +44,6 @@ internal fun FoodEntryScreen(
         topBar = {
             SymptomTrackerTopAppBar(
                 title = stringResource(titleId),
-                canNavigateBack = true,
                 navigateUp = navigateBack,
                 actions = {
                     TextButton(onClick = {

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.HorizontalFloatingToolbar
@@ -83,7 +84,7 @@ fun <L : Log> ViewLogScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 internal fun ViewLogsScreen(
     navigateBack: () -> Unit,
@@ -97,7 +98,6 @@ internal fun ViewLogsScreen(
         topBar = {
             SymptomTrackerTopAppBar(
                 title = "",
-                canNavigateBack = true,
                 navigateUp = navigateBack,
             )
         },

@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
@@ -39,6 +40,7 @@ import com.example.symptomtracker.core.designsystem.icon.DeleteIcon
 import com.example.symptomtracker.core.domain.model.Ingredient
 import com.example.symptomtracker.ui.SymptomTrackerTopAppBar
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MealieImportRoute(
     navigateBack: () -> Unit,
@@ -50,7 +52,6 @@ fun MealieImportRoute(
     Scaffold(topBar = {
         SymptomTrackerTopAppBar(
             title = stringResource(R.string.mealie_import_title),
-            canNavigateBack = true,
             navigateUp = navigateBack,
             actions = {
                 TextButton(

@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
@@ -37,6 +38,7 @@ import com.example.symptomtracker.feature.symptom.SymptomEntryEvent
 import com.example.symptomtracker.feature.symptom.SymptomEntryUiState
 import com.example.symptomtracker.ui.SymptomTrackerTopAppBar
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun SymptomEntryScreen(
     navigateBack: () -> Unit,
@@ -48,7 +50,6 @@ internal fun SymptomEntryScreen(
         topBar = {
             SymptomTrackerTopAppBar(
                 title = stringResource(titleId),
-                canNavigateBack = true,
                 navigateUp = navigateBack,
                 actions = {
                     TextButton(onClick = {
