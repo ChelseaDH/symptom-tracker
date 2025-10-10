@@ -49,18 +49,24 @@
     <string name="log_drink_title">Log drink</string>
     <string name="edit_drink_title">Edit drink</string>
 
+    // Manage items
+    <string name="manage_items_options_menu_cd">Open options menu for item %s</string>
+    <string name="manage_items_save_cd">Save item %s</string>
+    <string name="manage_items_edit">Edit %s</string>
+    <string name="manage_items_delete">Delete %s</string>
+    <string name="manage_items_merge">Merge %s</string>
+    <string name="manage_items_cancel_edit_cd">Cancel edit for item %s</string>
+    <string name="manage_items_direct_delete_dialog">This item will be permanently deleted.</string>
+    <string name="manage_items_merge_delete_selection_label">Item to merge with</string>
+
     // Manage food items screen
     <string name="manage_food_items_title">Food items</string>
-    <string name="manage_food_items_options_menu_cd">Open options menu for item %s</string>
-    <string name="manage_food_items_save_cd">Save item %s</string>
-    <string name="manage_food_items_edit">Edit %s</string>
-    <string name="manage_food_items_delete">Delete %s</string>
-    <string name="manage_food_items_merge">Merge %s</string>
-    <string name="manage_food_items_cancel_edit_cd">Cancel edit for item %s</string>
-    <string name="manage_food_items_direct_delete_dialog">This item will be permanently deleted.</string>
     <string name="manage_food_items_merge_delete_dialog">This item belongs to at least one food log and must be merged with another before it can be permanently deleted.</string>
-    <string name="manage_food_items_merge_delete_selection_label">Item to merge with</string>
     <string name="no_items_found">No items found</string>
+
+    // Manage drink items screen
+    <string name="manage_drink_items_title">Drink items</string>
+    <string name="manage_drink_items_merge_delete_dialog">This item belongs to at least one drink log and must be merged with another before it can be permanently deleted.</string>
 
     // Actions
     <string name="action_add">Add</string>

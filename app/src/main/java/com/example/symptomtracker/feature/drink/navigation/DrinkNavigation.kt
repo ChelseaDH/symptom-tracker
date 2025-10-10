@@ -8,6 +8,7 @@ import androidx.navigation.navArgument
 import com.example.symptomtracker.core.domain.model.DrinkLog
 import com.example.symptomtracker.feature.drink.AddDrinkScreen
 import com.example.symptomtracker.feature.drink.EditDrinkScreen
+import com.example.symptomtracker.feature.drink.ManageDrinkItemsRoute
 import com.example.symptomtracker.feature.drink.ViewDrinkRoute
 
 const val DRINK_LOG_ID = "drinkLogId"
@@ -16,6 +17,7 @@ const val PREFILL_ITEMS = "prefillItems"
 const val ADD_DRINK_ROUTE = "add_drink"
 const val EDIT_DRINK_ROUTE = "edit_drink"
 const val VIEW_DRINK_ROUTE = "view_drink"
+const val MANAGE_DRINK_ITEMS_ROUTE = "manage_drink_items"
 
 fun NavController.navigateToAddDrink(prefillItems: List<String>? = null) {
     val prefillItemsArg = prefillItems?.joinToString(separator = ",", prefix = "[", postfix = "]")
@@ -82,4 +84,10 @@ fun NavGraphBuilder.viewDrinkScreen(
             navigateToCopy = navigateToCopy,
         )
     }
+}
+
+fun NavController.navigateToManageDrinkItems() = navigate(route = MANAGE_DRINK_ITEMS_ROUTE)
+
+fun NavGraphBuilder.manageDrinkItemsScreen(navigateBack: () -> Unit) {
+    composable(route = MANAGE_DRINK_ITEMS_ROUTE) { ManageDrinkItemsRoute(navigateBack) }
 }

@@ -1,4 +1,4 @@
-package com.example.symptomtracker.feature.food
+package com.example.symptomtracker.feature.drink
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -34,21 +34,21 @@ import com.example.symptomtracker.core.designsystem.component.LabelledOutlinedRe
 import com.example.symptomtracker.core.designsystem.component.LabelledOutlinedTextField
 import com.example.symptomtracker.core.designsystem.icon.DeleteIcon
 import com.example.symptomtracker.core.designsystem.icon.EditIcon
-import com.example.symptomtracker.core.domain.model.FoodItem
-import com.example.symptomtracker.core.ui.ItemPreviewParameterProvider
+import com.example.symptomtracker.core.domain.model.DrinkItem
+import com.example.symptomtracker.core.ui.DrinkItemPreviewParameterProvider
 import com.example.symptomtracker.ui.SymptomTrackerTopAppBar
 
 @Composable
-fun ManageFoodItemsRoute(
+fun ManageDrinkItemsRoute(
     navigateBack: () -> Unit,
-    viewModel: ManageItemsViewModel = hiltViewModel(),
+    viewModel: ManageDrinkItemsViewModel = hiltViewModel(),
 ) {
-    val foodItemsState by viewModel.foodItemsState.collectAsState()
+    val drinkItemsState by viewModel.drinkItemsState.collectAsState()
     val userActionState by viewModel.userActionState.collectAsState()
 
-    ManageFoodItemsPage(
+    ManageDrinkItemsPage(
         navigateBack = navigateBack,
-        foodItemsState = foodItemsState,
+        drinkItemsState = drinkItemsState,
         userActionState = userActionState,
         eventSink = viewModel::handleEvent,
     )
@@ -56,36 +56,36 @@ fun ManageFoodItemsRoute(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun ManageFoodItemsPage(
+internal fun ManageDrinkItemsPage(
     navigateBack: () -> Unit,
-    foodItemsState: FoodItemsUiState,
-    userActionState: ActionState?,
-    eventSink: (ManageFoodEvent) -> Unit,
+    drinkItemsState: DrinkItemsUiState,
+    userActionState: DrinkActionState?,
+    eventSink: (ManageDrinkEvent) -> Unit,
 ) {
     Scaffold(
         topBar = {
             SymptomTrackerTopAppBar(
-                title = stringResource(id = R.string.manage_food_items_title),
+                title = stringResource(id = R.string.manage_drink_items_title),
                 navigateUp = navigateBack,
             )
         },
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
-            when (foodItemsState) {
-                is FoodItemsUiState.Loading -> {}
-                is FoodItemsUiState.Data -> Column {
-                    if (foodItemsState.items.isEmpty()) {
+            when (drinkItemsState) {
+                is DrinkItemsUiState.Loading -> {}
+                is DrinkItemsUiState.Data -> Column {
+                    if (drinkItemsState.items.isEmpty()) {
                         Text(text = stringResource(id = R.string.no_items_found))
                     }
 
                     LazyColumn {
-                        items(items = foodItemsState.items) { item ->
-                            FoodItemRow(
-                                foodItem = item,
-                                onActionChosen = { foodItem, action ->
+                        items(items = drinkItemsState.items) { item ->
+                            DrinkItemRow(
+                                drinkItem = item,
+                                onActionChosen = { drinkItem, action ->
                                     eventSink(
-                                        ManageFoodEvent.StartAction(
-                                            foodItem = foodItem,
+                                        ManageDrinkEvent.StartAction(
+                                            drinkItem = drinkItem,
                                             action = action
                                         )
                                     )
@@ -97,27 +97,27 @@ internal fun ManageFoodItemsPage(
             }
 
             when (userActionState) {
-                is ActionState.Edit ->
+                is DrinkActionState.Edit ->
                     EditDialog(
                         state = userActionState,
-                        onEditNameChange = { eventSink(ManageFoodEvent.UpdateName(it)) },
-                        onSubmit = { eventSink(ManageFoodEvent.SubmitAction) },
-                        onClose = { eventSink(ManageFoodEvent.CancelAction) },
+                        onEditNameChange = { eventSink(ManageDrinkEvent.UpdateName(it)) },
+                        onSubmit = { eventSink(ManageDrinkEvent.SubmitAction) },
+                        onClose = { eventSink(ManageDrinkEvent.CancelAction) },
                     )
 
-                is ActionState.Delete.Direct ->
+                is DrinkActionState.Delete.Direct ->
                     DirectDeleteDialog(
                         state = userActionState,
-                        onSubmit = { eventSink(ManageFoodEvent.SubmitAction) },
-                        onClose = { eventSink(ManageFoodEvent.CancelAction) },
+                        onSubmit = { eventSink(ManageDrinkEvent.SubmitAction) },
+                        onClose = { eventSink(ManageDrinkEvent.CancelAction) },
                     )
 
-                is ActionState.Delete.Merge ->
+                is DrinkActionState.Delete.Merge ->
                     MergeDeleteDialog(
                         state = userActionState,
-                        onSelectedItemUpdated = { eventSink(ManageFoodEvent.ChooseMergeCandidate(it)) },
-                        onSubmit = { eventSink(ManageFoodEvent.SubmitAction) },
-                        onClose = { eventSink(ManageFoodEvent.CancelAction) },
+                        onSelectedItemUpdated = { eventSink(ManageDrinkEvent.ChooseMergeCandidate(it)) },
+                        onSubmit = { eventSink(ManageDrinkEvent.SubmitAction) },
+                        onClose = { eventSink(ManageDrinkEvent.CancelAction) },
                     )
 
                 null -> {}
@@ -127,21 +127,21 @@ internal fun ManageFoodItemsPage(
 }
 
 @Composable
-fun FoodItemRow(
-    foodItem: FoodItem,
-    onActionChosen: (FoodItem, FoodItemAction) -> Unit,
+fun DrinkItemRow(
+    drinkItem: DrinkItem,
+    onActionChosen: (DrinkItem, DrinkItemAction) -> Unit,
 ) {
     var actionMenuOpen by remember { mutableStateOf(false) }
 
     ListItem(
-        headlineContent = { Text(text = foodItem.name) },
+        headlineContent = { Text(text = drinkItem.name) },
         trailingContent = {
             IconButton(onClick = { actionMenuOpen = true }) {
                 Icon(
                     painter = painterResource(R.drawable.outline_more_vert_24),
                     contentDescription = stringResource(
                         id = R.string.manage_items_options_menu_cd,
-                        formatArgs = arrayOf(foodItem.name),
+                        formatArgs = arrayOf(drinkItem.name),
                     )
                 )
             }
@@ -149,14 +149,14 @@ fun FoodItemRow(
                 DropdownMenuItem(
                     text = { Text(text = stringResource(id = R.string.action_edit)) },
                     onClick = {
-                        onActionChosen(foodItem, FoodItemAction.EDIT)
+                        onActionChosen(drinkItem, DrinkItemAction.EDIT)
                         actionMenuOpen = false
                     },
                     leadingIcon = {
                         EditIcon(
                             contentDescription = stringResource(
                                 id = R.string.manage_items_edit,
-                                formatArgs = arrayOf(foodItem.name),
+                                formatArgs = arrayOf(drinkItem.name),
                             )
                         )
                     }
@@ -164,14 +164,14 @@ fun FoodItemRow(
                 DropdownMenuItem(
                     text = { Text(text = stringResource(id = R.string.action_delete)) },
                     onClick = {
-                        onActionChosen(foodItem, FoodItemAction.DELETE)
+                        onActionChosen(drinkItem, DrinkItemAction.DELETE)
                         actionMenuOpen = false
                     },
                     leadingIcon = {
                         DeleteIcon(
                             contentDescription = stringResource(
                                 id = R.string.manage_items_delete,
-                                formatArgs = arrayOf(foodItem.name),
+                                formatArgs = arrayOf(drinkItem.name),
                             )
                         )
                     }
@@ -183,20 +183,20 @@ fun FoodItemRow(
 
 @Composable
 internal fun EditDialog(
-    state: ActionState.Edit,
+    state: DrinkActionState.Edit,
     onEditNameChange: (String) -> Unit,
     onSubmit: () -> Unit,
     onClose: () -> Unit,
 ) {
     Dialog(
-        title = stringResource(R.string.manage_items_edit).format(state.foodItem.name),
+        title = stringResource(R.string.manage_items_edit).format(state.drinkItem.name),
         confirmButtonText = R.string.action_save,
         confirmButtonEnabled = state.canSubmit,
         icon = {
             EditIcon(
                 contentDescription = stringResource(
                     id = R.string.manage_items_edit,
-                    formatArgs = arrayOf(state.foodItem.name),
+                    formatArgs = arrayOf(state.drinkItem.name),
                 )
             )
         },
@@ -213,18 +213,18 @@ internal fun EditDialog(
 
 @Composable
 internal fun DirectDeleteDialog(
-    state: ActionState.Delete.Direct,
+    state: DrinkActionState.Delete.Direct,
     onSubmit: () -> Unit,
     onClose: () -> Unit,
 ) {
     Dialog(
-        title = stringResource(R.string.manage_items_delete).format(state.foodItem.name),
+        title = stringResource(R.string.manage_items_delete).format(state.drinkItem.name),
         confirmButtonText = R.string.action_delete,
         icon = {
             DeleteIcon(
                 contentDescription = stringResource(
                     id = R.string.manage_items_delete,
-                    formatArgs = arrayOf(state.foodItem.name),
+                    formatArgs = arrayOf(state.drinkItem.name),
                 )
             )
         },
@@ -237,15 +237,15 @@ internal fun DirectDeleteDialog(
 
 @Composable
 internal fun MergeDeleteDialog(
-    state: ActionState.Delete.Merge,
-    onSelectedItemUpdated: (FoodItem) -> Unit,
+    state: DrinkActionState.Delete.Merge,
+    onSelectedItemUpdated: (DrinkItem) -> Unit,
     onSubmit: () -> Unit,
     onClose: () -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
 
     Dialog(
-        title = stringResource(R.string.manage_items_merge).format(state.foodItem.name),
+        title = stringResource(R.string.manage_items_merge).format(state.drinkItem.name),
         confirmButtonText = R.string.action_merge,
         confirmButtonEnabled = state.canSubmit,
         icon = {
@@ -253,7 +253,7 @@ internal fun MergeDeleteDialog(
                 painter = painterResource(id = R.drawable.outline_merge_24),
                 contentDescription = stringResource(
                     id = R.string.manage_items_merge,
-                    formatArgs = arrayOf(state.foodItem.name),
+                    formatArgs = arrayOf(state.drinkItem.name),
                 )
             )
         },
@@ -261,7 +261,7 @@ internal fun MergeDeleteDialog(
         onClose = onClose
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            Text(text = stringResource(id = R.string.manage_food_items_merge_delete_dialog))
+            Text(text = stringResource(id = R.string.manage_drink_items_merge_delete_dialog))
 
             LabelledOutlinedReadOnlyDropdown(
                 label = stringResource(id = R.string.manage_items_merge_delete_selection_label),
@@ -286,11 +286,11 @@ internal fun MergeDeleteDialog(
 
 @Preview
 @Composable
-fun ManageFoodItemsPagePreview(@PreviewParameter(ItemPreviewParameterProvider::class) foodItems: List<FoodItem>) {
+fun ManageDrinkItemsPagePreview(@PreviewParameter(DrinkItemPreviewParameterProvider::class) drinkItems: List<DrinkItem>) {
     SymptomTrackerTheme {
-        ManageFoodItemsPage(
+        ManageDrinkItemsPage(
             navigateBack = {},
-            foodItemsState = FoodItemsUiState.Data(foodItems),
+            drinkItemsState = DrinkItemsUiState.Data(drinkItems),
             userActionState = null,
             eventSink = {},
         )
@@ -299,10 +299,10 @@ fun ManageFoodItemsPagePreview(@PreviewParameter(ItemPreviewParameterProvider::c
 
 @Preview
 @Composable
-fun EditDialogPreview(@PreviewParameter(EditActionStateProvider::class) state: ActionState.Edit) {
+fun EditDialogPreview() {
     SymptomTrackerTheme {
         EditDialog(
-            state = state,
+            state = DrinkActionState.Edit(drinkItem = DrinkItem(id = 1, name = "Water")),
             onEditNameChange = {},
             onSubmit = {},
             onClose = {},
@@ -315,7 +315,7 @@ fun EditDialogPreview(@PreviewParameter(EditActionStateProvider::class) state: A
 fun DirectDeleteDialogPreview() {
     SymptomTrackerTheme {
         DirectDeleteDialog(
-            state = ActionState.Delete.Direct(foodItem = FoodItem(id = 1, name = "Oats")),
+            state = DrinkActionState.Delete.Direct(drinkItem = DrinkItem(id = 1, name = "Water")),
             onSubmit = { },
             onClose = { },
         )
@@ -324,10 +324,16 @@ fun DirectDeleteDialogPreview() {
 
 @Preview
 @Composable
-fun MergeDeleteDialogPreview(@PreviewParameter(MergeDeleteActionStateProvider::class) state: ActionState.Delete.Merge) {
+fun MergeDeleteDialogPreview() {
     SymptomTrackerTheme {
         MergeDeleteDialog(
-            state = state,
+            state = DrinkActionState.Delete.Merge(
+                drinkItem = DrinkItem(id = 1, name = "Water"),
+                mergeCandidates = listOf(
+                    DrinkItem(id = 2, name = "Coffee"),
+                    DrinkItem(id = 3, name = "Tea"),
+                ),
+            ),
             onSelectedItemUpdated = { },
             onSubmit = { },
             onClose = { },

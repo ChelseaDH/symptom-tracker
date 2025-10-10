@@ -19,6 +19,7 @@ import com.example.symptomtracker.core.designsystem.icon.MealieIcon
 @Composable
 fun SettingsScreen(
     navigateToManageFoodItems: () -> Unit,
+    navigateToManageDrinkItems: () -> Unit,
     navigateToMealieSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -45,6 +46,21 @@ fun SettingsScreen(
 
             ListItem(
                 headlineContent = {
+                    Text(text = stringResource(id = R.string.manage_drink_items_title))
+                },
+                modifier = Modifier.clickable { navigateToManageDrinkItems() },
+                leadingContent = {
+                    Icon(
+                        painter = painterResource(
+                            id = R.drawable.outline_glass_cup_24
+                        ),
+                        contentDescription = stringResource(id = R.string.manage_drink_items_title)
+                    )
+                }
+            )
+
+            ListItem(
+                headlineContent = {
                     Text(text = stringResource(id = R.string.mealie_settings_title))
                 },
                 modifier = Modifier.clickable { navigateToMealieSettings() },
@@ -57,5 +73,5 @@ fun SettingsScreen(
 @Preview(showSystemUi = true)
 @Composable
 fun ConfigScreenPreview() {
-    SettingsScreen(navigateToManageFoodItems = { }, navigateToMealieSettings = {})
+    SettingsScreen(navigateToManageFoodItems = { }, navigateToManageDrinkItems = { }, navigateToMealieSettings = {})
 }
