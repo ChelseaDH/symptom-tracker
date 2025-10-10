@@ -47,6 +47,7 @@
     <string name="add_drink_text">Drink</string>
     <string name="add_drink_cd">Add drink</string>
     <string name="log_drink_title">Log drink</string>
+    <string name="edit_drink_title">Edit drink</string>
 
     // Manage food items screen
     <string name="manage_food_items_title">Food items</string>

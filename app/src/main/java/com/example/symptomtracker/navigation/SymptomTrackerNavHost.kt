@@ -4,7 +4,11 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.example.symptomtracker.feature.drink.navigation.addDrinkScreen
+import com.example.symptomtracker.feature.drink.navigation.editDrinkScreen
 import com.example.symptomtracker.feature.drink.navigation.navigateToAddDrink
+import com.example.symptomtracker.feature.drink.navigation.navigateToEditDrink
+import com.example.symptomtracker.feature.drink.navigation.navigateToViewDrink
+import com.example.symptomtracker.feature.drink.navigation.viewDrinkScreen
 import com.example.symptomtracker.feature.food.navigation.addFoodScreen
 import com.example.symptomtracker.feature.food.navigation.editFoodScreen
 import com.example.symptomtracker.feature.food.navigation.manageFoodItemsScreen
@@ -45,6 +49,7 @@ fun SymptomTrackerNavHost(
             navigateToAddSymptom = navController::navigateToAddSymptom,
             navigateToAddMovement = navController::navigateToAddMovement,
             onFoodClick = navController::navigateToViewFood,
+            onDrinkClick = navController::navigateToViewDrink,
             onSymptomClick = navController::navigateToViewSymptom,
             onMovementClick = navController::navigateToViewMovement,
             navigateToMealieImport = navController::navigateToMealieImport,
@@ -72,7 +77,13 @@ fun SymptomTrackerNavHost(
         editFoodScreen(navigateBack = navController::navigateUp)
         manageFoodItemsScreen(navigateBack = navController::navigateUp)
 
+        viewDrinkScreen(
+            navigateBack = navController::navigateUp,
+            navigateToEdit = navController::navigateToEditDrink,
+            navigateToCopy = navController::navigateToAddDrink,
+        )
         addDrinkScreen(navigateBack = navController::navigateUp)
+        editDrinkScreen(navigateBack = navController::navigateUp)
 
         viewSymptomScreen(
             navigateBack = navController::navigateUp,

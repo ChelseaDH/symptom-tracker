@@ -64,6 +64,7 @@ fun HomeScreen(
     navigateToAddSymptom: () -> Unit,
     navigateToAddMovement: () -> Unit,
     onFoodClick: (Long) -> Unit,
+    onDrinkClick: (Long) -> Unit,
     onSymptomClick: (Long) -> Unit,
     onMovementClick: (Long) -> Unit,
     onMealieImport: () -> Unit,
@@ -120,6 +121,7 @@ fun HomeScreen(
             goToNextDate = { viewModel.handleEvent(HomeScreenEvent.GoToNextDay) },
             onDateChanged = { viewModel.handleEvent(HomeScreenEvent.UpdateDate(it)) },
             onFoodClick = onFoodClick,
+            onDrinkClick = onDrinkClick,
             onSymptomClick = onSymptomClick,
             onMovementClick = onMovementClick,
             logs = viewModel.uiState.logs,
@@ -147,6 +149,7 @@ fun HomeBody(
     goToNextDate: () -> Unit,
     onDateChanged: (LocalDate) -> Unit,
     onFoodClick: (Long) -> Unit,
+    onDrinkClick: (Long) -> Unit,
     onSymptomClick: (Long) -> Unit,
     onMovementClick: (Long) -> Unit,
     logs: List<Log>,
@@ -170,6 +173,7 @@ fun HomeBody(
             onLeftSwipe = goToNextDate,
             onRightSwipe = goToPreviousDate,
             onFoodClick = onFoodClick,
+            onDrinkClick = onDrinkClick,
             onSymptomClick = onSymptomClick,
             onMovementClick = onMovementClick,
         )
@@ -238,6 +242,7 @@ fun Timeline(
     onLeftSwipe: () -> Unit,
     onRightSwipe: () -> Unit,
     onFoodClick: (Long) -> Unit,
+    onDrinkClick: (Long) -> Unit,
     onSymptomClick: (Long) -> Unit,
     onMovementClick: (Long) -> Unit,
 ) {
@@ -323,7 +328,7 @@ fun Timeline(
                                 date = log.date,
                                 dateTimeFormatter = DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_hh_mm)),
                                 supportingText = log.items.joinToString { it.name },
-                                onClick = {})
+                                onClick = { onDrinkClick(log.id) })
                         }
                     }
                 }
@@ -410,6 +415,7 @@ fun HomeBodyWithNoLogsPreview() {
         goToNextDate = {},
         onDateChanged = { _ -> },
         onFoodClick = {},
+        onDrinkClick = {},
         onSymptomClick = {},
         onMovementClick = {},
         logs = listOf(),
@@ -426,6 +432,7 @@ fun HomeBodyWithLogsPreview(@PreviewParameter(LogsPreviewParameterProvider::clas
         goToNextDate = {},
         onDateChanged = { _ -> },
         onFoodClick = {},
+        onDrinkClick = {},
         onSymptomClick = {},
         onMovementClick = {},
         logs = logs,
