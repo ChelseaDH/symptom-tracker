@@ -1,5 +1,7 @@
 package com.example.symptomtracker.feature.home
 
+import com.example.symptomtracker.core.domain.model.DrinkItem
+import com.example.symptomtracker.core.domain.model.DrinkLog
 import com.example.symptomtracker.core.domain.model.FoodItem
 import com.example.symptomtracker.core.domain.model.FoodLog
 import com.example.symptomtracker.core.domain.model.MovementLog
@@ -8,6 +10,7 @@ import com.example.symptomtracker.core.domain.model.StoolType
 import com.example.symptomtracker.core.domain.model.Symptom
 import com.example.symptomtracker.core.domain.model.SymptomLog
 import com.example.symptomtracker.core.domain.model.SymptomWithSeverity
+import com.example.symptomtracker.core.testing.repository.TestDrinkRepository
 import com.example.symptomtracker.core.testing.repository.TestFoodRepository
 import com.example.symptomtracker.core.testing.repository.TestMovementRepository
 import com.example.symptomtracker.core.testing.repository.TestSettingsRepository
@@ -34,6 +37,7 @@ class HomeScreenViewModelTest {
     val dispatcherRule: TestWatcher = MainDispatcherRule()
 
     private val foodLogRepository = TestFoodRepository()
+    private val drinkLogRepository = TestDrinkRepository()
     private val symptomRepository = TestSymptomRepository()
     private val movementRepository = TestMovementRepository()
     private val settingsRepository = TestSettingsRepository()
@@ -43,6 +47,7 @@ class HomeScreenViewModelTest {
     fun setup() {
         viewModel = HomeScreenViewModel(
             foodLogRepository = foodLogRepository,
+            drinkLogRepository = drinkLogRepository,
             symptomRepository = symptomRepository,
             movementRepository = movementRepository,
             settingsRepository = settingsRepository,
@@ -54,11 +59,12 @@ class HomeScreenViewModelTest {
         val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.uiState }
 
         foodLogRepository.sendFoodLogs(foodLogs)
+        drinkLogRepository.sendDrinkLogs(drinkLogs)
         symptomRepository.sendSymptomLogs(symptomLogs)
         movementRepository.sendMovementLogs(movementLogs)
 
         assertFalse(viewModel.uiState.showQuickAddMenu)
-        assertEquals(listOf(foodLogs[1], symptomLogs[0]), viewModel.uiState.logs)
+        assertEquals(listOf(foodLogs[1], symptomLogs[0], drinkLogs[1]), viewModel.uiState.logs)
         assertTrue(viewModel.uiState.isToday)
 
         collectJob.cancel()
@@ -93,21 +99,22 @@ class HomeScreenViewModelTest {
         val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.uiState }
 
         foodLogRepository.sendFoodLogs(foodLogs)
+        drinkLogRepository.sendDrinkLogs(drinkLogs)
         symptomRepository.sendSymptomLogs(symptomLogs)
         movementRepository.sendMovementLogs(movementLogs)
 
         assertTrue(viewModel.uiState.isToday)
-        assertEquals(listOf(foodLogs[1], symptomLogs[0]), viewModel.uiState.logs)
+        assertEquals(listOf(foodLogs[1], symptomLogs[0], drinkLogs[1]), viewModel.uiState.logs)
 
         viewModel.handleEvent(HomeScreenEvent.GoToPreviousDay)
 
         assertFalse(viewModel.uiState.isToday)
-        assertEquals(listOf(foodLogs[0], movementLogs[0]), viewModel.uiState.logs)
+        assertEquals(listOf(foodLogs[0], movementLogs[0], drinkLogs[0]), viewModel.uiState.logs)
 
         viewModel.handleEvent(HomeScreenEvent.GoToNextDay)
 
         assertTrue(viewModel.uiState.isToday)
-        assertEquals(listOf(foodLogs[1], symptomLogs[0]), viewModel.uiState.logs)
+        assertEquals(listOf(foodLogs[1], symptomLogs[0], drinkLogs[1]), viewModel.uiState.logs)
 
         collectJob.cancel()
     }
@@ -162,4 +169,17 @@ val movementLogs = listOf(
         date = OffsetDateTime.now().minusDays(1),
         stoolType = StoolType.NORMAL_3
     )
+)
+
+val drinkLogs = listOf(
+    DrinkLog(
+        id = 1,
+        date = OffsetDateTime.now().minusDays(1),
+        items = listOf(DrinkItem(id = 1, name = "coffee"))
+    ),
+    DrinkLog(
+        id = 1,
+        date = OffsetDateTime.now(),
+        items = listOf(DrinkItem(id = 2, name = "milk"))
+    ),
 )

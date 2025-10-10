@@ -308,7 +308,18 @@ fun Timeline(
                                 supportingText = log.stoolType.getDisplayName(),
                                 onClick = { onMovementClick(log.id) })
 
-                            is DrinkLog -> {}
+                            is DrinkLog -> LogItemCard(
+                                icon = {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.outline_glass_cup_24),
+                                        contentDescription = stringResource(R.string.add_drink_text)
+                                    )
+                                },
+                                title = stringResource(R.string.add_drink_text),
+                                date = log.date,
+                                dateTimeFormatter = DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_hh_mm)),
+                                supportingText = log.items.joinToString { it.name },
+                                onClick = {})
                         }
                     }
                 }

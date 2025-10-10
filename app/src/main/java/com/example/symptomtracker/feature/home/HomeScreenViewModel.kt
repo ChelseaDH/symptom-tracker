@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.symptomtracker.core.domain.model.Log
+import com.example.symptomtracker.core.domain.repository.DrinkLogRepository
 import com.example.symptomtracker.core.domain.repository.FoodLogRepository
 import com.example.symptomtracker.core.domain.repository.MovementRepository
 import com.example.symptomtracker.core.domain.repository.SettingsRepository
@@ -24,6 +25,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
     private val foodLogRepository: FoodLogRepository,
+    private val drinkLogRepository: DrinkLogRepository,
     private val symptomRepository: SymptomRepository,
     private val movementRepository: MovementRepository,
     private val settingsRepository: SettingsRepository,
@@ -90,11 +92,12 @@ class HomeScreenViewModel @Inject constructor(
         val endDate = OffsetDateTime.of(date, LocalTime.of(23, 59, 59), now.offset)
 
         val foodLogs = foodLogRepository.getAllFoodLogsBetweenDates(startDate, endDate)
+        val drinkLogs = drinkLogRepository.getAllDrinkLogsBetweenDates(startDate, endDate)
         val symptomLogs = symptomRepository.getAllSymptomLogsBetweenDates(startDate, endDate)
         val movementLogs = movementRepository.getAllMovementLogsBetweenDates(startDate, endDate)
 
-        combine(foodLogs, symptomLogs, movementLogs) { data1, data2, data3 ->
-            data1 + data2 + data3
+        combine(foodLogs, drinkLogs, symptomLogs, movementLogs) { data1, data2, data3, data4 ->
+            data1 + data2 + data3 + data4
         }.collect { logs ->
             val sortedLogs = logs.toMutableList()
             sortedLogs.sortBy { it.date }

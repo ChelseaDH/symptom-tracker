@@ -43,6 +43,12 @@
     <string name="delete_log_confirmation_body">This will permanently remove the selected log.</string>
     <string name="feature_settings_title">Settings</string>
 
+    // Drinks logs
+    <string name="add_drink_text">Drink</string>
+    <string name="add_drink_cd">Add drink</string>
+    <string name="log_drink_title">Log drink</string>
+
+    // Manage food items screen
     <string name="manage_food_items_title">Food items</string>
     <string name="manage_food_items_options_menu_cd">Open options menu for item %s</string>
     <string name="manage_food_items_save_cd">Save item %s</string>
@@ -55,6 +61,7 @@
     <string name="manage_food_items_merge_delete_selection_label">Item to merge with</string>
     <string name="no_items_found">No items found</string>
 
+    // Actions
     <string name="action_add">Add</string>
     <string name="action_edit">Edit</string>
     <string name="action_save">Save</string>
@@ -67,11 +74,14 @@
     <string name="action_add_manually">Add manually</string>
     <string name="action_add_to_log">Add to log</string>
 
+    // Common labels
     <string name="ok_label">OK</string>
 
+    // Validation messages
     <string name="validation_required">Required</string>
     <string name="validation_invalid">Invalid</string>
 
+    // Mealie integration
     <string name="mealie_import_title">Log food from Mealie recipe</string>
     <string name="mealie_import_action">Mealie import</string>
     <string name="mealie_import_results_header">Ingredients to import</string>
@@ -89,6 +99,7 @@
     <string name="mealie_settings_check_credentials_failure">Credentials are invalid.</string>
     <string name="mealie_import_action_import_food_from_recipe">Import from Mealie recipe</string>
 
+    // Date and time picker
     <string name="datetime_select_time">Select time</string>
     <string name="datetime_time_picker_type_toggle">Time picker type toggle</string>
 </resources>

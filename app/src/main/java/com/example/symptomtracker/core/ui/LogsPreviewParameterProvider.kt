@@ -1,6 +1,8 @@
 package com.example.symptomtracker.core.ui
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import com.example.symptomtracker.core.domain.model.DrinkItem
+import com.example.symptomtracker.core.domain.model.DrinkLog
 import com.example.symptomtracker.core.domain.model.FoodItem
 import com.example.symptomtracker.core.domain.model.FoodLog
 import com.example.symptomtracker.core.domain.model.Log
@@ -23,6 +25,14 @@ class LogsPreviewParameterProvider : PreviewParameterProvider<List<Log>> {
                     FoodItem(2, "Strawberries"),
                     FoodItem(3, "Blueberries"),
                     FoodItem(4, "Yogurt"),
+                )
+            ),
+            DrinkLog(
+                id = 1,
+                date = OffsetDateTime.parse("2023-03-02T09:00:00+00:00"),
+                items = listOf(
+                    DrinkItem(1, "Coffee"),
+                    DrinkItem(2, "Milk"),
                 )
             ),
             MovementLog(
