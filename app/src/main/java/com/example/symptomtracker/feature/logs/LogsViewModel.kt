@@ -5,9 +5,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.symptomtracker.core.domain.model.DrinkLog
 import com.example.symptomtracker.core.domain.model.FoodLog
 import com.example.symptomtracker.core.domain.model.MovementLog
 import com.example.symptomtracker.core.domain.model.SymptomLog
+import com.example.symptomtracker.core.domain.repository.DrinkLogRepository
 import com.example.symptomtracker.core.domain.repository.FoodLogRepository
 import com.example.symptomtracker.core.domain.repository.MovementRepository
 import com.example.symptomtracker.core.domain.repository.SettingsRepository
@@ -22,17 +24,20 @@ import javax.inject.Inject
 @HiltViewModel
 class LogsViewModel @Inject constructor(
     private val foodLogRepository: FoodLogRepository,
+    private val drinkLogRepository: DrinkLogRepository,
     private val symptomRepository: SymptomRepository,
     private val movementRepository: MovementRepository,
     private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
     companion object {
         const val FOOD_TAB = "Food"
+
+        const val DRINK_TAB = "Drink"
         const val SYMPTOM_TAB = "Symptom"
         const val MOVEMENT_TAB = "Movement"
     }
 
-    val tabs = listOf(FOOD_TAB, SYMPTOM_TAB, MOVEMENT_TAB)
+    val tabs = listOf(FOOD_TAB, DRINK_TAB, SYMPTOM_TAB, MOVEMENT_TAB)
     var uiState by mutableStateOf(LogsViewUiState())
         private set
 
@@ -68,6 +73,13 @@ class LogsViewModel @Inject constructor(
                     uiState = uiState.copy(
                         selectedTabIndex = index,
                         tabState = TabUiState.FoodLogs(logs = it)
+                    )
+                }
+
+                DRINK_TAB -> drinkLogRepository.getAllDrinkLogs().collect {
+                    uiState = uiState.copy(
+                        selectedTabIndex = index,
+                        tabState = TabUiState.DrinkLogs(logs = it)
                     )
                 }
 
@@ -112,6 +124,8 @@ data class LogsViewUiState(
 sealed interface TabUiState {
     data object Loading : TabUiState
     data class FoodLogs(val logs: List<FoodLog>) : TabUiState
+
+    data class DrinkLogs(val logs: List<DrinkLog>) : TabUiState
     data class SymptomLogs(val logs: List<SymptomLog>) : TabUiState
     data class MovementLogs(val logs: List<MovementLog>) : TabUiState
 }

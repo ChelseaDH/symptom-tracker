@@ -1,5 +1,7 @@
 package com.example.symptomtracker.feature.logs
 
+import com.example.symptomtracker.core.domain.model.DrinkItem
+import com.example.symptomtracker.core.domain.model.DrinkLog
 import com.example.symptomtracker.core.domain.model.FoodItem
 import com.example.symptomtracker.core.domain.model.FoodLog
 import com.example.symptomtracker.core.domain.model.MovementLog
@@ -8,6 +10,7 @@ import com.example.symptomtracker.core.domain.model.StoolType
 import com.example.symptomtracker.core.domain.model.Symptom
 import com.example.symptomtracker.core.domain.model.SymptomLog
 import com.example.symptomtracker.core.domain.model.SymptomWithSeverity
+import com.example.symptomtracker.core.testing.repository.TestDrinkRepository
 import com.example.symptomtracker.core.testing.repository.TestFoodRepository
 import com.example.symptomtracker.core.testing.repository.TestMovementRepository
 import com.example.symptomtracker.core.testing.repository.TestSettingsRepository
@@ -33,6 +36,7 @@ class LogsViewModelTest {
     val dispatcherRule: TestWatcher = MainDispatcherRule()
 
     private val foodLogRepository = TestFoodRepository()
+    private val drinkLogRepository = TestDrinkRepository()
     private val symptomRepository = TestSymptomRepository()
     private val movementRepository = TestMovementRepository()
     private val settingsRepository = TestSettingsRepository()
@@ -42,6 +46,7 @@ class LogsViewModelTest {
     fun setup() {
         viewModel = LogsViewModel(
             foodLogRepository = foodLogRepository,
+            drinkLogRepository = drinkLogRepository,
             symptomRepository = symptomRepository,
             movementRepository = movementRepository,
             settingsRepository = settingsRepository,
@@ -63,6 +68,7 @@ class LogsViewModelTest {
         val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.uiState }
 
         foodLogRepository.sendFoodLogs(foodLogs)
+        drinkLogRepository.sendDrinkLogs(drinkLogs)
         symptomRepository.sendSymptomLogs(symptomLogs)
         movementRepository.sendMovementLogs(movementLogs)
 
@@ -77,6 +83,7 @@ class LogsViewModelTest {
         val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.uiState }
 
         foodLogRepository.sendFoodLogs(foodLogs)
+        drinkLogRepository.sendDrinkLogs(drinkLogs)
         symptomRepository.sendSymptomLogs(symptomLogs)
         movementRepository.sendMovementLogs(movementLogs)
 
@@ -85,14 +92,18 @@ class LogsViewModelTest {
 
         viewModel.handleEvent(LogsViewEvent.GoToNextTab)
         Assert.assertEquals(1, viewModel.uiState.selectedTabIndex)
+        Assert.assertEquals(TabUiState.DrinkLogs(drinkLogs), viewModel.uiState.tabState)
+
+        viewModel.handleEvent(LogsViewEvent.GoToNextTab)
+        Assert.assertEquals(2, viewModel.uiState.selectedTabIndex)
         Assert.assertEquals(TabUiState.SymptomLogs(symptomLogs), viewModel.uiState.tabState)
 
         viewModel.handleEvent(LogsViewEvent.GoToPreviousTab)
-        Assert.assertEquals(0, viewModel.uiState.selectedTabIndex)
-        Assert.assertEquals(TabUiState.FoodLogs(foodLogs), viewModel.uiState.tabState)
+        Assert.assertEquals(1, viewModel.uiState.selectedTabIndex)
+        Assert.assertEquals(TabUiState.DrinkLogs(drinkLogs), viewModel.uiState.tabState)
 
-        viewModel.handleEvent(LogsViewEvent.UpdateSelectedTab(2))
-        Assert.assertEquals(2, viewModel.uiState.selectedTabIndex)
+        viewModel.handleEvent(LogsViewEvent.UpdateSelectedTab(3))
+        Assert.assertEquals(3, viewModel.uiState.selectedTabIndex)
         Assert.assertEquals(TabUiState.MovementLogs(movementLogs), viewModel.uiState.tabState)
 
         collectJob.cancel()
@@ -149,3 +160,12 @@ val movementLogs = listOf(
         stoolType = StoolType.NORMAL_3
     )
 )
+
+val drinkLogs = listOf(
+    DrinkLog(
+        id = 1,
+        date = OffsetDateTime.now().minusDays(1),
+        items = listOf(DrinkItem(id = 1, name = "water"))
+    )
+)
+

@@ -57,6 +57,8 @@ fun SymptomTrackerNavHost(
         logsScreen(
             onFoodClick = navController::navigateToViewFood,
             onAddFoodClick = navController::navigateToAddFood,
+            onDrinkClick = navController::navigateToViewDrink,
+            onAddDrinkClick = navController::navigateToAddDrink,
             onSymptomClick = navController::navigateToViewSymptom,
             onAddSymptomClick = navController::navigateToAddSymptom,
             onMovementClick = navController::navigateToViewMovement,

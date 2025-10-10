@@ -50,6 +50,8 @@ import java.time.format.DateTimeFormatter
 fun LogsRoute(
     onFoodClick: (Long) -> Unit,
     onAddFoodClick: () -> Unit,
+    onDrinkClick: (Long) -> Unit,
+    onAddDrinkClick: () -> Unit,
     onSymptomClick: (Long) -> Unit,
     onAddSymptomClick: () -> Unit,
     onMovementClick: (Long) -> Unit,
@@ -68,6 +70,8 @@ fun LogsRoute(
         eventSink = viewModel::handleEvent,
         onFoodClick = onFoodClick,
         onAddFoodClick = onAddFoodClick,
+        onDrinkClick = onDrinkClick,
+        onAddDrinkClick = onAddDrinkClick,
         onSymptomClick = onSymptomClick,
         onAddSymptomClick = onAddSymptomClick,
         onMovementClick = onMovementClick,
@@ -87,6 +91,8 @@ internal fun LogsScreen(
     eventSink: (LogsViewEvent) -> Unit,
     onFoodClick: (Long) -> Unit,
     onAddFoodClick: () -> Unit,
+    onDrinkClick: (Long) -> Unit,
+    onAddDrinkClick: () -> Unit,
     onSymptomClick: (Long) -> Unit,
     onAddSymptomClick: () -> Unit,
     onMovementClick: (Long) -> Unit,
@@ -113,8 +119,21 @@ internal fun LogsScreen(
                     LogCard(
                         log = foodLog,
                         supportingText = foodLog.items.joinToString { it.name },
-                        onClick = { onFoodClick(foodLog.id) }
-                    )
+                        onClick = { onFoodClick(foodLog.id) })
+                }
+            }
+        }
+
+        is TabUiState.DrinkLogs -> {
+            fab = {
+                AddButton(onClick = onAddDrinkClick)
+            }
+            tabContent = {
+                items(items = tabState.logs) { drinkLog ->
+                    LogCard(
+                        log = drinkLog,
+                        supportingText = drinkLog.items.joinToString { it.name },
+                        onClick = { onDrinkClick(drinkLog.id) })
                 }
             }
         }
@@ -128,8 +147,7 @@ internal fun LogsScreen(
                     LogCard(
                         log = symptomLog,
                         supportingText = symptomLog.items.joinToString { it.getDisplayString() },
-                        onClick = { onSymptomClick(symptomLog.id) }
-                    )
+                        onClick = { onSymptomClick(symptomLog.id) })
                 }
             }
         }
@@ -143,8 +161,7 @@ internal fun LogsScreen(
                     LogCard(
                         log = movementLog,
                         supportingText = movementLog.stoolType.getDisplayName(),
-                        onClick = { onMovementClick(movementLog.id) }
-                    )
+                        onClick = { onMovementClick(movementLog.id) })
                 }
             }
         }
@@ -275,13 +292,15 @@ internal fun AddFoodMenu(
 @Composable
 fun LogsScreenPreview(@PreviewParameter(FoodLogsPreviewParameterProvider::class) foodLogs: List<FoodLog>) {
     LogsScreen(
-        tabs = listOf("Food", "Symptom"),
+        tabs = listOf("Food", "Drink", "Symptom", "Movement"),
         selectedTabIndex = 0,
         tabState = TabUiState.FoodLogs(logs = foodLogs),
         mealieIntegrationEnabled = true,
         eventSink = {},
         onFoodClick = {},
         onAddFoodClick = {},
+        onDrinkClick = {},
+        onAddDrinkClick = {},
         onSymptomClick = {},
         onAddSymptomClick = {},
         onMovementClick = {},
