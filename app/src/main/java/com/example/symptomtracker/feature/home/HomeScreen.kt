@@ -43,6 +43,7 @@ import com.example.symptomtracker.R
 import com.example.symptomtracker.core.designsystem.component.DatePickerModal
 import com.example.symptomtracker.core.designsystem.component.FloatingButtonMenu
 import com.example.symptomtracker.core.designsystem.icon.MealieIcon
+import com.example.symptomtracker.core.domain.model.DrinkLog
 import com.example.symptomtracker.core.domain.model.FoodLog
 import com.example.symptomtracker.core.domain.model.Log
 import com.example.symptomtracker.core.domain.model.MovementLog
@@ -306,6 +307,8 @@ fun Timeline(
                                 dateTimeFormatter = DateTimeFormatter.ofPattern(stringResource(R.string.datetime_format_hh_mm)),
                                 supportingText = log.stoolType.getDisplayName(),
                                 onClick = { onMovementClick(log.id) })
+
+                            is DrinkLog -> {}
                         }
                     }
                 }

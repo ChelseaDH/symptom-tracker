@@ -1,6 +1,7 @@
 package com.example.symptomtracker.core.database.di
 
 import com.example.symptomtracker.core.database.AppDatabase
+import com.example.symptomtracker.core.database.dao.DrinkLogDao
 import com.example.symptomtracker.core.database.dao.FoodLogDao
 import com.example.symptomtracker.core.database.dao.MovementDao
 import com.example.symptomtracker.core.database.dao.SymptomDao
@@ -15,6 +16,11 @@ internal object DaosModule {
     @Provides
     fun providesFoodLogDao(appDatabase: AppDatabase): FoodLogDao {
         return appDatabase.foodLogDao()
+    }
+
+    @Provides
+    fun providesDrinkLogDao(appDatabase: AppDatabase): DrinkLogDao {
+        return appDatabase.drinkLogDao()
     }
 
     @Provides
