@@ -12,6 +12,7 @@ fun NavController.navigateToHome(navOptions: NavOptions) = navigate(route = HOME
 
 fun NavGraphBuilder.homeScreen(
     navigateToAddFood: () -> Unit,
+    navigateToAddDrink: () -> Unit,
     navigateToAddSymptom: () -> Unit,
     navigateToAddMovement: () -> Unit,
     onFoodClick: (Long) -> Unit,
@@ -22,6 +23,7 @@ fun NavGraphBuilder.homeScreen(
     composable(route = HOME_ROUTE) {
         HomeScreen(
             navigateToAddFood = navigateToAddFood,
+            navigateToAddDrink = navigateToAddDrink,
             navigateToAddSymptom = navigateToAddSymptom,
             navigateToAddMovement = navigateToAddMovement,
             onFoodClick = onFoodClick,

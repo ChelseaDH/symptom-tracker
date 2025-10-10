@@ -4,10 +4,12 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import com.example.symptomtracker.core.data.repository.OfflineDrinkLogRepository
 import com.example.symptomtracker.core.data.repository.OfflineFoodLogRepository
 import com.example.symptomtracker.core.data.repository.OfflineMovementRepository
 import com.example.symptomtracker.core.data.repository.OfflineSettingsRepository
 import com.example.symptomtracker.core.data.repository.OfflineSymptomRepository
+import com.example.symptomtracker.core.domain.repository.DrinkLogRepository
 import com.example.symptomtracker.core.domain.repository.FoodLogRepository
 import com.example.symptomtracker.core.domain.repository.MovementRepository
 import com.example.symptomtracker.core.domain.repository.SettingsRepository
@@ -29,6 +31,11 @@ abstract class DataModule {
     internal abstract fun bindsFoodLogRepository(
         foodLogRepository: OfflineFoodLogRepository
     ): FoodLogRepository
+
+    @Binds
+    internal abstract fun bindsDrinkLogRepository(
+        drinkLogRepository: OfflineDrinkLogRepository
+    ): DrinkLogRepository
 
     @Binds
     internal abstract fun bindsSymptomLogRepository(

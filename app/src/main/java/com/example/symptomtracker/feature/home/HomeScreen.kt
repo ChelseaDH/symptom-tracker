@@ -60,6 +60,7 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun HomeScreen(
     navigateToAddFood: () -> Unit,
+    navigateToAddDrink: () -> Unit,
     navigateToAddSymptom: () -> Unit,
     navigateToAddMovement: () -> Unit,
     onFoodClick: (Long) -> Unit,
@@ -90,6 +91,10 @@ fun HomeScreen(
                 onAddFoodClick = {
                     closeQuickAddMenu()
                     navigateToAddFood()
+                },
+                onAddDrinkClick = {
+                    closeQuickAddMenu()
+                    navigateToAddDrink()
                 },
                 onAddSymptomClick = {
                     closeQuickAddMenu()
@@ -128,8 +133,7 @@ fun HomeScreen(
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = null,
-                        onClick = { closeQuickAddMenu() }
-                    )
+                        onClick = { closeQuickAddMenu() })
             )
         }
     }
@@ -335,6 +339,7 @@ fun QuickAddMenu(
     onExpandedChange: (Boolean) -> Unit,
     mealieIntegrationEnabled: Boolean,
     onAddFoodClick: () -> Unit,
+    onAddDrinkClick: () -> Unit,
     onAddSymptomClick: () -> Unit,
     onAddMovementClick: () -> Unit,
     onImportFoodClick: () -> Unit,
@@ -354,6 +359,16 @@ fun QuickAddMenu(
                 )
             },
             text = { Text(text = stringResource(R.string.add_food_text)) },
+        )
+        FloatingActionButtonMenuItem(
+            onClick = onAddDrinkClick,
+            icon = {
+                Icon(
+                    painter = painterResource(id = R.drawable.outline_glass_cup_24),
+                    contentDescription = stringResource(R.string.add_drink_cd)
+                )
+            },
+            text = { Text(text = stringResource(R.string.add_drink_text)) },
         )
         FloatingActionButtonMenuItem(
             onClick = onAddSymptomClick,
@@ -426,6 +441,7 @@ fun QuickAddMenuClosed() {
         onExpandedChange = {},
         mealieIntegrationEnabled = true,
         onAddFoodClick = {},
+        onAddDrinkClick = {},
         onImportFoodClick = {},
         onAddSymptomClick = {},
         onAddMovementClick = {},
@@ -441,6 +457,7 @@ fun QuickAddMenuWithIntegration() {
         onExpandedChange = {},
         mealieIntegrationEnabled = true,
         onAddFoodClick = {},
+        onAddDrinkClick = {},
         onImportFoodClick = {},
         onAddSymptomClick = {},
         onAddMovementClick = {},
@@ -456,6 +473,7 @@ fun QuickAddMenuWithoutIntegration() {
         onExpandedChange = {},
         mealieIntegrationEnabled = false,
         onAddFoodClick = {},
+        onAddDrinkClick = {},
         onImportFoodClick = {},
         onAddSymptomClick = {},
         onAddMovementClick = {},

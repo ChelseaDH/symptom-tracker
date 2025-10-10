@@ -3,6 +3,8 @@ package com.example.symptomtracker.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.example.symptomtracker.feature.drink.navigation.addDrinkScreen
+import com.example.symptomtracker.feature.drink.navigation.navigateToAddDrink
 import com.example.symptomtracker.feature.food.navigation.addFoodScreen
 import com.example.symptomtracker.feature.food.navigation.editFoodScreen
 import com.example.symptomtracker.feature.food.navigation.manageFoodItemsScreen
@@ -39,6 +41,7 @@ fun SymptomTrackerNavHost(
     NavHost(navController = navController, startDestination = HOME_ROUTE) {
         homeScreen(
             navigateToAddFood = navController::navigateToAddFood,
+            navigateToAddDrink = navController::navigateToAddDrink,
             navigateToAddSymptom = navController::navigateToAddSymptom,
             navigateToAddMovement = navController::navigateToAddMovement,
             onFoodClick = navController::navigateToViewFood,
@@ -68,6 +71,8 @@ fun SymptomTrackerNavHost(
         addFoodScreen(navigateBack = navController::navigateUp)
         editFoodScreen(navigateBack = navController::navigateUp)
         manageFoodItemsScreen(navigateBack = navController::navigateUp)
+
+        addDrinkScreen(navigateBack = navController::navigateUp)
 
         viewSymptomScreen(
             navigateBack = navController::navigateUp,
