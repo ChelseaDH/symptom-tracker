@@ -10,9 +10,10 @@ import com.example.symptomtracker.feature.drink.AddDrinkScreen
 import com.example.symptomtracker.feature.drink.EditDrinkScreen
 import com.example.symptomtracker.feature.drink.ManageDrinkItemsRoute
 import com.example.symptomtracker.feature.drink.ViewDrinkRoute
+import java.net.URLEncoder
 
 const val DRINK_LOG_ID = "drinkLogId"
-const val PREFILL_ITEMS = "prefillItems"
+const val PREFILL_ITEMS = "drinkPrefillItems"
 
 const val ADD_DRINK_ROUTE = "add_drink"
 const val EDIT_DRINK_ROUTE = "edit_drink"
@@ -26,7 +27,13 @@ fun NavController.navigateToAddDrink(prefillItems: List<String>? = null) {
 
 fun NavController.navigateToAddDrink(drinkLog: DrinkLog) {
     val prefillItemsArg =
-        drinkLog.items.joinToString(separator = ",", prefix = "[", postfix = "]") { it.name }
+        URLEncoder.encode(
+            drinkLog.items.joinToString(
+                separator = ",",
+                prefix = "[",
+                postfix = "]"
+            ) { it.name }, "UTF-8"
+        )
     navigate(route = "$ADD_DRINK_ROUTE?$PREFILL_ITEMS=$prefillItemsArg")
 }
 
@@ -34,7 +41,7 @@ fun NavGraphBuilder.addDrinkScreen(
     navigateBack: () -> Unit,
 ) {
     composable(
-        route = "$ADD_DRINK_ROUTE?$PREFILL_ITEMS={prefillItems}",
+        route = "$ADD_DRINK_ROUTE?$PREFILL_ITEMS={drinkPrefillItems}",
         arguments = listOf(navArgument(PREFILL_ITEMS) {
             type = NavType.StringType
             defaultValue = null

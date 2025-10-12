@@ -11,6 +11,7 @@ import com.example.symptomtracker.feature.food.EditFoodScreen
 import com.example.symptomtracker.feature.food.ManageFoodItemsRoute
 import com.example.symptomtracker.feature.food.ViewFoodRoute
 import com.example.symptomtracker.feature.mealie.navigation.MEALIE_IMPORT_ROUTE
+import java.net.URLEncoder
 
 const val FOOD_LOG_ID = "foodLogId"
 const val PREFILL_ITEMS = "prefillItems"
@@ -31,8 +32,10 @@ fun NavController.navigateToAddFood(prefillItems: List<String>? = null) {
 }
 
 fun NavController.navigateToAddFood(foodLog: FoodLog) {
-    val prefillItemsArg =
-        foodLog.items.joinToString(separator = ",", prefix = "[", postfix = "]") { it.name }
+    val prefillItemsArg = URLEncoder.encode(
+        foodLog.items.joinToString(separator = ",", prefix = "[", postfix = "]") { it.name },
+        "UTF-8"
+    )
     navigate(route = "$ADD_FOOD_ROUTE?$PREFILL_ITEMS=$prefillItemsArg")
 }
 
