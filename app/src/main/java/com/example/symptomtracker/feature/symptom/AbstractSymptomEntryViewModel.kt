@@ -175,6 +175,16 @@ abstract class AbstractSymptomEntryViewModel(private val symptomRepository: Symp
 
         _selectedSymptoms = symptomLog.items.toMutableStateList()
     }
+
+    protected fun setUiStateWithArgs(date: String?) {
+        date?.let {
+            uiState = uiState.copy(
+                dateTimeInput = uiState.dateTimeInput.copy(
+                    date = LocalDate.parse(it)
+                )
+            )
+        }
+    }
 }
 
 data class SymptomEntryUiState(

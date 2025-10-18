@@ -170,13 +170,20 @@ abstract class AbstractDrinkEntryViewModel(private val drinkLogRepository: Drink
         _selectedDrinkItems = drinkLog.items.toMutableStateList()
     }
 
-    protected suspend fun setUiStateFromPrefill(items: List<String>) {
-        _selectedDrinkItems = items.distinct().filter { it.isNotBlank() }.map { item ->
-            drinkLogRepository.insertOrGetItemByName(item.toDrinkItemName())
-        }.toMutableStateList()
+    protected suspend fun setUiStateFromPrefill(items: List<String>? = null, date: String? = null) {
+        items?.let {
+            _selectedDrinkItems = items.distinct().filter { it.isNotBlank() }.map { item ->
+                drinkLogRepository.insertOrGetItemByName(item.toDrinkItemName())
+            }.toMutableStateList()
+        }
+
+        val updatedDateTimeInput = date?.let {
+            uiState.dateTimeInput.copy(date = LocalDate.parse(it))
+        } ?: uiState.dateTimeInput
 
         uiState = uiState.copy(
-            selectedDrinkItems = _selectedDrinkItems
+            selectedDrinkItems = _selectedDrinkItems,
+            dateTimeInput = updatedDateTimeInput,
         )
     }
 }

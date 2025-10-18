@@ -59,15 +59,15 @@ import java.time.format.DateTimeFormatter
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun HomeScreen(
-    navigateToAddFood: () -> Unit,
-    navigateToAddDrink: () -> Unit,
-    navigateToAddSymptom: () -> Unit,
-    navigateToAddMovement: () -> Unit,
+    navigateToAddFood: (date: LocalDate) -> Unit,
+    navigateToAddDrink: (date: LocalDate) -> Unit,
+    navigateToAddSymptom: (date: LocalDate) -> Unit,
+    navigateToAddMovement: (date: LocalDate) -> Unit,
     onFoodClick: (Long) -> Unit,
     onDrinkClick: (Long) -> Unit,
     onSymptomClick: (Long) -> Unit,
     onMovementClick: (Long) -> Unit,
-    onMealieImport: () -> Unit,
+    onMealieImport: (date: LocalDate) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeScreenViewModel = hiltViewModel(),
 ) {
@@ -91,23 +91,23 @@ fun HomeScreen(
                 },
                 onAddFoodClick = {
                     closeQuickAddMenu()
-                    navigateToAddFood()
+                    navigateToAddFood(viewModel.uiState.date)
                 },
                 onAddDrinkClick = {
                     closeQuickAddMenu()
-                    navigateToAddDrink()
+                    navigateToAddDrink(viewModel.uiState.date)
                 },
                 onAddSymptomClick = {
                     closeQuickAddMenu()
-                    navigateToAddSymptom()
+                    navigateToAddSymptom(viewModel.uiState.date)
                 },
                 onAddMovementClick = {
                     closeQuickAddMenu()
-                    navigateToAddMovement()
+                    navigateToAddMovement(viewModel.uiState.date)
                 },
                 onImportFoodClick = {
                     closeQuickAddMenu()
-                    onMealieImport()
+                    onMealieImport(viewModel.uiState.date)
                 },
                 mealieIntegrationEnabled = mealieIntegrationEnabled,
             )

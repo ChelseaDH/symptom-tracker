@@ -1,6 +1,7 @@
 package com.example.symptomtracker.feature.mealie
 
 import android.webkit.URLUtil
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.symptomtracker.core.designsystem.component.TextInput
@@ -8,15 +9,22 @@ import com.example.symptomtracker.core.designsystem.component.TextValidationErro
 import com.example.symptomtracker.core.domain.model.Ingredient
 import com.example.symptomtracker.core.domain.usecase.GetMealieRecipeIngredientsUseCase
 import com.example.symptomtracker.core.domain.usecase.MealieRecipeIngredientsResult
+import com.example.symptomtracker.navigation.DATE_ARG
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
-class MealieImportFoodViewModel @Inject constructor(private val getMealieRecipeIngredients: GetMealieRecipeIngredientsUseCase) :
-    ViewModel() {
+class MealieImportFoodViewModel @Inject constructor(
+    private val getMealieRecipeIngredients: GetMealieRecipeIngredientsUseCase,
+    private val savedStateHandle: SavedStateHandle,
+) : ViewModel() {
     var uiState = MutableStateFlow(MealieImportFoodState())
+
+    private val dateArg: String? = savedStateHandle[DATE_ARG]
+    val date: LocalDate? = dateArg?.let(LocalDate::parse)
 
     fun handleEvent(event: MealieImportFoodEvent) {
         when (event) {
@@ -41,12 +49,11 @@ class MealieImportFoodViewModel @Inject constructor(private val getMealieRecipeI
         checkUrlInputValidity()
         if (uiState.value.url.validationError != null) return
 
-        uiState.value =
-            uiState.value.copy(
-                searchState = MealieImportSearchState.Loading,
-                canImport = false,
-                url = uiState.value.url.copy(validationError = null)
-            )
+        uiState.value = uiState.value.copy(
+            searchState = MealieImportSearchState.Loading,
+            canImport = false,
+            url = uiState.value.url.copy(validationError = null),
+        )
 
         val recipeSlug = uiState.value.url.value.split("/").last()
 
@@ -54,14 +61,14 @@ class MealieImportFoodViewModel @Inject constructor(private val getMealieRecipeI
             uiState.value = when (val result = getMealieRecipeIngredients(recipeSlug)) {
                 is MealieRecipeIngredientsResult.Empty -> uiState.value.copy(
                     searchState = MealieImportSearchState.Error.NoIngredients,
-                    canImport = false
+                    canImport = false,
                 )
 
                 is MealieRecipeIngredientsResult.Success -> uiState.value.copy(
                     searchState = MealieImportSearchState.Success(
                         ingredientsToImport = result.ingredients
                     ),
-                    canImport = true
+                    canImport = true,
                 )
 
                 is MealieRecipeIngredientsResult.Error -> uiState.value.copy(
@@ -77,11 +84,10 @@ class MealieImportFoodViewModel @Inject constructor(private val getMealieRecipeI
             val ingredients =
                 (uiState.value.searchState as MealieImportSearchState.Success).ingredientsToImport.filter { it != ingredient }
 
-            uiState.value =
-                uiState.value.copy(
-                    searchState = MealieImportSearchState.Success(ingredientsToImport = ingredients),
-                    canImport = ingredients.isNotEmpty()
-                )
+            uiState.value = uiState.value.copy(
+                searchState = MealieImportSearchState.Success(ingredientsToImport = ingredients),
+                canImport = ingredients.isNotEmpty(),
+            )
         }
     }
 
@@ -93,7 +99,7 @@ class MealieImportFoodViewModel @Inject constructor(private val getMealieRecipeI
         val validationError = uiState.value.url.findValidationError(
             errors = listOf(
                 TextValidationError.BLANK,
-                TextValidationError.INVALID
+                TextValidationError.INVALID,
             ),
             validityCheck = { URLUtil.isValidUrl(it) },
         )

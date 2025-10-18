@@ -39,12 +39,13 @@ import com.example.symptomtracker.core.designsystem.icon.ClearIcon
 import com.example.symptomtracker.core.designsystem.icon.DeleteIcon
 import com.example.symptomtracker.core.domain.model.Ingredient
 import com.example.symptomtracker.ui.SymptomTrackerTopAppBar
+import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MealieImportRoute(
     navigateBack: () -> Unit,
-    navigateToAddFood: (List<String>) -> Unit,
+    navigateToAddFood: (List<String>, LocalDate?) -> Unit,
     viewModel: MealieImportFoodViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -56,7 +57,10 @@ fun MealieImportRoute(
             actions = {
                 TextButton(
                     onClick = {
-                        navigateToAddFood(viewModel.getIngredientNames())
+                        navigateToAddFood(
+                            viewModel.getIngredientNames(),
+                            viewModel.date,
+                        )
                     },
                     enabled = uiState.canImport,
                 ) {
@@ -103,7 +107,7 @@ internal fun MealieImportBody(
 
             is MealieImportSearchState.Success -> SuccessContent(
                 ingredients = uiState.searchState.ingredientsToImport,
-                onRemoveIngredient = { eventSink(MealieImportFoodEvent.RemoveIngredientFromImport(it)) }
+                onRemoveIngredient = { eventSink(MealieImportFoodEvent.RemoveIngredientFromImport(it)) },
             )
 
             is MealieImportSearchState.Error -> ErrorContent(error = uiState.searchState)
@@ -172,7 +176,7 @@ fun SuccessContent(
                             DeleteIcon(
                                 contentDescription = stringResource(
                                     R.string.mealie_import_remove_ingreditent_cd,
-                                    ingredient.name
+                                    ingredient.name,
                                 )
                             )
                         }

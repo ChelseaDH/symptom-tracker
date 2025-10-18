@@ -57,6 +57,11 @@ data class DateTimeInput(
         time = date.toLocalTime(),
     )
 
+    constructor(date: String) : this(
+        date = LocalDate.parse(date, DateTimeFormatter.ISO_DATE),
+        time = LocalTime.now()
+    )
+
     fun toDate(): OffsetDateTime =
         OffsetDateTime.of(date, time, ZoneId.systemDefault().rules.getOffset(Instant.now()))
 }

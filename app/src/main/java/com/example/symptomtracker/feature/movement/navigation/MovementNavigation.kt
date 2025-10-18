@@ -8,6 +8,10 @@ import androidx.navigation.navArgument
 import com.example.symptomtracker.feature.movement.AddMovementScreen
 import com.example.symptomtracker.feature.movement.EditMovementScreen
 import com.example.symptomtracker.feature.movement.ViewMovementRoute
+import com.example.symptomtracker.navigation.DATE_ARG
+import com.example.symptomtracker.navigation.dateNavArgument
+import com.example.symptomtracker.navigation.formatDate
+import java.time.LocalDate
 
 const val MOVEMENT_LOG_ID = "movementLogId"
 
@@ -17,10 +21,16 @@ const val EDIT_MOVEMENT_ROUTE = "edit_movement"
 
 fun NavController.navigateToAddMovement() = navigate(route = ADD_MOVEMENT_ROUTE)
 
+fun NavController.navigateToAddMovement(date: LocalDate) =
+    navigate(route = "$ADD_MOVEMENT_ROUTE?$DATE_ARG=${formatDate(date)}")
+
 fun NavGraphBuilder.addMovementScreen(
     navigateBack: () -> Unit,
 ) {
-    composable(route = ADD_MOVEMENT_ROUTE) {
+    composable(
+        route = "$ADD_MOVEMENT_ROUTE?$DATE_ARG={$DATE_ARG}",
+        arguments = listOf(dateNavArgument()),
+    ) {
         AddMovementScreen(
             navigateBack = navigateBack,
         )
@@ -47,7 +57,7 @@ fun NavController.navigateToViewMovement(movementLogId: Long) =
 
 fun NavGraphBuilder.viewMovementScreen(
     navigateBack: () -> Unit,
-    navigateToEdit: (logId: Long) -> Unit
+    navigateToEdit: (logId: Long) -> Unit,
 ) {
     composable(
         route = "${VIEW_MOVEMENT_ROUTE}/{$MOVEMENT_LOG_ID}",

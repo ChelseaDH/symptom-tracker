@@ -1,14 +1,17 @@
 package com.example.symptomtracker.feature.mealie
 
 import android.webkit.URLUtil
+import androidx.lifecycle.SavedStateHandle
 import com.example.symptomtracker.core.designsystem.component.TextInput
 import com.example.symptomtracker.core.designsystem.component.TextValidationError
 import com.example.symptomtracker.core.domain.model.Ingredient
 import com.example.symptomtracker.core.domain.usecase.GetMealieRecipeIngredientsUseCase
 import com.example.symptomtracker.core.domain.usecase.MealieRecipeIngredientsResult
+import com.example.symptomtracker.navigation.DATE_ARG
 import com.example.symptomtracker.utils.MainDispatcherRule
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -16,6 +19,7 @@ import org.junit.rules.TestWatcher
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.mockStatic
 import org.mockito.Mockito.`when`
+import java.time.LocalDate
 
 class MealieImportFoodViewModelTest {
     @get:Rule
@@ -26,17 +30,40 @@ class MealieImportFoodViewModelTest {
 
     @Before
     fun setup() {
-        viewModel =
-            MealieImportFoodViewModel(getMealieRecipeIngredients = getMealieRecipeIngredients)
+        viewModel = MealieImportFoodViewModel(
+            getMealieRecipeIngredients = getMealieRecipeIngredients,
+            savedStateHandle = SavedStateHandle(),
+        )
     }
 
     @Test
-    fun whenInitialised_stateHoldsDefaultValues() = assertEquals(
-        MealieImportFoodState(
-            url = TextInput(value = ""), searchState = null, canImport = false,
-        ),
-        viewModel.uiState.value,
-    )
+    fun initialisation_whenNoArgsAreSet_uiStateContainsDefaultValues() = runTest {
+        assertEquals(
+            MealieImportFoodState(
+                url = TextInput(value = ""), searchState = null, canImport = false,
+            ),
+            viewModel.uiState.value,
+        )
+        assertNull(viewModel.date)
+    }
+
+    @Test
+    fun initialisation_whenArgsAreSet_uiStateContainsArgValues() = runTest {
+        val viewModel = MealieImportFoodViewModel(
+            getMealieRecipeIngredients = getMealieRecipeIngredients,
+            savedStateHandle = SavedStateHandle(
+                mapOf(DATE_ARG to "2025-05-01")
+            )
+        )
+
+        assertEquals(
+            MealieImportFoodState(
+                url = TextInput(value = ""), searchState = null, canImport = false,
+            ),
+            viewModel.uiState.value,
+        )
+        assertEquals(LocalDate.parse("2025-05-01"), viewModel.date)
+    }
 
     @Test
     fun whenUpdateUrlIsCalled_stateUpdatesAccordingly() = runTest {

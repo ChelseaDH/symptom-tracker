@@ -8,6 +8,10 @@ import androidx.navigation.navArgument
 import com.example.symptomtracker.feature.symptom.AddSymptomScreen
 import com.example.symptomtracker.feature.symptom.EditSymptomScreen
 import com.example.symptomtracker.feature.symptom.ViewSymptomRoute
+import com.example.symptomtracker.navigation.DATE_ARG
+import com.example.symptomtracker.navigation.dateNavArgument
+import com.example.symptomtracker.navigation.formatDate
+import java.time.LocalDate
 
 const val SYMPTOM_LOG_ID = "symptomLogId"
 
@@ -17,10 +21,16 @@ const val VIEW_SYMPTOM_ROUTE = "view_symptom"
 
 fun NavController.navigateToAddSymptom() = navigate(route = ADD_SYMPTOM_ROUTE)
 
+fun NavController.navigateToAddSymptom(date: LocalDate) =
+    navigate(route = "$ADD_SYMPTOM_ROUTE?$DATE_ARG=${formatDate(date)}")
+
 fun NavGraphBuilder.addSymptomScreen(
     navigateBack: () -> Unit,
 ) {
-    composable(route = ADD_SYMPTOM_ROUTE) {
+    composable(
+        route = "$ADD_SYMPTOM_ROUTE?$DATE_ARG={$DATE_ARG}",
+        arguments = listOf(dateNavArgument()),
+    ) {
         AddSymptomScreen(
             navigateBack = navigateBack,
         )

@@ -50,6 +50,16 @@ abstract class AbstractMovementEntryViewModel : ViewModel() {
     protected fun updateFieldsWithLog(movementLog: MovementLog) {
         uiState = MovementEntryUiState(movementLog = movementLog)
     }
+
+    protected fun setUiStateWithArgs(date: String?) {
+        date?.let {
+            uiState = uiState.copy(
+                dateTimeInput = uiState.dateTimeInput.copy(
+                    date = LocalDate.parse(it)
+                )
+            )
+        }
+    }
 }
 
 data class MovementEntryUiState(

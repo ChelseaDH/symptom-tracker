@@ -11,19 +11,29 @@ import com.example.symptomtracker.feature.food.EditFoodScreen
 import com.example.symptomtracker.feature.food.ManageFoodItemsRoute
 import com.example.symptomtracker.feature.food.ViewFoodRoute
 import com.example.symptomtracker.feature.mealie.navigation.MEALIE_IMPORT_ROUTE
-import java.net.URLEncoder
+import com.example.symptomtracker.navigation.DATE_ARG
+import com.example.symptomtracker.navigation.PREFILL_ITEMS
+import com.example.symptomtracker.navigation.dateNavArgument
+import com.example.symptomtracker.navigation.encodePrefillItems
+import com.example.symptomtracker.navigation.formatDate
+import com.example.symptomtracker.navigation.prefillNavArgument
+import java.time.LocalDate
 
 const val FOOD_LOG_ID = "foodLogId"
-const val PREFILL_ITEMS = "prefillItems"
 
 const val ADD_FOOD_ROUTE = "add_food"
 const val EDIT_FOOD_ROUTE = "edit_food"
 const val VIEW_FOOD_ROUTE = "view_food"
 const val MANAGE_ITEMS_ROUTE = "manage_items"
 
-fun NavController.navigateToAddFood(prefillItems: List<String>? = null) {
-    val prefillItemsArg = prefillItems?.joinToString(separator = ",", prefix = "[", postfix = "]")
-    navigate(route = "$ADD_FOOD_ROUTE?$PREFILL_ITEMS=$prefillItemsArg") {
+fun NavController.navigateToAddFood(prefillItems: List<String>? = null, date: LocalDate? = null) {
+    navigate(
+        route = "$ADD_FOOD_ROUTE?$PREFILL_ITEMS=${encodePrefillItems(prefillItems)}&$DATE_ARG=${
+            formatDate(
+                date
+            )
+        }"
+    ) {
         // The Mealie import screen is an intermediate page which we don't want to navigate back to
         popUpTo(MEALIE_IMPORT_ROUTE) {
             inclusive = true
@@ -32,23 +42,22 @@ fun NavController.navigateToAddFood(prefillItems: List<String>? = null) {
 }
 
 fun NavController.navigateToAddFood(foodLog: FoodLog) {
-    val prefillItemsArg = URLEncoder.encode(
-        foodLog.items.joinToString(separator = ",", prefix = "[", postfix = "]") { it.name },
-        "UTF-8"
-    )
+    val prefillItemsArg = encodePrefillItems(foodLog.items.map { it.name })
     navigate(route = "$ADD_FOOD_ROUTE?$PREFILL_ITEMS=$prefillItemsArg")
 }
+
+fun NavController.navigateToAddFood(date: LocalDate) =
+    navigate(route = "$ADD_FOOD_ROUTE?$DATE_ARG=${formatDate(date)}")
 
 fun NavGraphBuilder.addFoodScreen(
     navigateBack: () -> Unit,
 ) {
     composable(
-        route = "$ADD_FOOD_ROUTE?$PREFILL_ITEMS={prefillItems}",
-        arguments = listOf(navArgument(PREFILL_ITEMS) {
-            type = NavType.StringType
-            defaultValue = null
-            nullable = true
-        })
+        route = "$ADD_FOOD_ROUTE?$PREFILL_ITEMS={$PREFILL_ITEMS}&$DATE_ARG={$DATE_ARG}",
+        arguments = listOf(
+            prefillNavArgument(),
+            dateNavArgument(),
+        )
     ) {
         AddFoodScreen(navigateBack = navigateBack)
     }

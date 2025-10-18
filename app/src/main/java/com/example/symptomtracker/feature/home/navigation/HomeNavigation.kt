@@ -5,21 +5,22 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.example.symptomtracker.feature.home.HomeScreen
+import java.time.LocalDate
 
 const val HOME_ROUTE = "home"
 
 fun NavController.navigateToHome(navOptions: NavOptions) = navigate(route = HOME_ROUTE, navOptions)
 
 fun NavGraphBuilder.homeScreen(
-    navigateToAddFood: () -> Unit,
-    navigateToAddDrink: () -> Unit,
-    navigateToAddSymptom: () -> Unit,
-    navigateToAddMovement: () -> Unit,
+    navigateToAddFood: (date: LocalDate) -> Unit,
+    navigateToAddDrink: (date: LocalDate) -> Unit,
+    navigateToAddSymptom: (date: LocalDate) -> Unit,
+    navigateToAddMovement: (date: LocalDate) -> Unit,
     onFoodClick: (Long) -> Unit,
     onDrinkClick: (Long) -> Unit,
     onSymptomClick: (Long) -> Unit,
     onMovementClick: (Long) -> Unit,
-    navigateToMealieImport: () -> Unit,
+    navigateToMealieImport: (date: LocalDate) -> Unit,
 ) {
     composable(route = HOME_ROUTE) {
         HomeScreen(

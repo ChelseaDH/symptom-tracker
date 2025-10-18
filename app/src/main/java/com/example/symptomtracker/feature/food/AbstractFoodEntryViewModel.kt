@@ -170,17 +170,24 @@ abstract class AbstractFoodEntryViewModel(private val foodLogRepository: FoodLog
         _selectedFoodItems = foodLog.items.toMutableStateList()
     }
 
-    protected suspend fun setUiStateFromPrefill(items: List<String>) {
-        _selectedFoodItems = items
-            .distinct()
-            .filter { it.isNotBlank() }
-            .map { item ->
-                foodLogRepository.insertOrGetItemByName(item.toFoodItemName())
-            }
-            .toMutableStateList()
+    protected suspend fun setUiStateFromPrefill(items: List<String>? = null, date: String? = null) {
+        items?.let {
+            _selectedFoodItems = items
+                .distinct()
+                .filter { it.isNotBlank() }
+                .map { item ->
+                    foodLogRepository.insertOrGetItemByName(item.toFoodItemName())
+                }
+                .toMutableStateList()
+        }
+
+        val updatedDateTimeInput = date?.let {
+            uiState.dateTimeInput.copy(date = LocalDate.parse(it))
+        } ?: uiState.dateTimeInput
 
         uiState = uiState.copy(
-            selectedFoodItems = _selectedFoodItems
+            selectedFoodItems = _selectedFoodItems,
+            dateTimeInput = updatedDateTimeInput,
         )
     }
 }
