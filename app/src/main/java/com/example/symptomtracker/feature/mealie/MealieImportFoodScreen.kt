@@ -58,7 +58,7 @@ fun MealieImportRoute(
                 TextButton(
                     onClick = {
                         navigateToAddFood(
-                            viewModel.getIngredientNames(),
+                            uiState.ingredientNames,
                             viewModel.date,
                         )
                     },

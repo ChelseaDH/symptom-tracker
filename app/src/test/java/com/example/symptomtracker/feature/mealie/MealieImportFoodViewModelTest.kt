@@ -67,7 +67,8 @@ class MealieImportFoodViewModelTest {
 
     @Test
     fun whenUpdateUrlIsCalled_stateUpdatesAccordingly() = runTest {
-        viewModel.uiState.value = MealieImportFoodState(url = TextInput(value = "url"))
+        // First set an initial URL
+        viewModel.handleEvent(MealieImportFoodEvent.UpdateUrl("url"))
 
         viewModel.handleEvent(MealieImportFoodEvent.UpdateUrl("newUrl"))
 
@@ -81,7 +82,8 @@ class MealieImportFoodViewModelTest {
 
     @Test
     fun whenClearUrlIsCalled_stateUpdatesAccordingly() = runTest {
-        viewModel.uiState.value = MealieImportFoodState(url = TextInput(value = "url"))
+        // First set an initial URL
+        viewModel.handleEvent(MealieImportFoodEvent.UpdateUrl("url"))
 
         viewModel.handleEvent(MealieImportFoodEvent.ClearUrl)
 
@@ -94,137 +96,228 @@ class MealieImportFoodViewModelTest {
     }
 
     @Test
-    fun whenRemoveIngredientsFromImportIsCalled_stateUpdatesAccordingly() = mapOf(
-        MealieImportSearchState.Success(
-            ingredientsToImport = listOf(
-                Ingredient("Apple"),
-                Ingredient("banana"),
-            )
-        ) to MealieImportFoodState(
-            searchState = MealieImportSearchState.Success(
-                ingredientsToImport = listOf(
-                    Ingredient("Apple")
+    fun whenRemoveIngredientsFromImportIsCalled_stateUpdatesAccordingly() = runTest {
+        // Test case 1: Removing one ingredient from multiple
+        viewModel.handleEvent(MealieImportFoodEvent.UpdateUrl("https://test.mealie.co/recipe"))
+
+        mockStatic(URLUtil::class.java).use { mock ->
+            mock.`when`<Boolean> { URLUtil.isValidUrl("https://test.mealie.co/recipe") }
+                .thenReturn(true)
+
+            `when`(getMealieRecipeIngredients.invoke("recipe")).thenReturn(
+                MealieRecipeIngredientsResult.Success(
+                    ingredients = listOf(Ingredient("Apple"), Ingredient("Banana"))
                 )
-            ),
-            canImport = true,
-        ),
-        MealieImportSearchState.Success(
-            ingredientsToImport = listOf(
-                Ingredient("Banana")
             )
-        ) to MealieImportFoodState(
-            searchState = MealieImportSearchState.Success(
-                ingredientsToImport = emptyList()
-            ),
-            canImport = false,
-        ),
-    ).forEach { (initialSearchState, stateAfter) ->
-        runTest {
-            viewModel.uiState.value = MealieImportFoodState(
-                searchState = initialSearchState,
-                canImport = true,
+
+            viewModel.handleEvent(MealieImportFoodEvent.Search)
+
+            assertEquals(
+                MealieImportFoodState(
+                    url = TextInput(value = "https://test.mealie.co/recipe"),
+                    searchState = MealieImportSearchState.Success(
+                        ingredientsToImport = listOf(Ingredient("Apple"), Ingredient("Banana"))
+                    ),
+                    canImport = true,
+                ),
+                viewModel.uiState.value
             )
 
             viewModel.handleEvent(MealieImportFoodEvent.RemoveIngredientFromImport(Ingredient("Banana")))
 
-            assertEquals(stateAfter, viewModel.uiState.value)
-        }
-    }
-
-    @Test
-    fun whenGetIngredientNamesIsCalled_applicableNamesAreReturnedFromSearchState() = mapOf(
-        MealieImportSearchState.Loading to emptyList(),
-        MealieImportSearchState.Error.NoIngredients to emptyList(),
-        MealieImportSearchState.Error.ApiFailure(message = "Error occurred") to emptyList(),
-        MealieImportSearchState.Success(ingredientsToImport = emptyList()) to emptyList(),
-        MealieImportSearchState.Success(
-            ingredientsToImport = listOf(
-                Ingredient("Apple"),
-                Ingredient("banana"),
+            assertEquals(
+                MealieImportFoodState(
+                    url = TextInput(value = "https://test.mealie.co/recipe"),
+                    searchState = MealieImportSearchState.Success(
+                        ingredientsToImport = listOf(Ingredient("Apple"))
+                    ),
+                    canImport = true,
+                ),
+                viewModel.uiState.value
             )
-        ) to listOf("Apple", "Banana"),
-    ).forEach { (searchState, expectedResult) ->
-        runTest {
-            viewModel.uiState.value = MealieImportFoodState(
-                url = TextInput(value = "url"), searchState = searchState,
+        }
+
+        // Test case 2: Removing last ingredient
+        viewModel.handleEvent(MealieImportFoodEvent.UpdateUrl("https://test.mealie.co/recipe2"))
+
+        mockStatic(URLUtil::class.java).use { mock ->
+            mock.`when`<Boolean> { URLUtil.isValidUrl("https://test.mealie.co/recipe2") }
+                .thenReturn(true)
+
+            `when`(getMealieRecipeIngredients.invoke("recipe2")).thenReturn(
+                MealieRecipeIngredientsResult.Success(
+                    ingredients = listOf(Ingredient("Banana"))
+                )
             )
 
-            val result = viewModel.getIngredientNames()
+            viewModel.handleEvent(MealieImportFoodEvent.Search)
 
-            assertEquals(expectedResult, result)
+            viewModel.handleEvent(MealieImportFoodEvent.RemoveIngredientFromImport(Ingredient("Banana")))
+
+            assertEquals(
+                MealieImportFoodState(
+                    url = TextInput(value = "https://test.mealie.co/recipe2"),
+                    searchState = MealieImportSearchState.Success(
+                        ingredientsToImport = emptyList()
+                    ),
+                    canImport = false,
+                ),
+                viewModel.uiState.value
+            )
         }
     }
 
     @Test
-    fun givenTheSearchUrlIsInvalid_whenSearchIsCalled_theStateIsUpdatedToContainTheError() = mapOf(
-        MealieImportFoodState(url = TextInput(value = "")) to MealieImportFoodState(
-            url = TextInput(value = "", validationError = TextValidationError.BLANK),
-            searchState = null,
-            canImport = false,
-        ), MealieImportFoodState(url = TextInput(value = "notAUrl")) to MealieImportFoodState(
-            url = TextInput(
-                value = "notAUrl", validationError = TextValidationError.INVALID
-            ),
-            searchState = null,
-            canImport = false,
-        )
-    ).forEach { (stateBefore, stateAfter) ->
-        runTest {
-            viewModel.uiState.value = stateBefore
+    fun ingredientNamesProperty_returnsApplicableNamesFromSearchState() = runTest {
+        // Test case 1: Empty state
+        assertEquals(emptyList<String>(), viewModel.uiState.value.ingredientNames)
 
-            mockStatic(URLUtil::class.java).use { mock ->
-                mock.`when`<Boolean> { URLUtil.isValidUrl("notAUrl") }.thenReturn(false)
+        // Test case 2: After successful search
+        viewModel.handleEvent(MealieImportFoodEvent.UpdateUrl("https://test.mealie.co/recipe"))
 
-                viewModel.handleEvent(MealieImportFoodEvent.Search)
+        mockStatic(URLUtil::class.java).use { mock ->
+            mock.`when`<Boolean> { URLUtil.isValidUrl("https://test.mealie.co/recipe") }
+                .thenReturn(true)
 
-                assertEquals(stateAfter, viewModel.uiState.value)
-            }
+            `when`(getMealieRecipeIngredients.invoke("recipe")).thenReturn(
+                MealieRecipeIngredientsResult.Success(
+                    ingredients = listOf(Ingredient("Apple"), Ingredient("Banana"))
+                )
+            )
+
+            viewModel.handleEvent(MealieImportFoodEvent.Search)
+
+            assertEquals(listOf("Apple", "Banana"), viewModel.uiState.value.ingredientNames)
+        }
+
+        // Test case 3: Empty ingredients list
+        viewModel.handleEvent(MealieImportFoodEvent.UpdateUrl("https://test.mealie.co/recipe2"))
+
+        mockStatic(URLUtil::class.java).use { mock ->
+            mock.`when`<Boolean> { URLUtil.isValidUrl("https://test.mealie.co/recipe2") }
+                .thenReturn(true)
+
+            `when`(getMealieRecipeIngredients.invoke("recipe2")).thenReturn(
+                MealieRecipeIngredientsResult.Success(ingredients = emptyList())
+            )
+
+            viewModel.handleEvent(MealieImportFoodEvent.Search)
+
+            assertEquals(emptyList<String>(), viewModel.uiState.value.ingredientNames)
+        }
+
+        // Test case 4: Error states return empty
+        viewModel.handleEvent(MealieImportFoodEvent.UpdateUrl("https://test.mealie.co/recipe3"))
+
+        mockStatic(URLUtil::class.java).use { mock ->
+            mock.`when`<Boolean> { URLUtil.isValidUrl("https://test.mealie.co/recipe3") }
+                .thenReturn(true)
+
+            `when`(getMealieRecipeIngredients.invoke("recipe3")).thenReturn(
+                MealieRecipeIngredientsResult.Error(message = "Error occurred")
+            )
+
+            viewModel.handleEvent(MealieImportFoodEvent.Search)
+
+            assertEquals(emptyList<String>(), viewModel.uiState.value.ingredientNames)
         }
     }
 
     @Test
-    fun givenTheSearchUrlIsValid_whenSearchIsCalled_theSearchStateIsUpdatedAccordingly() = mapOf(
-        MealieRecipeIngredientsResult.Empty to MealieImportFoodState(
-            url = TextInput(value = "https://test.mealie.co/banana-bread"),
-            searchState = MealieImportSearchState.Error.NoIngredients,
-            canImport = false,
-        ),
-        MealieRecipeIngredientsResult.Error(message = "Invalid request") to MealieImportFoodState(
-            url = TextInput(value = "https://test.mealie.co/banana-bread"),
-            searchState = MealieImportSearchState.Error.ApiFailure(
-                message = "Invalid request"
-            ),
-            canImport = false,
-        ),
-        MealieRecipeIngredientsResult.Success(ingredients = listOf(Ingredient("Banana"))) to MealieImportFoodState(
-            url = TextInput(value = "https://test.mealie.co/banana-bread"),
-            searchState = MealieImportSearchState.Success(
-                ingredientsToImport = listOf(Ingredient("Banana"))
-            ),
-            canImport = true,
-        ),
-    ).forEach { (searchResult, expectedState) ->
-        runTest {
-            viewModel.uiState.value = MealieImportFoodState(
-                url = TextInput(value = "https://test.mealie.co/banana-bread"),
+    fun givenTheSearchUrlIsInvalid_whenSearchIsCalled_theStateIsUpdatedToContainTheError() = runTest {
+        // Test case 1: Empty URL
+        viewModel.handleEvent(MealieImportFoodEvent.Search)
+
+        assertEquals(
+            MealieImportFoodState(
+                url = TextInput(value = "", validationError = TextValidationError.BLANK),
                 searchState = null,
                 canImport = false,
+            ),
+            viewModel.uiState.value
+        )
+
+        // Test case 2: Invalid URL
+        viewModel.handleEvent(MealieImportFoodEvent.UpdateUrl("notAUrl"))
+
+        mockStatic(URLUtil::class.java).use { mock ->
+            mock.`when`<Boolean> { URLUtil.isValidUrl("notAUrl") }.thenReturn(false)
+
+            viewModel.handleEvent(MealieImportFoodEvent.Search)
+
+            assertEquals(
+                MealieImportFoodState(
+                    url = TextInput(
+                        value = "notAUrl", validationError = TextValidationError.INVALID
+                    ),
+                    searchState = null,
+                    canImport = false,
+                ),
+                viewModel.uiState.value
+            )
+        }
+    }
+
+    @Test
+    fun givenTheSearchUrlIsValid_whenSearchIsCalled_theSearchStateIsUpdatedAccordingly() = runTest {
+        mockStatic(URLUtil::class.java).use { mock ->
+            mock.`when`<Boolean> { URLUtil.isValidUrl("https://test.mealie.co/banana-bread") }
+                .thenReturn(true)
+
+            // Test case 1: Empty result
+            viewModel.handleEvent(MealieImportFoodEvent.UpdateUrl("https://test.mealie.co/banana-bread"))
+
+            `when`(getMealieRecipeIngredients.invoke("banana-bread"))
+                .thenReturn(MealieRecipeIngredientsResult.Empty)
+
+            viewModel.handleEvent(MealieImportFoodEvent.Search)
+
+            assertEquals(
+                MealieImportFoodState(
+                    url = TextInput(value = "https://test.mealie.co/banana-bread"),
+                    searchState = MealieImportSearchState.Error.NoIngredients,
+                    canImport = false,
+                ),
+                viewModel.uiState.value
             )
 
-            mockStatic(URLUtil::class.java).use { mock ->
-                mock.`when`<Boolean> { URLUtil.isValidUrl("https://test.mealie.co/banana-bread") }
-                    .thenReturn(true)
-                `when`(
-                    getMealieRecipeIngredients.invoke("banana-bread")
-                ).thenReturn(searchResult)
+            // Test case 2: API Error
+            viewModel.handleEvent(MealieImportFoodEvent.UpdateUrl("https://test.mealie.co/banana-bread"))
 
-                viewModel.handleEvent(MealieImportFoodEvent.Search)
+            `when`(getMealieRecipeIngredients.invoke("banana-bread"))
+                .thenReturn(MealieRecipeIngredientsResult.Error(message = "Invalid request"))
 
-                assertEquals(
-                    expectedState,
-                    viewModel.uiState.value,
-                )
-            }
+            viewModel.handleEvent(MealieImportFoodEvent.Search)
+
+            assertEquals(
+                MealieImportFoodState(
+                    url = TextInput(value = "https://test.mealie.co/banana-bread"),
+                    searchState = MealieImportSearchState.Error.ApiFailure(
+                        message = "Invalid request"
+                    ),
+                    canImport = false,
+                ),
+                viewModel.uiState.value
+            )
+
+            // Test case 3: Success
+            viewModel.handleEvent(MealieImportFoodEvent.UpdateUrl("https://test.mealie.co/banana-bread"))
+
+            `when`(getMealieRecipeIngredients.invoke("banana-bread"))
+                .thenReturn(MealieRecipeIngredientsResult.Success(ingredients = listOf(Ingredient("Banana"))))
+
+            viewModel.handleEvent(MealieImportFoodEvent.Search)
+
+            assertEquals(
+                MealieImportFoodState(
+                    url = TextInput(value = "https://test.mealie.co/banana-bread"),
+                    searchState = MealieImportSearchState.Success(
+                        ingredientsToImport = listOf(Ingredient("Banana"))
+                    ),
+                    canImport = true,
+                ),
+                viewModel.uiState.value
+            )
         }
     }
 }

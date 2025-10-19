@@ -12,6 +12,9 @@ import com.example.symptomtracker.core.domain.usecase.MealieRecipeIngredientsRes
 import com.example.symptomtracker.navigation.DATE_ARG
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
@@ -21,8 +24,8 @@ class MealieImportFoodViewModel @Inject constructor(
     private val getMealieRecipeIngredients: GetMealieRecipeIngredientsUseCase,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-    var uiState = MutableStateFlow(MealieImportFoodState())
-
+    private val _uiState = MutableStateFlow(MealieImportFoodState())
+    val uiState: StateFlow<MealieImportFoodState> = _uiState.asStateFlow()
     private val dateArg: String? = savedStateHandle[DATE_ARG]
     val date: LocalDate? = dateArg?.let(LocalDate::parse)
 
@@ -38,74 +41,84 @@ class MealieImportFoodViewModel @Inject constructor(
     }
 
     private fun updateUrl(url: String) {
-        uiState.value = uiState.value.copy(url = TextInput(value = url))
+        _uiState.update { currentState ->
+            currentState.copy(url = TextInput(value = url))
+        }
     }
 
     private fun clearUrl() {
-        uiState.value = uiState.value.copy(url = TextInput(value = ""))
+        _uiState.update { currentState ->
+            currentState.copy(
+                url = TextInput(value = "")
+            )
+        }
     }
 
     private fun search() {
-        checkUrlInputValidity()
-        if (uiState.value.url.validationError != null) return
+        val currentUrl = _uiState.value.url.value
 
-        uiState.value = uiState.value.copy(
-            searchState = MealieImportSearchState.Loading,
-            canImport = false,
-            url = uiState.value.url.copy(validationError = null),
+        val validationError = TextInput(value = currentUrl).findValidationError(
+            errors = listOf(TextValidationError.BLANK, TextValidationError.INVALID),
+            validityCheck = { URLUtil.isValidUrl(it) },
         )
 
-        val recipeSlug = uiState.value.url.value.split("/").last()
+        if (validationError != null) {
+            _uiState.update { currentState ->
+                currentState.copy(
+                    url = currentState.url.copy(validationError = validationError)
+                )
+            }
+            return
+        }
+
+        _uiState.update { currentState ->
+            currentState.copy(
+                searchState = MealieImportSearchState.Loading,
+                canImport = false,
+                url = currentState.url.copy(validationError = null),
+            )
+        }
+
+        val recipeSlug = currentUrl.split("/").last()
 
         viewModelScope.launch {
-            uiState.value = when (val result = getMealieRecipeIngredients(recipeSlug)) {
-                is MealieRecipeIngredientsResult.Empty -> uiState.value.copy(
-                    searchState = MealieImportSearchState.Error.NoIngredients,
-                    canImport = false,
-                )
+            val result = getMealieRecipeIngredients(recipeSlug)
 
-                is MealieRecipeIngredientsResult.Success -> uiState.value.copy(
-                    searchState = MealieImportSearchState.Success(
-                        ingredientsToImport = result.ingredients
-                    ),
-                    canImport = true,
-                )
+            _uiState.update { currentState ->
+                when (result) {
+                    is MealieRecipeIngredientsResult.Empty -> currentState.copy(
+                        searchState = MealieImportSearchState.Error.NoIngredients,
+                        canImport = false,
+                    )
 
-                is MealieRecipeIngredientsResult.Error -> uiState.value.copy(
-                    searchState = MealieImportSearchState.Error.ApiFailure(result.message),
-                    canImport = false,
-                )
+                    is MealieRecipeIngredientsResult.Success -> currentState.copy(
+                        searchState = MealieImportSearchState.Success(
+                            ingredientsToImport = result.ingredients
+                        ),
+                        canImport = true,
+                    )
+
+                    is MealieRecipeIngredientsResult.Error -> currentState.copy(
+                        searchState = MealieImportSearchState.Error.ApiFailure(result.message),
+                        canImport = false,
+                    )
+                }
             }
         }
     }
 
     private fun removeIngredientFromImport(ingredient: Ingredient) {
-        if (uiState.value.searchState is MealieImportSearchState.Success) {
-            val ingredients =
-                (uiState.value.searchState as MealieImportSearchState.Success).ingredientsToImport.filter { it != ingredient }
+        _uiState.update { currentState ->
+            val successState = currentState.searchState as? MealieImportSearchState.Success
+                ?: return@update currentState
 
-            uiState.value = uiState.value.copy(
-                searchState = MealieImportSearchState.Success(ingredientsToImport = ingredients),
-                canImport = ingredients.isNotEmpty(),
+            val filteredIngredients = successState.ingredientsToImport.filter { it != ingredient }
+
+            currentState.copy(
+                searchState = MealieImportSearchState.Success(ingredientsToImport = filteredIngredients),
+                canImport = filteredIngredients.isNotEmpty(),
             )
         }
-    }
-
-    fun getIngredientNames(): List<String> =
-        (uiState.value.searchState as? MealieImportSearchState.Success)?.ingredientsToImport?.map { it.name }
-            ?: listOf()
-
-    private fun checkUrlInputValidity() {
-        val validationError = uiState.value.url.findValidationError(
-            errors = listOf(
-                TextValidationError.BLANK,
-                TextValidationError.INVALID,
-            ),
-            validityCheck = { URLUtil.isValidUrl(it) },
-        )
-
-        uiState.value =
-            uiState.value.copy(url = uiState.value.url.copy(validationError = validationError))
     }
 }
 
@@ -113,7 +126,13 @@ data class MealieImportFoodState(
     val url: TextInput = TextInput(value = ""),
     val searchState: MealieImportSearchState? = null,
     val canImport: Boolean = false,
-)
+) {
+    val ingredientNames: List<String>
+        get() = (searchState as? MealieImportSearchState.Success)
+            ?.ingredientsToImport
+            ?.map { it.name }
+            .orEmpty()
+}
 
 sealed interface MealieImportSearchState {
     data object Loading : MealieImportSearchState
