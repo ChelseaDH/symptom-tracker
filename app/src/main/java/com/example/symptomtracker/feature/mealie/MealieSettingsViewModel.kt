@@ -11,6 +11,9 @@ import com.example.symptomtracker.core.domain.usecase.ValidateMealieCredentialsU
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,15 +22,16 @@ class MealieSettingsViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val validateMealieCredentials: ValidateMealieCredentialsUseCase,
 ) : ViewModel() {
-    val uiState = MutableStateFlow<MealieSettingsUiState>(MealieSettingsUiState.Loading)
+    private val _uiState = MutableStateFlow<MealieSettingsUiState>(MealieSettingsUiState.Loading)
+    val uiState: StateFlow<MealieSettingsUiState> = _uiState.asStateFlow()
 
     private val _saveResult = MutableStateFlow<Boolean?>(null)
-    val saveResult: StateFlow<Boolean?> get() = _saveResult
+    val saveResult: StateFlow<Boolean?> = _saveResult.asStateFlow()
 
     init {
         viewModelScope.launch {
-            settingsRepository.getMealieSettings().collect { settings ->
-                uiState.value = MealieSettingsUiState.Success(
+            settingsRepository.getMealieSettings().distinctUntilChanged().collect { settings ->
+                _uiState.value = MealieSettingsUiState.Success(
                     isEnabled = settings.enabled,
                     baseUrl = TextInput(value = settings.baseUrl),
                     apiToken = TextInput(value = settings.apiToken),
@@ -47,21 +51,27 @@ class MealieSettingsViewModel @Inject constructor(
     }
 
     private fun updateIsEnabled(isEnabled: Boolean) {
-        (uiState.value as MealieSettingsUiState.Success).let { state ->
-            uiState.value = state.copy(isEnabled = isEnabled)
+        _uiState.update { currentState ->
+            (currentState as? MealieSettingsUiState.Success)?.copy(
+                isEnabled = isEnabled
+            ) ?: currentState
         }
     }
 
     private fun updateBaseUrl(baseUrl: String) {
-        uiState.value = (uiState.value as MealieSettingsUiState.Success).copy(
-            baseUrl = TextInput(value = baseUrl)
-        )
+        _uiState.update { currentState ->
+            (currentState as? MealieSettingsUiState.Success)?.copy(
+                baseUrl = TextInput(value = baseUrl)
+            ) ?: currentState
+        }
     }
 
     private fun updateApiToken(apiToken: String) {
-        uiState.value = (uiState.value as MealieSettingsUiState.Success).copy(
-            apiToken = TextInput(value = apiToken)
-        )
+        _uiState.update { currentState ->
+            (currentState as? MealieSettingsUiState.Success)?.copy(
+                apiToken = TextInput(value = apiToken)
+            ) ?: currentState
+        }
     }
 
     private fun onCheckCredentials() {
@@ -74,15 +84,14 @@ class MealieSettingsViewModel @Inject constructor(
         viewModelScope.launch {
             val isValid = isStateValidForSave()
             if (isValid) {
-                (uiState.value as MealieSettingsUiState.Success).let { state ->
-                    if (state.isEnabled) {
-                        settingsRepository.enableMealieIntegration(
-                            baseUrl = state.baseUrl.value,
-                            apiToken = state.apiToken.value
-                        )
-                    } else {
-                        settingsRepository.disableMealieIntegration()
-                    }
+                val state = _uiState.value as? MealieSettingsUiState.Success ?: return@launch
+
+                if (state.isEnabled) {
+                    settingsRepository.enableMealieIntegration(
+                        baseUrl = state.baseUrl.value, apiToken = state.apiToken.value
+                    )
+                } else {
+                    settingsRepository.disableMealieIntegration()
                 }
             }
             _saveResult.value = isValid
@@ -90,48 +99,50 @@ class MealieSettingsViewModel @Inject constructor(
     }
 
     private suspend fun validateInput() {
-        (uiState.value as MealieSettingsUiState.Success).let { state ->
-            val baseUrlValidationError = state.baseUrl.findValidationError(
-                errors = listOf(
-                    TextValidationError.BLANK, TextValidationError.INVALID
-                ),
-                validityCheck = { URLUtil.isValidUrl(it) },
-            )
-            val apiTokenValidationError = state.apiToken.findValidationError(
-                errors = listOf(TextValidationError.BLANK)
-            )
+        val state = _uiState.value as? MealieSettingsUiState.Success ?: return
 
-            if (baseUrlValidationError != null || apiTokenValidationError != null) {
-                uiState.value = state.copy(
-                    baseUrl = state.baseUrl.copy(
-                        validationError = baseUrlValidationError
-                    ), apiToken = state.apiToken.copy(
-                        validationError = apiTokenValidationError
-                    )
-                )
+        val baseUrlValidationError = state.baseUrl.findValidationError(
+            errors = listOf(TextValidationError.BLANK, TextValidationError.INVALID),
+            validityCheck = { URLUtil.isValidUrl(it) },
+        )
+        val apiTokenValidationError = state.apiToken.findValidationError(
+            errors = listOf(TextValidationError.BLANK)
+        )
 
-                return
+        if (baseUrlValidationError != null || apiTokenValidationError != null) {
+            _uiState.update { currentState ->
+                (currentState as? MealieSettingsUiState.Success)?.copy(
+                    baseUrl = currentState.baseUrl.copy(validationError = baseUrlValidationError),
+                    apiToken = currentState.apiToken.copy(validationError = apiTokenValidationError),
+                ) ?: currentState
             }
+            return
+        }
 
-            val credentialsValidation = validateMealieCredentials(
-                baseUrl = state.baseUrl.value, apiToken = state.apiToken.value
-            )
-            uiState.value = state.copy(
-                credentialsCheckResult = credentialsValidation
-            )
+        val credentialsValidation = validateMealieCredentials(
+            baseUrl = state.baseUrl.value, apiToken = state.apiToken.value
+        )
+
+        _uiState.update { currentState ->
+            (currentState as? MealieSettingsUiState.Success)?.copy(
+                baseUrl = currentState.baseUrl.copy(validationError = null),
+                apiToken = currentState.apiToken.copy(validationError = null),
+                credentialsCheckResult = credentialsValidation,
+            ) ?: currentState
         }
     }
 
     private suspend fun isStateValidForSave(): Boolean {
-        return when (val state = uiState.value) {
+        return when (val state = _uiState.value) {
             MealieSettingsUiState.Loading -> false
             is MealieSettingsUiState.Success -> {
                 if (!state.isEnabled) return true
 
                 validateInput()
-                (uiState.value as? MealieSettingsUiState.Success)?.let { newState ->
-                    newState.baseUrl.validationError == null && newState.apiToken.validationError == null && newState.credentialsCheckResult is MealieCredentialsValidation.Success
-                } ?: false
+                val validatedState =
+                    _uiState.value as? MealieSettingsUiState.Success ?: return false
+
+                validatedState.baseUrl.validationError == null && validatedState.apiToken.validationError == null && validatedState.credentialsCheckResult is MealieCredentialsValidation.Success
             }
         }
     }

@@ -69,15 +69,21 @@ class MealieSettingsViewModelTest {
     fun whenInitialised_saveResultIsNull() = assertNull(viewModel.saveResult.value)
 
     @Test
-    fun whenUpdateIsEnabledIsCalled_stateUpdatesAccordingly() = runTest {
-        viewModel.uiState.value = MealieSettingsUiState.Success(
-            isEnabled = true,
-            baseUrl = TextInput(value = "baseUrl"),
-            apiToken = TextInput(value = "apiToken"),
+    fun updateFunctions_whenCalled_updateStateAsExpected() = runTest {
+        val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.uiState.collect() }
+        settingsRepository.sendMealieSettings(
+            MealieSettings(enabled = true, baseUrl = "baseUrl", apiToken = "apiToken")
+        )
+
+        assertEquals(
+            MealieSettingsUiState.Success(
+                isEnabled = true,
+                baseUrl = TextInput(value = "baseUrl"),
+                apiToken = TextInput(value = "apiToken"),
+            ), viewModel.uiState.value
         )
 
         viewModel.handleEvent(MealieSettingsEvent.UpdateIsEnabled(false))
-
         assertEquals(
             MealieSettingsUiState.Success(
                 isEnabled = false,
@@ -87,93 +93,91 @@ class MealieSettingsViewModelTest {
             ),
             viewModel.uiState.value,
         )
-    }
-
-    @Test
-    fun whenUpdateBaseUrlIsCalled_stateUpdatesAccordingly() = runTest {
-        viewModel.uiState.value = MealieSettingsUiState.Success(
-            isEnabled = true,
-            baseUrl = TextInput(value = "baseUrl"),
-            apiToken = TextInput(value = "apiToken"),
-        )
 
         viewModel.handleEvent(MealieSettingsEvent.UpdateBaseUrl("newUrl"))
-
         assertEquals(
             MealieSettingsUiState.Success(
-                isEnabled = true,
+                isEnabled = false,
                 baseUrl = TextInput(value = "newUrl"),
                 apiToken = TextInput(value = "apiToken"),
                 credentialsCheckResult = null,
             ),
             viewModel.uiState.value,
         )
-    }
-
-    @Test
-    fun whenUpdateApiTokenIsCalled_stateUpdatesAccordingly() = runTest {
-        viewModel.uiState.value = MealieSettingsUiState.Success(
-            isEnabled = true,
-            baseUrl = TextInput(value = "baseUrl"),
-            apiToken = TextInput(value = "apiToken"),
-        )
 
         viewModel.handleEvent(MealieSettingsEvent.UpdateApiToken("newToken"))
-
         assertEquals(
             MealieSettingsUiState.Success(
-                isEnabled = true,
-                baseUrl = TextInput(value = "baseUrl"),
+                isEnabled = false,
+                baseUrl = TextInput(value = "newUrl"),
                 apiToken = TextInput(value = "newToken"),
                 credentialsCheckResult = null,
             ),
             viewModel.uiState.value,
         )
+
+        collectJob.cancel()
     }
 
     @Test
     fun givenInputsAreInvalid_whenOnCheckCredentialsIsCalled_stateUpdatesWithApplicableValidationErrors() =
-        mapOf(
-            MealieSettingsUiState.Success(
-                isEnabled = true,
-                baseUrl = TextInput(value = ""), apiToken = TextInput(value = ""),
-            ) to MealieSettingsUiState.Success(
-                isEnabled = true,
-                baseUrl = TextInput(value = "", validationError = TextValidationError.BLANK),
-                apiToken = TextInput(value = "", validationError = TextValidationError.BLANK),
-                credentialsCheckResult = null,
-            ), MealieSettingsUiState.Success(
-                isEnabled = true,
-                baseUrl = TextInput(value = "notAUrl"), apiToken = TextInput(value = "apiToken"),
-            ) to MealieSettingsUiState.Success(
-                isEnabled = true,
-                baseUrl = TextInput(
-                    value = "notAUrl", validationError = TextValidationError.INVALID
-                ),
-                apiToken = TextInput(value = "apiToken", validationError = null),
-                credentialsCheckResult = null,
+        runTest {
+            val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.uiState.collect() }
+
+            // Test case 1: Empty inputs
+            settingsRepository.sendMealieSettings(
+                MealieSettings(enabled = true, baseUrl = "", apiToken = "")
             )
-        ).forEach { (stateBefore, stateAfter) ->
-            runTest {
-                viewModel.uiState.value = stateBefore
 
-                mockStatic(URLUtil::class.java).use { mock ->
-                    mock.`when`<Boolean> { URLUtil.isValidUrl("notAUrl") }.thenReturn(false)
+            viewModel.handleEvent(MealieSettingsEvent.CheckCredentials)
 
-                    viewModel.handleEvent(MealieSettingsEvent.CheckCredentials)
+            assertEquals(
+                MealieSettingsUiState.Success(
+                    isEnabled = true,
+                    baseUrl = TextInput(value = "", validationError = TextValidationError.BLANK),
+                    apiToken = TextInput(value = "", validationError = TextValidationError.BLANK),
+                    credentialsCheckResult = null,
+                ),
+                viewModel.uiState.value
+            )
 
-                    assertEquals(stateAfter, viewModel.uiState.value)
-                }
+            // Test case 2: Invalid URL
+            settingsRepository.sendMealieSettings(
+                MealieSettings(enabled = true, baseUrl = "notAUrl", apiToken = "apiToken")
+            )
+
+            mockStatic(URLUtil::class.java).use { mock ->
+                mock.`when`<Boolean> { URLUtil.isValidUrl("notAUrl") }.thenReturn(false)
+
+                viewModel.handleEvent(MealieSettingsEvent.CheckCredentials)
+
+                assertEquals(
+                    MealieSettingsUiState.Success(
+                        isEnabled = true,
+                        baseUrl = TextInput(
+                            value = "notAUrl", validationError = TextValidationError.INVALID
+                        ),
+                        apiToken = TextInput(value = "apiToken", validationError = null),
+                        credentialsCheckResult = null,
+                    ),
+                    viewModel.uiState.value
+                )
             }
+
+            collectJob.cancel()
         }
 
     @Test
     fun givenCredentialsAreNotValid_whenonCheckCredentialsIsCalled_stateUpdatesWithApplicableValidationErrors() =
         runTest {
-            viewModel.uiState.value = MealieSettingsUiState.Success(
-                isEnabled = true,
-                baseUrl = TextInput(value = "https://test.mealie.co"),
-                apiToken = TextInput(value = "apiToken"),
+            val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.uiState.collect() }
+
+            settingsRepository.sendMealieSettings(
+                MealieSettings(
+                    enabled = true,
+                    baseUrl = "https://test.mealie.co",
+                    apiToken = "apiToken"
+                )
             )
 
             mockStatic(URLUtil::class.java).use {
@@ -200,11 +204,13 @@ class MealieSettingsViewModelTest {
                     viewModel.uiState.value,
                 )
             }
+
+            collectJob.cancel()
         }
 
     @Test
     fun givenStateIsLoading_whenOnSaveIsCalled_saveResultIsFalse() = runTest {
-        viewModel.uiState.value = MealieSettingsUiState.Loading
+        assertEquals(MealieSettingsUiState.Loading, viewModel.uiState.value)
 
         viewModel.handleEvent(MealieSettingsEvent.Save)
 
@@ -213,10 +219,14 @@ class MealieSettingsViewModelTest {
 
     @Test
     fun givenInputsAreInvalid_whenOnSaveIsCalled_saveResultIsFalse() = runTest {
-        viewModel.uiState.value = MealieSettingsUiState.Success(
-            isEnabled = true,
-            baseUrl = TextInput(value = "https://test.mealie.co"),
-            apiToken = TextInput(value = "apiToken"),
+        val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.uiState.collect() }
+
+        settingsRepository.sendMealieSettings(
+            MealieSettings(
+                enabled = true,
+                baseUrl = "https://test.mealie.co",
+                apiToken = "apiToken"
+            )
         )
 
         mockStatic(URLUtil::class.java).use {
@@ -233,27 +243,38 @@ class MealieSettingsViewModelTest {
 
             assertFalse(viewModel.saveResult.value!!)
         }
+
+        collectJob.cancel()
     }
 
     @Test
     fun givenIsEnabledIsFalse_whenOnSaveIsCalled_saveResultIsTrue() = runTest {
-        viewModel.uiState.value = MealieSettingsUiState.Success(
-            isEnabled = false,
-            baseUrl = TextInput(value = ""),
-            apiToken = TextInput(value = "apiToken"),
+        val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.uiState.collect() }
+
+        settingsRepository.sendMealieSettings(
+            MealieSettings(enabled = true, baseUrl = "", apiToken = "apiToken")
         )
+
+        // Update to disabled state
+        viewModel.handleEvent(MealieSettingsEvent.UpdateIsEnabled(false))
 
         viewModel.handleEvent(MealieSettingsEvent.Save)
 
         assertTrue(viewModel.saveResult.value!!)
+
+        collectJob.cancel()
     }
 
     @Test
     fun givenInputsAreValid_whenOnSaveIsCalled_saveResultIsTrue() = runTest {
-        viewModel.uiState.value = MealieSettingsUiState.Success(
-            isEnabled = true,
-            baseUrl = TextInput(value = "https://test.mealie.co"),
-            apiToken = TextInput(value = "apiToken"),
+        val collectJob = launch(UnconfinedTestDispatcher()) { viewModel.uiState.collect() }
+
+        settingsRepository.sendMealieSettings(
+            MealieSettings(
+                enabled = true,
+                baseUrl = "https://test.mealie.co",
+                apiToken = "apiToken"
+            )
         )
 
         mockStatic(URLUtil::class.java).use {
@@ -270,5 +291,7 @@ class MealieSettingsViewModelTest {
 
             assertTrue(viewModel.saveResult.value!!)
         }
+
+        collectJob.cancel()
     }
 }
